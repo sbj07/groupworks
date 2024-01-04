@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="MemberMapper">
+    <!--    회원가입    -->
+    <insert id="signup">
+        INSERT INTO MEMBER
+        (
+            NO
+            ,NAME
+            ,ID
+            ,PWD
+            ,EMAIL
+            ,TEL
+            ,ADDRESS
+            ,DEPART_NO
+            ,COMPANY_NO
+            ,POSITION_NO
+        )
+        VALUES
+        (
+            SEQ_MEMBER_NO.NEXTVAL
+            ,{memberName}
+            ,{memberId}
+            ,{memberPwd}
+            ,{memberEmail}
+            ,{memberTel}
+            ,{memberAddress}
+            ,(
+                SELECT NO
+                FROM DEPARTMENT
+                WHERE NAME = {departName}
+             )
+            ,(
+                SELECT NO
+                FROM COMPANY
+                WHERE NAME = {companyName}
+             )
+            ,(
+                SELECT NO
+                FROM POSITION
+                WHERE NAME = {positionName}
+             )
+        )
+    </insert>
+
+    <!--    로그인    -->
+    <select id="login" resultType="MemberVo">
+        SELECT *
+        FROM MEMBER
+        WHERE ID = {memberId}
+        AND PWD = {memberPwd}
+    </select>
+
+    <!--    연차수정    -->
+    <update id="editAnnual">
+        UPDATE MEMBER
+        SET
+        ANNUAL = {annual}
+        WHERE NO = {memberNo}
+    </update>
+
+    <!--    근태상태변경    -->
+    <update id="editWorkStatus">
+        UPDATE MEMBER
+        SET
+        WORK_STATUS_NO = (
+                            SELECT NO
+                            FROM WORK_STATUS
+                            WHERE STATUS = {status}
+                         )
+        WHERE NO = {memberNo}
+    </update>
+
+    <!--    권한변경    -->
+    <update id="editAuth">
+        UPDATE MEMBER
+        SET
+        AUTH_NO = (
+                    SELECT NO
+                    FROM AUTHORITY
+                    WHERE NAME = {authName}
+                  )
+        WHERE NO = {memberNo}
+    </update>
+
+    <!--    회사추가    -->
+    <insert id="insertCompany">
+        INSERT INTO COMPANY
+        (
+            NO
+            , NAME
+            , MANAGER_NO
+        )
+        VALUES
+        (
+            SEQ_COMPANY_NO.NEXTVAL
+            , {companyName}
+            , {memberNo}
+        )
+    </insert>
+
+</mapper>
