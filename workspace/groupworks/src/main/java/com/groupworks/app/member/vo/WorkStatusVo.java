@@ -1,9 +1,10 @@
-package com.groupworks.app.auth;
+package com.groupworks.app.member.vo;
 
 import lombok.Data;
 
 @Data
-public class AuthVo {
+public class WorkStatusVo {
     private String no;
     private String name;
+
 }

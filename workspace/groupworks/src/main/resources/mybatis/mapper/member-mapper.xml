@@ -27,21 +27,9 @@
             ,{email}
             ,{tel}
             ,{address}
-            ,(
-                SELECT NO
-                FROM DEPARTMENT
-                WHERE NAME = {departName}
-             )
-            ,(
-                SELECT NO
-                FROM COMPANY
-                WHERE NAME = {companyName}
-             )
-            ,(
-                SELECT NO
-                FROM POSITION
-                WHERE NAME = {positionName}
-             )
+            ,{departNo}
+            ,{companyNo}
+            ,{positionNo}
         )
     </insert>
 
@@ -79,11 +67,7 @@
     <update id="editWorkStatus">
         UPDATE MEMBER
         SET
-        WORK_STATUS_NO = (
-                            SELECT NO
-                            FROM WORK_STATUS
-                            WHERE STATUS = {status}
-                         )
+        WORK_STATUS_NO = {workStatusNo}
         WHERE NO = {no}
     </update>
 
@@ -110,5 +94,46 @@
             , {no}
         )
     </insert>
+
+    <!-- 권한목록 조회 -->
+    <select id="getAuthList" resultType="AuthVo">
+        SELECT
+        NO
+        ,NAME
+        FROM AUTHORITY
+    </select>
+
+    <!-- 부서 목록 조회 -->
+    <select id="getDepartList" resultType="DepartVo">
+        SELECT
+        NO
+        , NAME
+        FROM DEPARTMENT
+    </select>
+
+    <!-- 회사 목록 조회 -->
+    <select id="getCompanyList" resultType="CompanyVo">
+        SELECT
+        NO
+        , NAME
+        FROM COMPANY
+    </select>
+
+    <!-- 직책 목록 조회 -->
+    <select id="getPositionList" resultType="PositionVo">
+        SELECT
+        NO
+        , NAME
+        FROM POSITION
+    </select>
+
+    <!-- 근무 상태 목록 조회 -->
+    <select id="getWorkStatList" resultType="WorkStatVo">
+        SELECT
+        NO
+        , NAME
+        FROM WORK_STATUS
+    </select>
+
 
 </mapper>
