@@ -21,12 +21,12 @@
         VALUES
         (
             SEQ_MEMBER_NO.NEXTVAL
-            ,{memberName}
-            ,{memberId}
-            ,{memberPwd}
-            ,{memberEmail}
-            ,{memberTel}
-            ,{memberAddress}
+            ,{name}
+            ,{id}
+            ,{pwd}
+            ,{email}
+            ,{tel}
+            ,{address}
             ,(
                 SELECT NO
                 FROM DEPARTMENT
@@ -47,10 +47,24 @@
 
     <!--    로그인    -->
     <select id="login" resultType="MemberVo">
-        SELECT *
+        SELECT
+        NO
+        , NAME
+        , ID
+        , PWD
+        , EMAIL
+        , TEL
+        , ADDRESS
+        , ANNUAL
+        , AUTH_NO
+        , DEPART_NO
+        , COMPANY_NO
+        , POSITION_NO
+        , WORK_STATUS_NO
+        , DEL_YN
         FROM MEMBER
-        WHERE ID = {memberId}
-        AND PWD = {memberPwd}
+        WHERE ID = {id}
+        AND PWD = {pwd}
     </select>
 
     <!--    연차수정    -->
@@ -58,7 +72,7 @@
         UPDATE MEMBER
         SET
         ANNUAL = {annual}
-        WHERE NO = {memberNo}
+        WHERE NO = {no}
     </update>
 
     <!--    근태상태변경    -->
@@ -70,19 +84,15 @@
                             FROM WORK_STATUS
                             WHERE STATUS = {status}
                          )
-        WHERE NO = {memberNo}
+        WHERE NO = {no}
     </update>
 
     <!--    권한변경    -->
     <update id="editAuth">
         UPDATE MEMBER
         SET
-        AUTH_NO = (
-                    SELECT NO
-                    FROM AUTHORITY
-                    WHERE NAME = {authName}
-                  )
-        WHERE NO = {memberNo}
+        AUTH_NO = {authNo}
+        WHERE NO = {no}
     </update>
 
     <!--    회사추가    -->
@@ -97,7 +107,7 @@
         (
             SEQ_COMPANY_NO.NEXTVAL
             , {companyName}
-            , {memberNo}
+            , {no}
         )
     </insert>
 

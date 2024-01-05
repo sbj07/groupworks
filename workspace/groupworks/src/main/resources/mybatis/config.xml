@@ -10,4 +10,8 @@
         <setting name="jdbcTypeForNull" value="NULL"/>
     </settings>
 
+    <typeAliases>
+        <typeAlias type="com.groupworks.app.member.vo.MemberVo" alias="MemberVo"/>
+    </typeAliases>
+
 </configuration>
