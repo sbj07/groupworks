@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="이름 바꾸기">
+
+<!-- 	공지사항 작성 -->
+	<insert id="insert">
+	INSERT INTO NOTICE
+	(
+	 	NOTICE_NO
+	 	, MEMBER_NO
+	 	, TITLE
+	 	, CONTENT
+	 	, FILE_PATH
+	 	, CATEGORY
+	 	, OPEN_DEPART
+	 	, ENROLL_DATE
+	 	)
+ 	VALUES
+ 	(
+	 	SEQ_NOTICE_NO.NEXTVAL
+	 	, #{memberNo}
+	 	, #{title}
+	 	, #{content}
+	 	, #{filePath}
+	 	, #{category}
+	 	, #{openDepart}
+	 	, #{enrollDate}
+ 	)
+	</insert>
+	
+<!-- 	전체 목록 조회 -->
+	<select id="list" resultType="com.groupworks.app.notice.vo.NoticeVo">
+		SELECT
+		    NOTICE_NO
+		    , MEMBER_NO
+		    , TITLE
+		    , CLICK_NO
+		    , FILE_PATH
+		    , CATEGORY
+		    , EMERGENCY_YN
+		    , OPEN_DEPART
+		    , ENROLL_DATE
+		FROM NOTICE
+		WHERE DELETE_YN = 'N'
+		ORDER BY NOTICE_NO DESC
+	</select>
+	
+<!-- 상세 조회(번호) -->
+	<select id="detail" resultType="com.groupworks.app.notice.vo.NoticeVo">
+		SELECT
+		    NOTICE_NO
+		    , MEMBER_NO
+		    , TITLE
+		    , CONTENT
+		    , CLICK_NO
+		    , FILE_PATH
+		    , CATEGORY
+		    , EMERGENCY_YN
+		    , OPEN_DEPART
+		    , ENROLL_DATE
+		    , UPDATE_DATE
+		FROM NOTICE
+		WHERE NOTICE_NO = #{noticeNo}
+		AND DELETE_YN = 'N'
+	</select>
+	
+<!-- 	수정 -->
+	<update id="edit">
+		UPDATE NOTICE
+		SET
+		<trim prefixOverrides=",">
+			<if test=" title != null and title != '' ">
+		 		TITLE = #{title}
+			</if>
+			<if test=" content != null and content != '' ">
+			    , CONTENT = #{content]
+		    </if>
+		    </trim>
+			WHERE NOTICE_NO = #{noticeNo}
+			AND DELETE_YN = 'N'
+	</update>
+	
+</mapper>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
