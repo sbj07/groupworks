@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="MessageMapper">
+   
+    <!-- 메세지보내기 -->
+ 	<insert id="SendMsg"></insert>
+ 	
+ 	 <!-- 메세지답장 -->
+ 	<insert id="ReSendMsg"></insert>
+ 	
+ 	<!-- 메세지삭제 -->
+ 	<update id="QuitMsg"></update>
+ 	
+ 	
+</mapper>
