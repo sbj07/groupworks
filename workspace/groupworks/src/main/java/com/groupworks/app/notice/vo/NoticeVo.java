@@ -5,7 +5,7 @@ import lombok.Data;
 @Data
 public class NoticeVo {
 
-	private String notice_no;
+	private String noticeNo;
 	private String memberNo;
 	private String title;
 	private String content;
