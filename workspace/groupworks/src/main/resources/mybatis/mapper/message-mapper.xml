@@ -6,6 +6,7 @@
    
    
    <!-- 메세지 조회 -->
+   <!-- 메세지 조회 -->
    <select id="SelectMsg" resultType="MessageVo">
 	   SELECT * 
 	   FROM MESSAGE 

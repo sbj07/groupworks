@@ -5,6 +5,8 @@ import lombok.Data;
 @Data
 public class MessageVo {
 
+	
+	//vo
 	private String no;
 	private String sendNo;
 	private String recieveNo;

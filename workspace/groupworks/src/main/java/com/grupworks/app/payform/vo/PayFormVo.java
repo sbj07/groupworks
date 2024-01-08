@@ -4,7 +4,7 @@ import lombok.Data;
 
 @Data
 public class PayFormVo {
-
+	//vo
 	private String no;
 	private String writerNo;
 	private String firstApplyNo;

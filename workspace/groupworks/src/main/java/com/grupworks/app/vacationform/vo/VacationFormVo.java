@@ -5,6 +5,7 @@ import lombok.Data;
 @Data
 public class VacationFormVo {
 
+	//vo
 	private String no;
 	private String vacationNo;
 	private String writerNo;

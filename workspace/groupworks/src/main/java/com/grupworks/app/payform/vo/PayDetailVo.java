@@ -4,7 +4,7 @@ import lombok.Data;
 
 @Data
 public class PayDetailVo {
-
+	//vo
 	private String no;
 	private String payFormNo;
 	private String detail;

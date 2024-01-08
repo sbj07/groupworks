@@ -5,4 +5,8 @@ import org.springframework.stereotype.Repository;
 @Repository
 public class BusinessTripFormDao {
 
+	
+public void write() {
+		
+	}
 }
