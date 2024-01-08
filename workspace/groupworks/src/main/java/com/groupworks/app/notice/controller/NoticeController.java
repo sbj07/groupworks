@@ -19,6 +19,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class NoticeController {
 
+	//§∑§∑
 	private final NoticeService service;
 	
 	//¿€º∫

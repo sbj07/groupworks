@@ -13,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 @Service
 @RequiredArgsConstructor
 public class NoticeService {
+	//¤·¤·
 
 	private final NoticeDao dao;
 	private final SqlSessionTemplate sst;

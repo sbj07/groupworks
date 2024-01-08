@@ -4,6 +4,8 @@
   "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="BookMapper">
 
+<!-- ㅇㅇ -->
+
 	<insert id="insert">
 		INSERT INTO BOOK(
 		    BOOK_NO
