@@ -4,101 +4,16 @@
         "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="PayFormMapper">
    
-   	<!-- 지출결의서 조회 -->
- 	<select id="SelectPay" resultType="PayFormVo">
-	 	SELECT * 
-	 	FROM PAY_FORM 
-	    WHERE WRITER_NO = #{no}
-	    AND DEL_YN = 'N'
- 	</select>
- 	
- 	<!-- 지출결의서 결재대기 조회 -->
- 	<select id="SelectIngPayForm" resultType="PayFormVo">
-	 	 SELECT * 
-	 	 FROM PAY_FORM 
-	 	 WHERE CATEGORY_NO = 
-	 	 					(
-	 	 					SELECT NO 
-	 	 					FROM DOCUMENT_CATEGORY 
-	 	 					WHERE CATEGORY = '결제대기'
-	 	 					)
-	  	 AND DEL_YN = 'N'
-	</select>
-
-		<!-- 지출결의서 결재완료 조회 -->
- 	<select id="SelectEdPayForm" resultType="PayFormVo">
-	 	 SELECT * 
-	 	 FROM PAY_FORM 
-	 	 WHERE CATEGORY_NO = 
-	 	 					(
-	 	 					SELECT NO 
-	 	 					FROM DOCUMENT_CATEGORY 
-	 	 					WHERE CATEGORY = '결제완료'
-	 	 					)
-	  	 AND DEL_YN = 'N'
-	</select>
-	
     <!-- 지출결의서 등록 -->
- 	<insert id="InsertPay">
-	 	INSERT INTO PAY_FORM 
-		 	(
-		 	NO
-		 	,PAY_NO
-		 	,WRITER_NO
-		 	,FIRST_APPLY_NO
-		 	,MID_APPLY_NO
-		 	,LAST_APPLY_NO
-		 	,CATEGORY_NO
-		 	,START_TIME
-		 	,FINISH_TIME
-		 	,CONTENT
-		 	,WRITE_DATE
-		 	)
-	    VALUES 
-	    	(
-	        #{no}
-	        ,#{payNo}
-	        ,#{writerNo}
-	        ,#{firstApplyNo}
-	        ,#{midApplyNo}
-	        ,#{lastApplyNo}
-	        ,#{categoryNo}
-	        ,#{startTime}
-	        ,#{finishTime}
-	        ,#{content}
-	        ,#{writeDate}
-	    	)
- 	</insert>
+ 	<insert id="InsertPay"></insert>
  	
  	<!-- 지출결의서 승인 -->
- 	<update id="ApplyPay">
-	 	 UPDATE PAY_FORM 
-	 	 	SET CATEGORY_NO = 
-		                      (
-		                      SELECT NO 
-		                      FROM DOCUMENT_CATEGORY 
-		                      WHERE CATEGORY = '승인'
-		                      ) 
-	    WHERE NO = #{no}
-	 </update>
+ 	<update id="ApplyPay"></update>
  	
  	<!-- 지출결의서 반려 -->
- 	<update id="RejectionPay">
- 		 UPDATE PAY_FORM 
- 		 	SET CATEGORY_NO = 
-		                      (
-		                      SELECT NO 
-		                      FROM DOCUMENT_CATEGORY 
-		                      WHERE CATEGORY = '반려'
-		                      )
-	    , REJECTION = #{rejection} WHERE NO = #{no}
- 	</update>
+ 	<update id="RejectionPay"></update>
 
  	 <!-- 지출결의서 삭제 -->
- 	<update id="QuitPay">
- 		UPDATE PAY_FORM 
- 			SET DEL_YN = 'Y' 
- 		WHERE NO = #{no}
- 	</update>
+ 	<update id="QuitPay"></update>
  	
 </mapper>
