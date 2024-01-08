@@ -13,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 @Service
 @RequiredArgsConstructor
 public class OrganService {
+	//¤¤¤¤
 
 	private final SqlSessionTemplate sst;
 	private final OrganDao dao;

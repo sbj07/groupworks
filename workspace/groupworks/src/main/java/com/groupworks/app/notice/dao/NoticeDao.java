@@ -9,6 +9,7 @@ import com.groupworks.app.notice.vo.NoticeVo;
 
 @Repository
 public class NoticeDao {
+	//§∑§∑
 	
 	//¿€º∫
 	public int insert(SqlSessionTemplate sst, NoticeVo vo) {
