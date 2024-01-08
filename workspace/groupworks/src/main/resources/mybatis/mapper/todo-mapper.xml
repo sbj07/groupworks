@@ -3,14 +3,51 @@
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="TodoMapper">
-   	
+   	<!-- 할일조회 -->
+   	<!-- 할일조회 -->
+ 	<select id="AddTodo" resultType="TodoVo">
+ 	  	SELECT * 
+		FROM TODO 
+		WHERE DEL_YN = 'N'
+		AND MEMBER_NO = #{memberNo}
+ 	</select>
+	 
    	<!-- 할일등록 -->
- 	<insert id="AddTodo"></insert>
+ 	<insert id="AddTodo">
+ 		INSERT INTO TODO 
+	 	(
+	 		NO
+	 		,MEMBER_NO
+	 		,CONTENT
+	 		,WRITE_DATE
+	 		,DEL_YN
+	 	) 
+		VALUES 
+		(
+		    #{no}
+		    ,#{memberNo}
+		    ,#{content}
+		    ,SYSDATE
+		    ,'N'
+		)
+ 	</insert>
  	
  	<!-- 할일수정 -->
- 	<update id="EditTodo"></update>
- 	
+ 	<update id="EditTodo">
+	   UPDATE TODO 
+		    SET CONTENT = #{content}
+		    , MODIFY_DATE = SYSDATE 
+	    WHERE NO = #{no} 
+	    AND MEMBER_NO = #{memberNo};
+ 	</update>
+
  	<!-- 할일삭제 -->
- 	<update id="QuitTodo"></update>
+ 	<update id="QuitTodo">
+ 		UPDATE TODO 
+		   	SET DEL_YN = 'Y'
+		   	,DELETE_DATE = SYSDATE 
+	   WHERE NO = #{no} 
+	   AND MEMBER_NO = #{memberNo};
+ 	</update>
  
 </mapper>
