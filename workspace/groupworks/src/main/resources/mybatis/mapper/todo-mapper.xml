@@ -19,12 +19,14 @@
 	 		NO
 	 		,MEMBER_NO
 	 		,CONTENT
+	 		,WRITE_DATE
 	 	) 
 		VALUES 
 		(
 		    #{no}
 		    ,#{memberNo}
 		    ,#{content}
+			,SYSDATE
 		)
  	</insert>
  	
