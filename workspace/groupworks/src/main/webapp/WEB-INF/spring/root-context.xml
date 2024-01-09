@@ -10,9 +10,9 @@
 <!-- commons-dbcp2 > dbcp -->
 <bean id="dbcpSource" class="org.apache.commons.dbcp2.BasicDataSource">
 	<property name="driverClassName" value="oracle.jdbc.OracleDriver"/>
-	<property name="url" value="jdbc:oracle:thin:@127.0.0.1:1521:xe"/>
-	<property name="username" value="C##GROUPWORKS"/>
-	<property name="password" value="KHGROUPWORKS"/>
+	<property name="url" value="jdbc:oracle:thin:@129.154.52.135:40000:xe"/>
+	<property name="username" value="KH0821_10"/>
+	<property name="password" value="1234"/>
 
 	<property name="maxTotal" value="20"/>
 	<property name="maxIdle" value="10"/>
@@ -38,7 +38,7 @@
 	<constructor-arg index="0" ref="sqlSessionFactory"/>
 </bean>
 
-<!-- BCryptPasswordEncoder -->
+<!-- BCryptPasswordEncoder-->
 <bean id="passwordEncoder" class="org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder">
 
 </bean>
