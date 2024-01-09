@@ -9,7 +9,6 @@ import com.groupworks.app.notice.vo.NoticeVo;
 
 @Repository
 public class NoticeDao {
-	//ㅇㅇ
 	
 	//작성
 	public int insert(SqlSessionTemplate sst, NoticeVo vo) {
@@ -29,6 +28,11 @@ public class NoticeDao {
 		return sst.selectOne("NoticeMapper.detail", vo);
 	}
 	
+	//조회수 증가
+	public int increaseHit(SqlSessionTemplate sst, NoticeVo vo) {
+		return sst.update("NoticeMapper.increaseHit", vo);
+	}
+
 	//수정
 	public int edit(SqlSessionTemplate sst, NoticeVo vo) {
 
@@ -40,6 +44,7 @@ public class NoticeDao {
 
 		return sst.delete("NoticeMapper.delete", vo);
 	}
+
 
 }//class
 

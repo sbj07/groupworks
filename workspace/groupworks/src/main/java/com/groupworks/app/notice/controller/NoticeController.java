@@ -1,6 +1,10 @@
 package com.groupworks.app.notice.controller;
 
+import java.io.File;
+import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -8,6 +12,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.groupworks.app.notice.service.NoticeService;
 import com.groupworks.app.notice.vo.NoticeVo;
@@ -19,41 +24,65 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class NoticeController {
 
-	//ㅇㅇ
 	private final NoticeService service;
 	
 	//작성
 	@PostMapping("insert")
-	public String insert(NoticeVo vo) throws Exception{
+	public Map<String, String> insert(NoticeVo vo, MultipartFile f) throws Exception{
+		
+		String filePath = saveFile(f);
+		vo.setFilePath(filePath);
 		
 		int result = service.insert(vo);
 		
+		Map<String, String> map = new HashMap<String, String>();
+		map.put("msg", "ggod");
+		
 		if(result != 1) {
-			System.out.println("공지사항 작성 실패");
-			throw new Exception();
+			map.put("msg", "bad");
 		}
-		return "redirect:/notice/list";
+		return map;
 	}//insert
 	
+	/**
+	 * 파일을 서버에 저장하고, 파일 전체 경로를 리턴함
+	 * @param 파일객체 
+	 * @param 파일경로
+	 * @return 실제파일저장경로(파일경로+파일명)
+	 * @throws Exception
+	 * @throws  
+	 */
+	private String saveFile(MultipartFile f) throws Exception, IOException {
+		String path = "";
+		String originName = f.getOriginalFilename();
 	
-	//전체 목록 조회(번호)(렌더링)
+		File target = new File(path + originName);
+		f.transferTo(target);
+		
+		return path + originName;
+	}
+
+
+	//전체 목록 조회(번호)(렌더링)?
 	@GetMapping("list")
-	public String list(Model model) {
+	public Map<String, Object> list(Model model) {
 		
 		List<NoticeVo> voList = service.list();
-		model.addAttribute("noticeVoList", voList);
 		
-		return "notice/list";
+		Map<String, Object> map = new HashMap<>();
+		map.put("msg", "good");
+		map.put("voList", voList);
+		return map;
 	}//렌더링
 	
-	//전체 목록 조회(번호)(데이터)
-	@GetMapping("rest/list")
-	@ResponseBody
-	public List<NoticeVo> restList(){
-		List<NoticeVo> voList = service.list();
-		
-		return voList;
-	}//데이터
+//	//전체 목록 조회(번호)(데이터)
+//	@GetMapping("rest/list")
+//	@ResponseBody
+//	public List<NoticeVo> restList(){
+//		List<NoticeVo> voList = service.list();
+//		
+//		return voList;
+//	}//데이터
 	
 	
 	//상세 조회(번호)

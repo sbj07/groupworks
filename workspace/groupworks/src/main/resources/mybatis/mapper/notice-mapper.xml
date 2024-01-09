@@ -3,9 +3,9 @@
   PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
   "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="NoticeMapper">
-<!-- ㅇㄴㄴㅇ -->
+
 <!-- 	공지사항 작성 -->
-	<insert id=insert>
+	<insert id="insert">
 		INSERT INTO NOTICE
 		(
 		 	NOTICE_NO
@@ -64,6 +64,15 @@
 		AND DELETE_YN = 'N'
 	</select>
 	
+<!-- 	조회수 증가 -->
+	<update id="increaseHit">
+		UPDATE NOTICE
+		SET
+			CLICK_NO = CLICK_NO+1
+		WHERE NOTICE_NO = #{no}
+		AND DELETE_YN = 'N'
+	</update>
+	
 <!-- 	수정 -->
 	<update id="edit">
 		UPDATE NOTICE
@@ -75,7 +84,13 @@
 		<if test=" content != null and content != '' ">
 		    , CONTENT = #{content]
 	    </if>
-  			<if test=" updateDate != null and updateDate != '' ">
+     	<if test=" filePath != null and filePath != '' ">
+	        , FILE_PATH = #{filePath}
+        </if>
+        <if test=" category != null and category != '' ">
+	        , CATEGORY = #{category}
+        </if>
+		<if test=" updateDate != null and updateDate != '' ">
 	        , UPDATE_DATE = SYSDATE
         </if>
 	    </trim>
