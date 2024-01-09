@@ -13,13 +13,19 @@ import lombok.RequiredArgsConstructor;
 @Service
 @RequiredArgsConstructor
 public class NoticeService {
-	//ㅇㅇ
 
 	private final NoticeDao dao;
 	private final SqlSessionTemplate sst;
 	
-	//작성
+	//작성	
 	public int insert(NoticeVo vo) {
+		
+		String str = vo.getFilePath().replace("", "");
+		vo.setFilePath(str);
+		
+		if(vo.getTitle().length() < 1) {
+			throw new IllegalStateException();
+		}
 		
 		return dao.insert(sst, vo);
 	}
@@ -30,9 +36,13 @@ public class NoticeService {
 		return dao.list(sst);
 	}
 
-	//상세 조회
+	//상세 조회(+조회수 증가)
 	public NoticeVo detail(NoticeVo vo) {
 
+		int result = dao.increaseHit(sst, vo);
+		if(result != 1) {
+			throw new IllegalStateException();
+		}
 		return dao.detail(sst, vo);
 	}
 

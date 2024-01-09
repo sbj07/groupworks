@@ -18,7 +18,6 @@ import lombok.RequiredArgsConstructor;
 @RequestMapping("organ")
 @RequiredArgsConstructor
 public class OrganController {
-	//¤·¤·
 
 	private final OrganService service;
 	

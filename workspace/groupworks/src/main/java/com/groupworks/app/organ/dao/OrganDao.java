@@ -10,7 +10,6 @@ import com.groupworks.app.organ.vo.OrganVo;
 @Repository
 public class OrganDao {
 
-	//しし
 	//持失
 	public int insert(SqlSessionTemplate sst, OrganVo vo) {
 

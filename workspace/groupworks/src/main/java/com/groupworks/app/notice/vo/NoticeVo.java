@@ -4,7 +4,6 @@ import lombok.Data;
 
 @Data
 public class NoticeVo {
-	//¤·¤·
 
 	private String noticeNo;
 	private String memberNo;
