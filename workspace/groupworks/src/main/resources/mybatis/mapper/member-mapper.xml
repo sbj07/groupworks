@@ -21,15 +21,15 @@
         VALUES
         (
             SEQ_MEMBER_NO.NEXTVAL
-            ,{name}
-            ,{id}
-            ,{pwd}
-            ,{email}
-            ,{tel}
-            ,{address}
-            ,{departNo}
-            ,{companyNo}
-            ,{positionNo}
+            , #{name}
+            , #{id}
+            , #{pwd}
+            , #{email}
+            , #{tel}
+            , #{address}
+            , #{departNo}
+            , #{companyNo}
+            , #{positionNo}
         )
     </insert>
 
@@ -38,7 +38,7 @@
         SELECT
             ID
         FROM MEMBER
-        WHERE ID = {id}
+        WHERE ID = #{id}
     </select>
 
     <!--    로그인    -->
@@ -59,8 +59,8 @@
         , WORK_STATUS_NO
         , DEL_YN
         FROM MEMBER
-        WHERE ID = {id}
-        AND PWD = {pwd}
+        WHERE ID = #{id}
+        AND PWD = #{pwd}
         AND DEL_YN = 'N'
     </select>
 
@@ -116,24 +116,24 @@
     <update id="editAnnual">
         UPDATE MEMBER
         SET
-        ANNUAL = {annual}
-        WHERE NO = {no}
+        ANNUAL = #{annual}
+        WHERE NO = #{no}
     </update>
 
     <!--    근태상태변경    -->
     <update id="editWorkStatus">
         UPDATE MEMBER
         SET
-        WORK_STATUS_NO = {workStatusNo}
-        WHERE NO = {no}
+        WORK_STATUS_NO = #{workStatusNo}
+        WHERE NO = #{no}
     </update>
 
     <!--    권한변경    -->
     <update id="editAuth">
         UPDATE MEMBER
         SET
-        AUTH_NO = {authNo}
-        WHERE NO = {no}
+        AUTH_NO = #{authNo}
+        WHERE NO = #{no}
     </update>
 
     <!--    회사추가    -->
@@ -147,8 +147,8 @@
         VALUES
         (
         SEQ_COMPANY_NO.NEXTVAL
-        , {companyName}
-        , {no}
+        , #{companyName}
+        , #{no}
         )
     </insert>
 

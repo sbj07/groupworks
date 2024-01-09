@@ -16,7 +16,7 @@ public class MemberApiController {
     private final MemberService service;
 
     // 회원가입
-    @PostMapping("signup")
+    @PostMapping("signUp")
     public Map<String, String> signup(MemberVo vo){
         int result = service.signup(vo);
         Map<String, String> map = new HashMap<String,String>();
@@ -28,6 +28,7 @@ public class MemberApiController {
     }
 
     // 아이디 중복 확인
+    @GetMapping("checkId")
     public Map<String, String> checkDuplicateId(String id){
         MemberVo rs = service.checkDuplicateId(id);
         Map<String, String> map = new HashMap<String,String>();
