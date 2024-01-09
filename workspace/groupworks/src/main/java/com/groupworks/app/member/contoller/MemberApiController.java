@@ -1,4 +1,4 @@
-package com.groupworks.app.member.api.contoller;
+package com.groupworks.app.member.contoller;
 
 import com.groupworks.app.member.service.MemberService;
 import com.groupworks.app.member.vo.*;
@@ -12,7 +12,7 @@ import java.util.Map;
 @RestController
 @RequestMapping("api/member")
 @RequiredArgsConstructor
-public class MemberController {
+public class MemberApiController {
     private final MemberService service;
 
     // 회원가입
@@ -27,9 +27,20 @@ public class MemberController {
         return map;
     }
 
+    // 아이디 중복 확인
+    public Map<String, String> checkDuplicateId(String id){
+        MemberVo rs = service.checkDuplicateId(id);
+        Map<String, String> map = new HashMap<String,String>();
+        map.put("msg", "okay");
+        if(rs == null){
+            map.put("msg", "nope");
+        }
+        return map;
+    }
+
     // 로그인
     @PostMapping
-    public Map<String, Object> login(MemberVo vo) throws Exception {
+    public Map<String, Object> login(MemberVo vo) {
         MemberVo loginMember = service.login(vo);
         Map<String, Object> map = new HashMap<>();
         map.put("msg", "okay");
@@ -39,6 +50,7 @@ public class MemberController {
         }
         return map;
     }
+
     // 회원탈퇴
     @DeleteMapping
     public Map<String, String> deleteMember(String no){
@@ -78,6 +90,7 @@ public class MemberController {
         }
         return map;
     }
+
     // 회사
     @GetMapping("company")
     public Map<String, Object> getCompanyList(){
@@ -116,6 +129,7 @@ public class MemberController {
         }
         return map;
     }
+
     // ----------------- 변경 -------------------
 
     // 근무상태
@@ -126,8 +140,9 @@ public class MemberController {
         map.put("msg", "okay");
 
         if(result != 1) {
-            msp
+            map.put("msg","nope");
         }
+        return map;
     }
     // 권한
 

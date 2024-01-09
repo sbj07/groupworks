@@ -14,6 +14,11 @@ public class MemberDao {
         return sessionTemplate.insert("MemberMapper.signup",vo);
     }
 
+    // 아이디 중복확인
+    public MemberVo checkDuplicateId(SqlSessionTemplate sessionTemplate, String id) {
+        return sessionTemplate.selectOne("MemberMapper.checkDuplicateId", id);
+    }
+
     // 로그인
     public MemberVo login(SqlSessionTemplate sessionTemplate, MemberVo vo){
         return sessionTemplate.selectOne("MemberMapper.login", vo);
@@ -63,5 +68,6 @@ public class MemberDao {
     public int insertCompany(SqlSessionTemplate sessionTemplate, CompanyVo vo){
         return sessionTemplate.insert("MemberMapper.insertCompany", vo);
     }
+
 
 }

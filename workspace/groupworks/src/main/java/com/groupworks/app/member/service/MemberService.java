@@ -27,6 +27,11 @@ public class MemberService {
         return dao.signup(sessionTemplate, vo);
     }
 
+    //아이디 중복 확인
+    public MemberVo checkDuplicateId(String id) {
+        return dao.checkDuplicateId(sessionTemplate, id);
+    }
+
     // 로그인
     public MemberVo login(MemberVo vo){
         return dao.login(sessionTemplate, vo);
@@ -76,4 +81,6 @@ public class MemberService {
     public int insertCompany(CompanyVo vo){
         return dao.insertCompany(sessionTemplate, vo);
     }
+
+
 }
