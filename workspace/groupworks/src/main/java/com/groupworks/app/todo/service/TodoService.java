@@ -1,12 +1,10 @@
 package com.groupworks.app.todo.service;
 
 import java.util.List;
-
 import org.mybatis.spring.SqlSessionTemplate;
 import org.springframework.stereotype.Service;
 import com.groupworks.app.todo.dao.TodoDao;
 import com.groupworks.app.todo.vo.TodoVo;
-
 import lombok.RequiredArgsConstructor;
 
 @Service
