@@ -20,8 +20,8 @@ public class NoticeService {
 	//작성	
 	public int insert(NoticeVo vo) {
 		
-		String str = vo.getFilePath().replace("", "");
-		vo.setFilePath(str);
+//		String str = vo.getFilePath().replace("C:\\dev\\finalPrj\\workspace\\groupworks\\src\\main\\webapp", "http://127.0.0.1:8888/app");
+//		vo.setFilePath(str);
 		
 		if(vo.getTitle().length() < 1) {
 			throw new IllegalStateException();
@@ -48,6 +48,13 @@ public class NoticeService {
 
 	//수정
 	public int edit(NoticeVo vo) {
+		
+		if(vo == null) {
+			throw new IllegalStateException("vo가 없어서 업데이트 불가능");
+		}
+		if(vo.getTitle() != null && vo.getTitle().length() < 1) {
+			throw new IllegalStateException();
+		}
 
 		return dao.edit(sst, vo);
 	}
