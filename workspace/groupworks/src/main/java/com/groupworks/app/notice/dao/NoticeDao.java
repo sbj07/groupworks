@@ -13,7 +13,7 @@ public class NoticeDao {
 	//작성
 	public int insert(SqlSessionTemplate sst, NoticeVo vo) {
 
-		return sst.insert("NoticeMapper.write", vo);
+		return sst.insert("NoticeMapper.insert", vo);
 	}
 
 	//전체 목록 조회(번호)
