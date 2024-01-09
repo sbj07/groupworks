@@ -5,47 +5,63 @@
 <mapper namespace="MessageMapper">
    
    
-   <!-- 메세지 조회 -->
-   <!-- 메세지 조회 -->
-   <select id="SelectMsg" resultType="MessageVo">
+   <!-- 수신가능자리스트 조회 -->
+   <select id="list" resultType="MessageVo">
+   	   SELECT
+   	   	  사용자번호, 이름, 직책, 부서 
+   	   	  group by 회사 (회사같은사람들끼리만)
+   	   FROM 
+   </select>
+   
+   <!-- 보낸메세지 조회 -->
+   <select id="sendList" resultType="MessageVo">
 	   SELECT * 
 	   FROM MESSAGE 
 	   WHERE DEL_YN = 'N' 
-	   AND SEND_NO = #{sendNo}
+	   AND SEND_NO = #{memberNo}
+   </select>
+   
+    <!-- 받은메세지 조회 -->
+   <select id="recieveList" resultType="MessageVo">
+	   SELECT * 
+	   FROM MESSAGE 
+	   WHERE DEL_YN = 'N' 
+	   AND RECIEVE_NO = #{memberNo}
    </select>
    
     <!-- 메세지보내기 -->
- 	<insert id="SendMsg">
+ 	<insert id="insert">
  		INSERT INTO MESSAGE 
- 			(
+ 		(
  			NO
  			,SEND_NO
  			,RECIEVE_NO
  			,CONTENT
  			,SEND_DATE
  			,DEL_YN
- 			) 
+ 		) 
     	VALUES 
-    		(
+   		(
     		#{no}
     		, #{sendNo}
     		, #{recieveNo}
     		, #{content}
     		, SYSDATE
     		, 'N'
-    		)
+   		)
  	</insert>
  	
  	 <!-- 메세지답장 -->
- 	<insert id="ReSendMsg">
+ 	<insert id="reInsert">
 	 	INSERT INTO MESSAGE 
-	 		(
+	 	(
 	 		NO
 	 		,SEND_NO
 	 		,RECIEVE_NO
 	 		,CONTENT
 	 		,SEND_DATE
-	 		,DEL_YN) 
+	 		,DEL_YN
+	 	) 
 		VALUES 
 		(
 	    	#{no}
@@ -58,7 +74,7 @@
  	</insert>
  	
  	<!-- 메세지삭제 -->
- 	<update id="QuitMsg">
+ 	<update id="delete">
  		UPDATE MESSAGE 
 		    SET DEL_YN = 'Y'
 		    , DELETE_DATE = SYSDATE 

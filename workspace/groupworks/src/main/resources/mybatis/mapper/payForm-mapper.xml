@@ -3,9 +3,9 @@
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="PayFormMapper">
-    	<!-- 지출결의서 조회 -->
+
    	<!-- 지출결의서 조회 -->
- 	<select id="SelectPay" resultType="PayFormVo">
+ 	<select id="list" resultType="PayFormVo">
 	 	SELECT * 
 	 	FROM PAY_FORM 
 	    WHERE WRITER_NO = #{no}
@@ -13,33 +13,33 @@
  	</select>
  	
  	<!-- 지출결의서 결재대기 조회 -->
- 	<select id="SelectIngPayForm" resultType="PayFormVo">
+ 	<select id="selectIng" resultType="PayFormVo">
 	 	 SELECT * 
 	 	 FROM PAY_FORM 
 	 	 WHERE CATEGORY_NO = 
 	 	 					(
 	 	 					SELECT NO 
 	 	 					FROM DOCUMENT_CATEGORY 
-	 	 					WHERE CATEGORY = '결제대기'
+	 	 					WHERE CATEGORY = '결재대기'
 	 	 					)
 	  	 AND DEL_YN = 'N'
 	</select>
 
 		<!-- 지출결의서 결재완료 조회 -->
- 	<select id="SelectEdPayForm" resultType="PayFormVo">
+ 	<select id="selectEd" resultType="PayFormVo">
 	 	 SELECT * 
 	 	 FROM PAY_FORM 
 	 	 WHERE CATEGORY_NO = 
 	 	 					(
 	 	 					SELECT NO 
 	 	 					FROM DOCUMENT_CATEGORY 
-	 	 					WHERE CATEGORY = '결제완료'
+	 	 					WHERE CATEGORY = '결재완료'
 	 	 					)
 	  	 AND DEL_YN = 'N'
 	</select>
 	
     <!-- 지출결의서 등록 -->
- 	<insert id="InsertPay">
+ 	<insert id="insert">
 	 	INSERT INTO PAY_FORM 
 		 	(
 		 	NO
@@ -71,7 +71,7 @@
  	</insert>
  	
  	<!-- 지출결의서 승인 -->
- 	<update id="ApplyPay">
+ 	<update id="apply">
 	 	 UPDATE PAY_FORM 
 	 	 	SET CATEGORY_NO = 
 		                      (
@@ -83,7 +83,7 @@
 	 </update>
  	
  	<!-- 지출결의서 반려 -->
- 	<update id="RejectionPay">
+ 	<update id="rejection">
  		 UPDATE PAY_FORM 
  		 	SET CATEGORY_NO = 
 		                      (
@@ -95,7 +95,7 @@
  	</update>
 
  	 <!-- 지출결의서 삭제 -->
- 	<update id="QuitPay">
+ 	<update id="delete">
  		UPDATE PAY_FORM 
  			SET DEL_YN = 'Y' 
  		WHERE NO = #{no}
