@@ -54,7 +54,7 @@ public class TodoController {
 	@PostMapping("edit")
 	public Map<String, String> edit(TodoVo vo) {
 		int result = service.edit(vo);
-		Map<String, String> map = new HashMap<>();
+		Map<String, String> map = new HashMap<String, String>();
 		map.put("msg", "good");
 		if(result != 1) {
 			map.put("msg", "bad");
@@ -66,7 +66,7 @@ public class TodoController {
 	@DeleteMapping
 	public Map<String, String> delete(String no){
 		int result = service.delete(no);
-		Map<String, String> map = new HashMap<>();
+		Map<String, String> map = new HashMap<String, String>();
 		map.put("msg", "good");
 		if(result != 1) {
 			map.put("msg", "bad");
