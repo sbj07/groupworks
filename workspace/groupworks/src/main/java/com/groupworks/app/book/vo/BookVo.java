@@ -4,7 +4,6 @@ import lombok.Data;
 
 @Data
 public class BookVo {
-	//¤·¤·
 
 	private String bookNo;
 	private String memberNo;

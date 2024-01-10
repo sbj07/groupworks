@@ -92,6 +92,7 @@ public class NoticeController {
 	//상세 조회(번호)
 	@GetMapping("detail")
 	public String detail(NoticeVo vo, Model model) {
+		System.out.println(vo);
 		NoticeVo noticeVo = service.detail(vo);
 		model.addAttribute("noticeVo", noticeVo);
 		

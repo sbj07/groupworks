@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.groupworks.app.notice.vo.NoticeVo;
 import com.groupworks.app.organ.service.OrganService;
 import com.groupworks.app.organ.vo.OrganVo;
 
@@ -30,6 +31,11 @@ public class OrganController {
 		
 		System.out.println("vo : " + vo);
 		
+//		System.out.println("f : " + f.getOriginalFilename());
+		
+//		String filePath = saveFile(f);
+//		vo.setFilePath(filePath);
+		
 		int result = service.insert(vo);
 		
 		Map<String, String> map = new HashMap<String, String>();
@@ -42,33 +48,63 @@ public class OrganController {
 	}
 	
 	
+	/**
+	 * 파일을 서버에 저장하고, 파일 전체 경로를 리턴함
+	 * @param 파일객체 
+	 * @param 파일경로
+	 * @return 실제파일저장경로(파일경로+파일명)
+	 * @throws Exception
+	 * @throws  
+	 */
+//	private String saveFile(MultipartFile f) throws Exception {
+//		String path = "C:\\dev\\finalPrj\\workspace\\groupworks\\src\\main\\webapp\\resources\\upload\\notice\\img";
+//		String originName = f.getOriginalFilename();
+//	
+//		File target = new File(path + originName);
+//		f.transferTo(target);
+//		
+//		return path + originName;
+//	}
+	
 	//전체 목록 조회(번호)(렌더링)
 	@GetMapping("list")
-	public String list(Model model) {
+	public Map<String, Object> list(Model model) {
 		
 		List<OrganVo> voList = service.list();
-		model.addAttribute("organVoList", voList);
 		
-		return "organ/list";
+		Map<String, Object> map = new HashMap<>();
+		map.put("msg", "good");
+		map.put("voList", voList);
+		return map;
 	}//렌더링
 	
-	//전체 목록 조회(번호)(데이터)
-	@GetMapping("rest/list")
-	@ResponseBody
-	public List<OrganVo> restList(){
-		List<OrganVo> voList = service.list();
+	
+	
+//	//전체 목록 조회(번호)(데이터)
+//	@GetMapping("rest/list")
+//	@ResponseBody
+//	public List<OrganVo> restList(){
+//		List<OrganVo> voList = service.list();
+//		
+//		return voList;
+//	}//데이터
+	
+	
+	//상세 조회(번호)
+	@GetMapping("detail")
+	public String detail(OrganVo vo, Model model) {
+		System.out.println(vo);
+		OrganVo organVo = service.detail(vo);
+		model.addAttribute("organVo", organVo);
 		
-		return voList;
-	}//데이터
-	
-	
-	//상세조회??
+		System.out.println("organVo : " + organVo);
+		return "organ/detail";
+	}//detail
 	
 	
 	//수정
 	@PostMapping("edit")
 	public String edit(OrganVo vo) throws Exception{
-		
 		int result = service.edit(vo);
 		if(result != 1) {
 			System.out.println("조직도 수정 실패");
