@@ -4,6 +4,7 @@ import com.groupworks.app.member.dao.MemberDao;
 import com.groupworks.app.member.vo.*;
 import lombok.RequiredArgsConstructor;
 import org.mybatis.spring.SqlSessionTemplate;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -13,6 +14,7 @@ import java.util.List;
 public class MemberService {
     private final MemberDao dao;
     private final SqlSessionTemplate sessionTemplate;
+    private final PasswordEncoder passwordEncoder;
 
     // 화원가입
     public int signup(MemberVo vo){
@@ -24,7 +26,18 @@ public class MemberService {
             throw new IllegalStateException("연락처가 잘못 입력됨");
         }
 
+        // 비밀번호 암호화
+        if (vo != null && vo.getPwd() != null ) {
+             String encodedPwd = pwdEncoding(vo.getPwd());
+             vo.setPwd(encodedPwd);
+        }
+
         return dao.signup(sessionTemplate, vo);
+    }
+
+    // 비밀번호 암호화
+    public String  pwdEncoding(String pwd){
+        return passwordEncoder.encode(pwd);
     }
 
     //아이디 중복 확인
@@ -34,7 +47,13 @@ public class MemberService {
 
     // 로그인
     public MemberVo login(MemberVo vo){
-        return dao.login(sessionTemplate, vo);
+        MemberVo loginMember = dao.login(sessionTemplate, vo);
+        String rawPwd = vo.getPwd();
+        String encodedPwd = loginMember.getPwd();
+        if(! passwordEncoder.matches(rawPwd, encodedPwd)){
+            throw new IllegalStateException("비밀번호 틀림");
+        };
+        return loginMember;
     }
 
     // 회원 탈퇴

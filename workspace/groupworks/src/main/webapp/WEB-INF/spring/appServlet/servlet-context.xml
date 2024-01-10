@@ -22,7 +22,13 @@
 	</beans:bean>
 	
 	<context:component-scan base-package="com.groupworks.app" />
-	
-	
+
+	<!--CrossOrigin-->
+	<cors>
+		<mapping
+				path="/**"
+				allowed-origins="*"
+		/>
+	</cors>
 	
 </beans:beans>

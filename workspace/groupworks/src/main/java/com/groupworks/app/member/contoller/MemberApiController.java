@@ -16,7 +16,7 @@ public class MemberApiController {
     private final MemberService service;
 
     // 회원가입
-    @PostMapping("signUp")
+    @PostMapping("sign-up")
     public Map<String, String> signup(MemberVo vo){
         int result = service.signup(vo);
         Map<String, String> map = new HashMap<String,String>();
@@ -28,7 +28,7 @@ public class MemberApiController {
     }
 
     // 아이디 중복 확인
-    @GetMapping("checkId")
+    @GetMapping("check-id")
     public Map<String, String> checkDuplicateId(String id){
         MemberVo rs = service.checkDuplicateId(id);
         Map<String, String> map = new HashMap<String,String>();
@@ -45,7 +45,7 @@ public class MemberApiController {
         MemberVo loginMember = service.login(vo);
         Map<String, Object> map = new HashMap<>();
         map.put("msg", "okay");
-        map.put("loginMember", loginMember);
+        map.put("loginMemberNo", loginMember.getNo());
         if(loginMember == null){
             map.put("msg", "nope");
         }
@@ -119,7 +119,7 @@ public class MemberApiController {
     }
 
     // 근무싱태
-    @GetMapping("workStat")
+    @GetMapping("work-stat")
     public Map<String, Object> getWorkStatusList(){
         List<WorkStatusVo> workStatList = service.getWorkStatList();
         Map<String, Object> map = new HashMap<>();
@@ -134,7 +134,7 @@ public class MemberApiController {
     // ----------------- 변경 -------------------
 
     // 근무상태
-    @PutMapping("workStat")
+    @PutMapping("work-stat")
     public Map<String, String> editWorkStat(MemberVo vo){
         int result = service.editWorkStatus(vo);
         Map<String, String > map = new HashMap<String, String>();
