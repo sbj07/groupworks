@@ -75,7 +75,13 @@ public class MessageController {
 	
 	//쪽지삭제
 	@DeleteMapping("delete")
-	public void delete() {
-		
+	public Map<String, String> delete(String no) {
+		int result = service.delete(no);
+		Map<String, String> map = new HashMap<String, String>();
+		map.put("msg", "good");
+		if(result != 1) {
+			map.put("msg", "bad");
+		}
+		return map;
 	}
 }
