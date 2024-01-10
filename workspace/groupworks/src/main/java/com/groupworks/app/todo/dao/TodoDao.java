@@ -10,22 +10,22 @@ import com.groupworks.app.todo.vo.TodoVo;
 @Repository
 public class TodoDao {
 
-	//ÇÒÀÏÁ¶È¸
+	//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½È¸
 	public List<TodoVo> list(SqlSessionTemplate sst){
 		return sst.selectList("TodoMapper.list");
 	}
 	
-	//ÇÒÀÏÀÛ¼º
+	//ï¿½ï¿½ï¿½ï¿½ï¿½Û¼ï¿½
 	public int write(SqlSessionTemplate sst, TodoVo vo) {
 		return sst.insert("TodoMapper.insert", vo);
 	}
 	
-	//ÇÒÀÏ¼öÁ¤
+	//ï¿½ï¿½ï¿½Ï¼ï¿½ï¿½ï¿½
 	public int edit(SqlSessionTemplate sst, TodoVo vo) {
 		return sst.update("TodoMapper.edit", vo);
 	}
 	
-	//ÇÒÀÏ»èÁ¦
+	//ï¿½ï¿½ï¿½Ï»ï¿½ï¿½ï¿½
 	public int delete(SqlSessionTemplate sst, String no) {
 		return sst.update("TodoMapper.delete", no);
 	}

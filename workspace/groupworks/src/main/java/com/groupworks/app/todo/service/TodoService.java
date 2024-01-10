@@ -14,22 +14,22 @@ public class TodoService {
 	private final TodoDao dao;
 	private final SqlSessionTemplate sst;
 	
-	//ÇÒÀÏÁ¶È¸
+	//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½È¸
 	public List<TodoVo> list() {
 		return dao.list(sst);
 	}
 	
-	//ÇÒÀÏÀÛ¼º
+	//ï¿½ï¿½ï¿½ï¿½ï¿½Û¼ï¿½
 	public int write(TodoVo vo) {
 		return dao.write(sst, vo);
 	}
 	
-	//ÇÒÀÏ¼öÁ¤
+	//ï¿½ï¿½ï¿½Ï¼ï¿½ï¿½ï¿½
 	public int edit(TodoVo vo) {
 		return dao.edit(sst, vo);
 	}
 	
-	//ÇÒÀÏ»èÁ¦
+	//ï¿½ï¿½ï¿½Ï»ï¿½ï¿½ï¿½
 	public int delete(String no) {
 		return dao.delete(sst, no);
 	}

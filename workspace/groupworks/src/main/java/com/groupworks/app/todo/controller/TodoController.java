@@ -33,6 +33,7 @@ public class TodoController {
 		if(todoList == null) {
 			map.put("msg", "bad");
 		}
+		System.out.println(todoList);
 		return map;
 	}
 	
