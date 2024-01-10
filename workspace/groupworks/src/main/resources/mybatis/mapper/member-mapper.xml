@@ -60,7 +60,6 @@
         , DEL_YN
         FROM MEMBER
         WHERE ID = #{id}
-        AND PWD = #{pwd}
         AND DEL_YN = 'N'
     </select>
 
@@ -108,7 +107,7 @@
     <select id="getWorkStatList" resultType="WorkStatVo">
         SELECT
         NO
-        , NAME
+        , STATUS
         FROM WORK_STATUS
     </select>
 
