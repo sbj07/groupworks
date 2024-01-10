@@ -12,5 +12,6 @@ public class OrganVo {
 	private String position;
 	private String name;
 	private String tel;
+	private String deleteYn;
 
 }//class

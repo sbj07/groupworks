@@ -65,10 +65,6 @@ public class NoticeService {
 		return dao.delete(sst, vo);
 	}
 
-	
-	
-	//ªË¡¶
-
 }//class
 
 

@@ -4,8 +4,7 @@
   "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="BookMapper">
 
-<!-- ㅇㅇ -->
-
+<!-- 예약 -->
 	<insert id="insert">
 		INSERT INTO BOOK(
 		    BOOK_NO
@@ -18,6 +17,81 @@
 		    , #{memberNo}
 		    , #{useDate}
 		    , #{bookPurpose}
-		)
+			)
 	</insert>
+	
+<!-- 	전체 조회 -->
+	<select id="list" resultType="com.groupworks.app.book.vo.BookVo">
+		SELECT
+		    BOOK_NO
+		    , MEMBER_NO
+		    , USE_DATE
+		    , BOOK_PURPOSE
+		    , BOOK_DATE
+		    , UPDATE_DATE
+		    , CANCEL_DATE
+		FROM BOOK
+<!-- 		WHERE CANCEL_DATE = NULL -->
+		ORDER BY BOOK_NO DESC
+	</select>
+
+<!-- 상세 조회 -->
+	<select id="detail" resultType="com.groupworks.app.book.vo.BookVo">
+		SELECT
+		    BOOK_NO
+		    , MEMBER_NO
+		    , USE_DATE
+		    , BOOK_PURPOSE
+		    , BOOK_DATE
+		    , UPDATE_DATE
+		    , CANCEL_DATE
+		FROM BOOK
+		WHERE BOOK_NO = #{bookNo}
+<!-- 		AND CANCEL_DATE = NULL -->
+	</select>
+
+<!-- 수정 -->
+	<update id="edit">
+		UPDATE BOOK
+		    SET
+    		<trim prefixOverrides=",">
+			<if test=" useDate != null and useDate != '' ">
+		    	USE_DATE = #{useDate}
+	    	</if>
+ 			<if test=" bookPurpose != null and bookPurpose != '' ">
+		        , BOOK_PURPOSE = #{bookPurpose}
+	        </if>
+	        <if test=" updateDate != null and updateDate != '' ">
+		        , UPDATE_DATE = SYSDATE
+	        </if>
+	        </trim>
+		WHERE BOOK_NO = #{bookNo}
+<!-- 		AND CANCEL_DATE = NULL -->
+	</update>
+
+<!-- 삭제 -->
+	<update id="delete">
+		UPDATE BOOK
+		    SET
+		        CANCEL_DATE = SYSDATE
+		WHERE BOOK_NO = #{bookNo}
+	</update>
+	
 </mapper>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

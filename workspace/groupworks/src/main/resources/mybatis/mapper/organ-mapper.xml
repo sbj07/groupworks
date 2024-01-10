@@ -41,13 +41,27 @@
 		ORDER BY ORG_NO DESC
 	</select>
 	
+	<select id="detail" resultType="com.groupworks.app.organ.vo.OrganVo">
+		SELECT
+		    ORG_NO
+		    , MEMBER_NO
+		    , PROFILE
+		    , DEPARTMENT
+		    , POSITION
+		    , NAME
+		    , TEL
+		FROM ORGAN
+		WHERE MEMBER_NO = #{memberNo}
+		AND DELETE_YN = 'N'
+	</select>
+	
 <!-- 	수정 -->
 	<update id="edit">
 		UPDATE ORGAN
 		SET
 		<trim prefixOverrides=",">
 		<if test=" memberNo != null and memberNo != '' ">
-			MEMBER_NO = #{no}
+			MEMBER_NO = #{memberNo}
 		</if>
 		<if test=" profile != null and profile != '' ">
 		    , PROFILE = #{profile}
@@ -65,7 +79,7 @@
 		    , TEL = #{tel}
 	    </if>
 	    </trim>
-		WHERE ORG_NO = #{no}
+		WHERE ORG_NO = #{orgNo}
 		AND DELETE_YN = 'N'
 	</update>
 	
@@ -73,7 +87,7 @@
 	<update id="delete">
 		UPDATE ORGAN
 		SET DELETE_YN = 'Y'
-		WHERE ORG_NO = #{no}
+		WHERE ORG_NO = #{orgNo}
 	</update>
 </mapper>
 

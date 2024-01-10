@@ -23,6 +23,14 @@ public class OrganDao {
 	
 	}
 
+	
+	//상세 조회
+	public OrganVo detail(SqlSessionTemplate sst, OrganVo vo) {
+
+		return sst.selectOne("OrganMapper.detail", vo);
+	}
+	
+	
 	//수정
 	public int edit(SqlSessionTemplate sst, OrganVo vo) {
 
@@ -36,4 +44,5 @@ public class OrganDao {
 		return sst.delete("OrganMapper.delete", vo);
 	}
 
-}
+
+}//class
