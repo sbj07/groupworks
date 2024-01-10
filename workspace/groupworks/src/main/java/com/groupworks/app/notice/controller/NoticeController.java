@@ -75,6 +75,7 @@ public class NoticeController {
 		Map<String, Object> map = new HashMap<>();
 		map.put("msg", "good");
 		map.put("voList", voList);
+		System.out.println("voList : " + voList);
 		return map;
 	}//·»´õ¸µ
 	
@@ -94,6 +95,7 @@ public class NoticeController {
 		NoticeVo noticeVo = service.detail(vo);
 		model.addAttribute("noticeVo", noticeVo);
 		
+		System.out.println("noticeVo : " + noticeVo);
 		return "notice/detail";
 	}//detail
 	
