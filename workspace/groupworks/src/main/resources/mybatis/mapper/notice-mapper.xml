@@ -78,7 +78,7 @@
 	 		TITLE = #{title}
 		</if>
 		<if test=" content != null and content != '' ">
-		    , CONTENT = #{content]
+		    , CONTENT = #{content}
 	    </if>
      	<if test=" filePath != null and filePath != '' ">
 	        , FILE_PATH = #{filePath}
