@@ -6,7 +6,12 @@
 
    	<!-- 할일조회 -->
  	<select id="list" resultType="TodoVo">
- 	  	SELECT * 
+ 	  	SELECT 
+ 	  		NO
+ 	  		,MEMBER_NO
+ 	  		,CONTENT
+ 	  		,WRITE_DATE
+ 	  		,DELETE_DATE
 		FROM TODO 
 		WHERE DEL_YN = 'N'
 		AND MEMBER_NO = #{memberNo}
@@ -23,7 +28,7 @@
 	 	) 
 		VALUES 
 		(
-		    #{no}
+		    SEQ_TODO_NO.NEXTVAL
 		    ,#{memberNo}
 		    ,#{content}
 			,SYSDATE
