@@ -72,7 +72,7 @@ public class MemberApiController {
         List<AuthVo> authList = service.getAuthList();
         Map<String, Object> map = new HashMap<>();
         map.put("msg", "okay");
-        map.put("authList", authList);
+        map.put("list", authList);
         if(authList == null) {
             map.put("msg", "nope");
         }
@@ -85,7 +85,7 @@ public class MemberApiController {
         List<DepartVo> departList = service.getDepartList();
         Map<String, Object> map = new HashMap<>();
         map.put("msg", "okay");
-        map.put("authList", departList);
+        map.put("list", departList);
         if(departList == null) {
             map.put("msg", "nope");
         }
@@ -98,7 +98,7 @@ public class MemberApiController {
         List<CompanyVo> companyList = service.getCompanyList();
         Map<String, Object> map = new HashMap<>();
         map.put("msg", "okay");
-        map.put("authList", companyList);
+        map.put("list", companyList);
         if(companyList == null) {
             map.put("msg", "nope");
         }
@@ -111,7 +111,7 @@ public class MemberApiController {
         List<PositionVo> positionList = service.getPositionList();
         Map<String, Object> map = new HashMap<>();
         map.put("msg", "okay");
-        map.put("authList", positionList);
+        map.put("list", positionList);
         if(positionList == null) {
             map.put("msg", "nope");
         }
