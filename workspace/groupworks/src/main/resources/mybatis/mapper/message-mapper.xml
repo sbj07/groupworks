@@ -15,7 +15,13 @@
    
    <!-- 보낸메세지 조회 -->
    <select id="sendList" resultType="MessageVo">
-	   SELECT * 
+	   SELECT 
+	   		NO
+	   		, MEMBER_NO
+	   		, SEND_NO
+	   		, RECIEVE_NO
+	   		, CONTENT
+	   		, SEND_DATE
 	   FROM MESSAGE 
 	   WHERE DEL_YN = 'N' 
 	   AND SEND_NO = #{memberNo}
@@ -23,7 +29,13 @@
    
     <!-- 받은메세지 조회 -->
    <select id="recieveList" resultType="MessageVo">
-	   SELECT * 
+	   SELECT 
+	   		NO
+	   		, MEMBER_NO
+	   		, SEND_NO
+	   		, RECIEVE_NO
+	   		, CONTENT
+	   		, SEND_DATE
 	   FROM MESSAGE 
 	   WHERE DEL_YN = 'N' 
 	   AND RECIEVE_NO = #{memberNo}
@@ -38,16 +50,14 @@
  			,RECIEVE_NO
  			,CONTENT
  			,SEND_DATE
- 			,DEL_YN
  		) 
     	VALUES 
    		(
-    		#{no}
+    		SEQ_MESSAGE_NO.NEXTVAL
     		, #{sendNo}
     		, #{recieveNo}
     		, #{content}
     		, SYSDATE
-    		, 'N'
    		)
  	</insert>
  	
@@ -60,16 +70,14 @@
 	 		,RECIEVE_NO
 	 		,CONTENT
 	 		,SEND_DATE
-	 		,DEL_YN
 	 	) 
 		VALUES 
 		(
-	    	#{no}
+	    	SEQ_MESSAGE_NO.NEXTVAL
 	    	,#{recieveNo}
 	    	,#{sendNo}
 	    	,#{content}
 	    	,SYSDATE
-	    	, 'N'
 	    )
  	</insert>
  	
@@ -79,7 +87,7 @@
 		    SET DEL_YN = 'Y'
 		    , DELETE_DATE = SYSDATE 
 	    WHERE NO = #{no} 
-	    AND RECVE_NO = #{recieveNo};
+	    AND MEMBER_NO = #{memberNo};
  	</update>
  	
  	
