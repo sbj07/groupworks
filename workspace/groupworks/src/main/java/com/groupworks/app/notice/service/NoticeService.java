@@ -20,8 +20,8 @@ public class NoticeService {
 	//¿€º∫	
 	public int insert(NoticeVo vo) {
 		
-//		String str = vo.getFilePath().replace("C:\\dev\\finalPrj\\workspace\\groupworks\\src\\main\\webapp", "http://127.0.0.1:8888/app");
-//		vo.setFilePath(str);
+		String str = vo.getFilePath().replace("C:\\dev\\finalPrj\\workspace\\groupworks\\src\\main\\webapp", "http://127.0.0.1:8888/app");
+		vo.setFilePath(str);
 		
 		if(vo.getTitle().length() < 1) {
 			throw new IllegalStateException();

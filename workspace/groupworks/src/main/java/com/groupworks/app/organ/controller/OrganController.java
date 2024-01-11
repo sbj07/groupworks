@@ -1,5 +1,6 @@
 package com.groupworks.app.organ.controller;
 
+import java.io.File;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -31,10 +32,10 @@ public class OrganController {
 		
 		System.out.println("vo : " + vo);
 		
-//		System.out.println("f : " + f.getOriginalFilename());
+		System.out.println("f : " + f.getOriginalFilename());
 		
-//		String filePath = saveFile(f);
-//		vo.setFilePath(filePath);
+		String profile = saveFile(f);
+		vo.setProfile(profile);
 		
 		int result = service.insert(vo);
 		
@@ -56,15 +57,15 @@ public class OrganController {
 	 * @throws Exception
 	 * @throws  
 	 */
-//	private String saveFile(MultipartFile f) throws Exception {
-//		String path = "C:\\dev\\finalPrj\\workspace\\groupworks\\src\\main\\webapp\\resources\\upload\\notice\\img";
-//		String originName = f.getOriginalFilename();
-//	
-//		File target = new File(path + originName);
-//		f.transferTo(target);
-//		
-//		return path + originName;
-//	}
+	private String saveFile(MultipartFile f) throws Exception {
+		String path = "C:\\dev\\finalPrj\\workspace\\groupworks\\src\\main\\webapp\\resources\\upload\\organ\\img";
+		String originName = f.getOriginalFilename();
+	
+		File target = new File(path + originName);
+		f.transferTo(target);
+		
+		return path + originName;
+	}
 	
 	//전체 목록 조회(번호)(렌더링)
 	@GetMapping("list")
@@ -75,6 +76,7 @@ public class OrganController {
 		Map<String, Object> map = new HashMap<>();
 		map.put("msg", "good");
 		map.put("voList", voList);
+		System.out.println(voList);
 		return map;
 	}//렌더링
 	
