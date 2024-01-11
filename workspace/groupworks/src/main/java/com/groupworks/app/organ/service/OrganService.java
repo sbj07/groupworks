@@ -20,8 +20,8 @@ public class OrganService {
 	//»ý¼º
 	public int insert(OrganVo vo) {
 		
-//		String str = vo.getFilePath().replace("C:\\dev\\finalPrj\\workspace\\groupworks\\src\\main\\webapp", "http://127.0.0.1:8888/app");
-//		vo.setFilePath(str);
+		String str = vo.getProfile().replace("C:\\dev\\finalPrj\\workspace\\groupworks\\src\\main\\webapp", "http://127.0.0.1:8888/app");
+		vo.setProfile(str);
 
 		return dao.insert(sst, vo);
 	}

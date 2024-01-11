@@ -31,10 +31,10 @@ public class NoticeController {
 	public Map<String, String> insert(NoticeVo vo, MultipartFile f) throws Exception{
 		
 		System.out.println("vo : " + vo);
-//		System.out.println("f : " + f.getOriginalFilename());
+		System.out.println("f : " + f.getOriginalFilename());
 		
-//		String filePath = saveFile(f);
-//		vo.setFilePath(filePath);
+		String filePath = saveFile(f);
+		vo.setFilePath(filePath);
 		
 		int result = service.insert(vo);
 		
@@ -55,15 +55,15 @@ public class NoticeController {
 	 * @throws Exception
 	 * @throws  
 	 */
-//	private String saveFile(MultipartFile f) throws Exception {
-//		String path = "C:\\dev\\finalPrj\\workspace\\groupworks\\src\\main\\webapp\\resources\\upload\\notice\\img";
-//		String originName = f.getOriginalFilename();
-//	
-//		File target = new File(path + originName);
-//		f.transferTo(target);
-//		
-//		return path + originName;
-//	}
+	private String saveFile(MultipartFile f) throws Exception {
+		String path = "C:\\dev\\finalPrj\\workspace\\groupworks\\src\\main\\webapp\\resources\\upload\\notice\\img";
+		String originName = f.getOriginalFilename();
+	
+		File target = new File(path + originName);
+		f.transferTo(target);
+		
+		return path + originName;
+	}
 
 
 	//전체 목록 조회(번호)(렌더링)?

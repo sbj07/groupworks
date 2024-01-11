@@ -55,10 +55,10 @@ export default function data() {
 
   return {
     columns: [
-      { Header: "project", accessor: "project", width: "30%", align: "left" },
-      { Header: "budget", accessor: "budget", align: "left" },
-      { Header: "status", accessor: "status", align: "center" },
-      { Header: "completion", accessor: "completion", align: "center" },
+      { Header: "프로젝트명", accessor: "project", width: "30%", align: "left" },
+      { Header: "예산", accessor: "budget", align: "left" },
+      { Header: "진행 상태", accessor: "status", align: "center" },
+      { Header: "완성도", accessor: "completion", align: "center" },
       { Header: "action", accessor: "action", align: "center" },
     ],
 
