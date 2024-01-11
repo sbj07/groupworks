@@ -6,7 +6,17 @@
 
    	<!-- 지출결의서 조회 -->
  	<select id="list" resultType="PayFormVo">
-	 	SELECT * 
+	 	SELECT 
+	 		NO
+	 		, WRITER_NO
+	 		, FIRST__APPLY_NO
+	 		, MID_APPLY_NO
+	 		, LAST_APPLY_NO
+	 		, CATEGORY_NO
+	 		, TITLE
+	 		, WRITE_DATE
+	 		, DOCUMENT_DATE
+	 		, REJECTION 
 	 	FROM PAY_FORM 
 	    WHERE WRITER_NO = #{no}
 	    AND DEL_YN = 'N'
@@ -14,26 +24,46 @@
  	
  	<!-- 지출결의서 결재대기 조회 -->
  	<select id="selectIng" resultType="PayFormVo">
-	 	 SELECT * 
+	 	 SELECT 
+	 	 	NO
+	 		, WRITER_NO
+	 		, FIRST__APPLY_NO
+	 		, MID_APPLY_NO
+	 		, LAST_APPLY_NO
+	 		, CATEGORY_NO
+	 		, TITLE
+	 		, WRITE_DATE
+	 		, DOCUMENT_DATE
+	 		, REJECTION 
 	 	 FROM PAY_FORM 
 	 	 WHERE CATEGORY_NO = 
 	 	 					(
 	 	 					SELECT NO 
 	 	 					FROM DOCUMENT_CATEGORY 
-	 	 					WHERE CATEGORY = '결재대기'
+	 	 					WHERE NO = 1
 	 	 					)
 	  	 AND DEL_YN = 'N'
 	</select>
 
 		<!-- 지출결의서 결재완료 조회 -->
  	<select id="selectEd" resultType="PayFormVo">
-	 	 SELECT * 
+	 	 SELECT 
+	 	 	NO
+	 		, WRITER_NO
+	 		, FIRST__APPLY_NO
+	 		, MID_APPLY_NO
+	 		, LAST_APPLY_NO
+	 		, CATEGORY_NO
+	 		, TITLE
+	 		, WRITE_DATE
+	 		, DOCUMENT_DATE
+	 		, REJECTION 
 	 	 FROM PAY_FORM 
-	 	 WHERE CATEGORY_NO = 
+	 	 WHERE CATEGORY_NO IN 
 	 	 					(
 	 	 					SELECT NO 
 	 	 					FROM DOCUMENT_CATEGORY 
-	 	 					WHERE CATEGORY = '결재완료'
+	 	 					WHERE NO IN (2, 3)
 	 	 					)
 	  	 AND DEL_YN = 'N'
 	</select>
@@ -56,7 +86,7 @@
 		 	)
 	    VALUES 
 	    	(
-	        #{no}
+	        SEQ_PAY_FORM_NO.NEXTVAL
 	        ,#{payNo}
 	        ,#{writerNo}
 	        ,#{firstApplyNo}
@@ -77,8 +107,9 @@
 		                      (
 		                      SELECT NO 
 		                      FROM DOCUMENT_CATEGORY 
-		                      WHERE CATEGORY = '승인'
-		                      ) 
+		                      WHERE NO = 2
+		                      )
+	    , DOCUMENT_DATE = SYSDATE
 	    WHERE NO = #{no}
 	 </update>
  	
@@ -89,9 +120,11 @@
 		                      (
 		                      SELECT NO 
 		                      FROM DOCUMENT_CATEGORY 
-		                      WHERE CATEGORY = '반려'
+		                      WHERE NO = 3
 		                      )
-	    , REJECTION = #{rejection} WHERE NO = #{no}
+		, DOCUMENT_DATE = SYSDATE
+	    , REJECTION = #{rejection} 
+	    WHERE NO = #{no}
  	</update>
 
  	 <!-- 지출결의서 삭제 -->

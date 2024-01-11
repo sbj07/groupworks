@@ -11,7 +11,7 @@
  	  		,MEMBER_NO
  	  		,CONTENT
  	  		,WRITE_DATE
- 	  		,DELETE_DATE
+ 	  		,MODIFY_DATE
 		FROM TODO 
 		WHERE DEL_YN = 'N'
 		AND MEMBER_NO = #{memberNo}
