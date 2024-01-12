@@ -11,8 +11,8 @@ import com.groupworks.app.todo.vo.TodoVo;
 public class TodoDao {
 
 	//������ȸ
-	public List<TodoVo> list(SqlSessionTemplate sst){
-		return sst.selectList("TodoMapper.list");
+	public List<TodoVo> list(SqlSessionTemplate sst, String memberNo){
+		return sst.selectList("TodoMapper.list", memberNo);
 	}
 	
 	//�����ۼ�

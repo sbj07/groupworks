@@ -5,10 +5,13 @@ import java.util.List;
 import java.util.Map;
 
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.groupworks.app.todo.service.TodoService;
@@ -19,14 +22,15 @@ import lombok.RequiredArgsConstructor;
 @RestController
 @RequestMapping("api/todo")
 @RequiredArgsConstructor
+@CrossOrigin("*")
 public class TodoController {
 
 	private final TodoService service;
 	
 	//할일 조회
 	@GetMapping("list")
-	public Map<String, Object> list() {
-		List<TodoVo> todoList = service.list();
+	public Map<String, Object> list(@RequestParam String memberNo) {
+		List<TodoVo> todoList = service.list(memberNo);
 		Map<String, Object> map = new HashMap<>();
 		map.put("msg", "good");
 		map.put("todoList", todoList);

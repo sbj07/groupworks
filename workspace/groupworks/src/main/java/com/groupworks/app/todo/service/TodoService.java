@@ -15,8 +15,8 @@ public class TodoService {
 	private final SqlSessionTemplate sst;
 	
 	//������ȸ
-	public List<TodoVo> list() {
-		return dao.list(sst);
+	public List<TodoVo> list(String memberNo) {
+		return dao.list(sst, memberNo);
 	}
 	
 	//�����ۼ�
