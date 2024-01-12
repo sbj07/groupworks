@@ -17,9 +17,9 @@ public class NoticeDao {
 	}
 
 	//전체 목록 조회(번호)
-	public List<NoticeVo> list(SqlSessionTemplate sst) {
+	public List<NoticeVo> list(SqlSessionTemplate sst, String memberNo) {
 
-		return sst.selectList("NoticeMapper.list");
+		return sst.selectList("NoticeMapper.list", memberNo);
 	}
 
 	//상세 조회(번호)

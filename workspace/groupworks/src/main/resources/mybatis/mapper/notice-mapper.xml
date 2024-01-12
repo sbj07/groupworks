@@ -26,19 +26,25 @@
 	
 <!-- 	전체 목록 조회 -->
 	<select id="list" resultType="com.groupworks.app.notice.vo.NoticeVo">
-		SELECT
-		    NOTICE_NO
-		    , MEMBER_NO
-		    , TITLE
-		    , CLICK_NO
-		    , FILE_PATH
-		    , CATEGORY
-		    , EMERGENCY_YN
-		    , OPEN_DEPART
-		    , ENROLL_DATE
-		FROM NOTICE
-		WHERE DELETE_YN = 'N'
-		ORDER BY NOTICE_NO DESC
+SELECT
+    N.NOTICE_NO
+    , N.MEMBER_NO
+    , N.TITLE
+    , N.CLICK_NO
+    , N.FILE_PATH
+    , N.CATEGORY
+    , N.EMERGENCY_YN
+    , N.OPEN_DEPART
+    , N.ENROLL_DATE
+FROM NOTICE N
+JOIN MEMBER M ON  N.MEMBER_NO = M.NO 
+WHERE N.DELETE_YN = 'N'
+AND M.COMPANY_NO = (
+                    SELECT 
+                    COMPANY_NO
+                    FROM MEMBER
+                    WHERE NO = #{loginMemberNo}
+                    )
 	</select>
 	
 <!-- 상세 조회(번호) -->
