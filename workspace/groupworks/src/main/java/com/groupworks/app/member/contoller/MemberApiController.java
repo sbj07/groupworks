@@ -17,7 +17,7 @@ public class MemberApiController {
 
     // 회원가입
     @PostMapping("sign-up")
-    public Map<String, String> signup(MemberVo vo){
+    public Map<String, String> signup(@RequestBody MemberVo vo){
         int result = service.signup(vo);
         Map<String, String> map = new HashMap<String,String>();
         map.put("msg","okay");
@@ -41,7 +41,7 @@ public class MemberApiController {
 
     // 로그인
     @PostMapping
-    public Map<String, Object> login(MemberVo vo) {
+    public Map<String, Object> login(@RequestBody MemberVo vo) {
         MemberVo loginMember = service.login(vo);
         Map<String, Object> map = new HashMap<>();
         map.put("msg", "okay");
