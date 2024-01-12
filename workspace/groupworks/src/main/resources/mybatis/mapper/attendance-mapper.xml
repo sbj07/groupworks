@@ -80,4 +80,14 @@
         )
     </insert>
 
+    <select id="getBusinessTripList" resultType="BusinessTripVo">
+        SELECT
+        NO
+        ,MEMBER_NO
+        ,START_DATE
+        ,END_DATE
+        ,MEMO
+        FROM BUSINESS_TRIP
+        WHERE MEMBER_NO = ${no}
+    </select>
 </mapper>

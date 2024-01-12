@@ -18,6 +18,9 @@
         <typeAlias type="com.groupworks.app.member.vo.PositionVo" alias="PositionVo"/>
         <typeAlias type="com.groupworks.app.member.vo.WorkStatusVo" alias="WorkStatVo"/>
         <typeAlias type="com.groupworks.app.member.vo.WorkStatusVo" alias="WorkStatVo"/>
+        <typeAlias type="com.groupworks.app.attendance.vo.VacationVo" alias="VacationVo"/>
+        <typeAlias type="com.groupworks.app.attendance.vo.OutsideWorkVo" alias="OutsideWorkVo"/>
+        <typeAlias type="com.groupworks.app.attendance.vo.BusinessTripVo" alias="BusinessTripVo"/>
 
         <typeAlias type="com.groupworks.app.businessform.vo.BusinessTripFormVo" alias="BusinessTripFormVo" />
         <typeAlias type="com.groupworks.app.message.vo.MessageVo" alias="MessageVo" />
