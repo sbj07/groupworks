@@ -75,7 +75,7 @@ public class NoticeController {
 		Map<String, Object> map = new HashMap<>();
 		map.put("msg", "good");
 		map.put("voList", voList);
-		System.out.println("voList : " + voList);
+//		System.out.println("voList : " + voList);
 		return map;
 	}//·»´õ¸µ
 	
