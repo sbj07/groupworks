@@ -1,17 +1,15 @@
-import { useEffect } from "react";
+import { Link, useEffect } from "react";
 import { useLocation, NavLink } from "react-router-dom";
 import PropTypes from "prop-types";
 import List from "@mui/material/List";
 import Divider from "@mui/material/Divider";
-import Link from "@mui/material/Link";
 import Icon from "@mui/material/Icon";
 import MDBox from "components/MDBox";
 import MDTypography from "components/MDTypography";
 import SidenavCollapse from "examples/Sidenav/SidenavCollapse";
-// Custom styles for the Sidenav
 import SidenavRoot from "examples/Sidenav/SidenavRoot";
 import sidenavLogoLabel from "examples/Sidenav/styles/sidenav";
-
+import MDButton from "components/MDButton";
 // Material Dashboard 2 React context
 import {
   useMaterialUIController,
@@ -153,7 +151,18 @@ function Sidenav({ color, brand, brandName, routes, ...rest }) {
       />
       <List>{renderRoutes}</List>
       <MDBox p={2} mt="auto">
-        
+        <MDButton 
+          component="a"
+          href="/authentication/sign-in"
+          rel="noreferrer"
+          variant="gradient"
+          color={sidenavColor}
+          // onClick={ () => {
+          // }}
+          fullWidth
+        >
+            LOG OUT
+        </MDButton>
       </MDBox>
     </SidenavRoot>
   );

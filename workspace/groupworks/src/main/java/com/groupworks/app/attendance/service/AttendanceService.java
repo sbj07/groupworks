@@ -8,6 +8,8 @@ import lombok.RequiredArgsConstructor;
 import org.mybatis.spring.SqlSessionTemplate;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class AttendanceService {
@@ -27,5 +29,10 @@ public class AttendanceService {
     // 휴가등록
     public int insertVacation(VacationVo vo){
         return dao.insertVacation(sessionTemplate, vo);
+    }
+
+    // 출장 리스트
+    public List<BusinessTripVo> getBusinessTripList(String no) {
+        return dao.getBusinessTripList(sessionTemplate, no);
     }
 }

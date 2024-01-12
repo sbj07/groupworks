@@ -5,11 +5,14 @@ import com.groupworks.app.attendance.vo.BusinessTripVo;
 import com.groupworks.app.attendance.vo.OutsideWorkVo;
 import com.groupworks.app.attendance.vo.VacationVo;
 import lombok.RequiredArgsConstructor;
+import org.apache.ibatis.annotations.One;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -50,6 +53,19 @@ public class AttendanceApiController {
         Map<String, String> map = new HashMap<String, String>();
         map.put("msg", "okay");
         if(result != 1){
+            map.put("msg", "nope");
+        }
+        return map;
+    }
+
+    // 출장 리스트
+    @GetMapping("business-trip")
+    public Map<String, Object> getBusinessTripList(String loginMemberNo) {
+        List<BusinessTripVo> voList = service.getBusinessTripList(loginMemberNo);
+        Map<String, Object> map = new HashMap<>();
+        map.put("msg", "okay");
+        map.put("bTripList", voList);
+        if(voList == null) {
             map.put("msg", "nope");
         }
         return map;
