@@ -3,8 +3,10 @@ package com.groupworks.app.member.contoller;
 import com.groupworks.app.member.service.MemberService;
 import com.groupworks.app.member.vo.*;
 import lombok.RequiredArgsConstructor;
+import org.apache.ibatis.annotations.One;
 import org.springframework.web.bind.annotation.*;
 
+import java.rmi.MarshalledObject;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -15,9 +17,9 @@ import java.util.Map;
 public class MemberApiController {
     private final MemberService service;
 
-    // 회원가입
+    // 관리자 화원가입 || 구성원 추가
     @PostMapping("sign-up")
-    public Map<String, String> signup(@RequestBody MemberVo vo){
+    public Map<String, String> signup(MemberVo vo){
         int result = service.signup(vo);
         Map<String, String> map = new HashMap<String,String>();
         map.put("msg","okay");
@@ -47,6 +49,18 @@ public class MemberApiController {
         map.put("msg", "okay");
         map.put("loginMemberNo", loginMember.getNo());
         if(loginMember == null){
+            map.put("msg", "nope");
+        }
+        return map;
+    }
+
+    // 회원정보수정
+    @PutMapping
+    public Map<String, Object> edit(MemberVo editVo) {
+        int result = service.edit(editVo);
+        Map<String, Object> map = new HashMap<>();
+        map.put("msg", "okay");
+        if(result != 1){
             map.put("msg", "nope");
         }
         return map;
