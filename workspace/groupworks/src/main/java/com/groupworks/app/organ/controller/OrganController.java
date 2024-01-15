@@ -5,23 +5,23 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.groupworks.app.notice.vo.NoticeVo;
 import com.groupworks.app.organ.service.OrganService;
 import com.groupworks.app.organ.vo.OrganVo;
 
 import lombok.RequiredArgsConstructor;
 
-@Controller
+@RestController
 @RequestMapping("organ")
 @RequiredArgsConstructor
+@CrossOrigin
 public class OrganController {
 
 	private final OrganService service;
@@ -71,12 +71,14 @@ public class OrganController {
 	@GetMapping("list")
 	public Map<String, Object> list(Model model) {
 		
+		System.out.println("listttt");
+		
 		List<OrganVo> voList = service.list();
+		System.out.println(voList);
 		
 		Map<String, Object> map = new HashMap<>();
 		map.put("msg", "good");
 		map.put("voList", voList);
-		System.out.println(voList);
 		return map;
 	}//·»´õ¸µ
 	

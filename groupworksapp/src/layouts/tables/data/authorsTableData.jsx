@@ -8,39 +8,29 @@
   import team2 from "assets/images/team-2.jpg";
   import team3 from "assets/images/team-3.jpg";
   import team4 from "assets/images/team-4.jpg";
-  import { useEffect, useState } from "react";
-  import { useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
 
   // export default function data() {
     const Data = () => {
 
       const navigate = useNavigate();
-      const [data, setData] = useState([]);
+      const [organList, setOrganList] = useState([]);
 
-        //fetch 를 이용해서 데이터 준비
-        const [organVoList , setOrganVoList] = useState([]);
-        const loadOrganVoList = () => {
-            fetch("http://127.0.0.1:8888/app/organ/list")
-            .then( resp => resp.json() )
-            .then( (x) => { setOrganVoList(x); } )
-            ;
-        }
-    
-        useEffect( () => {
-            console.log("useEffect 호출됨 ~~~");
-            loadOrganVoList();
-        }, [] );
-
-
-
+  useEffect( () => {
+    console.log("useEffect start");
+    fetch("http://127.0.0.1:8888/app/organ/list")
+    .then( (resp) => { return resp.json() })
+    .then( (data) => {
+      console.log("data",data);
+      setOrganList(data.voList);
+    })
+  } ,[] );
+  console.log("유즈이펙트 끝나고",organList);
 
     const Author = ({ image, name, email }) => (
-
       <MDBox display="flex" alignItems="center" lineHeight={1}>
         <MDAvatar src={image} name={name} size="sm" />
-
-
-
         <MDBox ml={2} lineHeight={1}>
           <MDTypography display="block" variant="button" fontWeight="medium">
             {name}
@@ -58,6 +48,7 @@
         <MDTypography variant="caption">{description}</MDTypography>
       </MDBox>
     );
+
 
 
 
@@ -86,9 +77,22 @@
 
     return {
 
-
+    //   {
+    //     boardVoList.length === 0 
+    //     ?
+    //     <h1>로딩중...</h1>
+    //     :
+    //     boardVoList.map( vo => <div key={vo.no}>
+    //         <div>{vo.no}</div>
+    //         <div>{vo.title}</div>
+    //         <div>{vo.writer}</div>
+    //         <div>{vo.hit}</div>
+    //         <div>{vo.enrollDate}</div>
+    //     </div>
+    //     )
+    // }
       columns: [
-        { Header: "이름 / 이메일", accessor: "author", width: "45%", align: "left" },
+        { Header: "이름", accessor: "author", width: "45%", align: "left" },
         { Header: "직책", accessor: "function", align: "left" },
         { Header: "상태", accessor: "status", align: "center" },
         { Header: "전화번호", accessor: "employed", align: "center" },
@@ -102,6 +106,29 @@
       ],
 
 
+      rows:  organList.map( organ => { return {
+        // author: <Author image={team2} name={organ.name} email={organ.tel} />,
+        author: <Author image={team2} name={organ.name} email="" />,
+        function: <Job title={organ.department} description={organ.position} />,
+        status: (
+          <MDBox ml={-1}>
+            <MDBadge badgeContent="online" color="success" variant="gradient" size="sm" />
+          </MDBox>
+        ),
+        employed: (
+          <MDTypography component="a" href="#" variant="caption" color="text" fontWeight="medium">
+            {organ.tel} 
+          </MDTypography>
+        ),
+        action: (
+          <MDTypography component="a" href="#" variant="caption" color="text" fontWeight="medium">
+            <button >쪽지</button>
+          </MDTypography>
+        ),
+      } } )
+      ,
+        
+
   // 기존코드
       // const rows = data.map((item, index) => (
       //   <div key={index}>
@@ -113,27 +140,6 @@
       //   </div>
       // ));
 
-      rows: [
-        {
-          author: <Author image={team2} name="이름" email="john@creative-tim.com" />,
-          function: <Job title="Manager" description="Organization" />,
-          status: (
-            <MDBox ml={-1}>
-              <MDBadge badgeContent="online" color="success" variant="gradient" size="sm" />
-            </MDBox>
-          ),
-          employed: (
-            <MDTypography component="a" href="#" variant="caption" color="text" fontWeight="medium">
-              23/04/18
-              {/* vo.tel */}
-            </MDTypography>
-          ),
-          action: (
-            <MDTypography component="a" href="#" variant="caption" color="text" fontWeight="medium">
-              <button >쪽지</button>
-            </MDTypography>
-          ),
-        },
 
 // ...rows.map((row, index) => <div key={index}>{row}</div>)
 
@@ -255,8 +261,7 @@
         //   ),
         // },
 
-      ],
-    };
-  }
-
+  
+      };
+      };
   export default Data;
