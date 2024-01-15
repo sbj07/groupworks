@@ -26,7 +26,7 @@ public class NoticeController {
 
 	private final NoticeService service;
 	
-	//ÀÛ¼º
+	//ï¿½Û¼ï¿½
 	@PostMapping("insert")
 	public Map<String, String> insert(NoticeVo vo, MultipartFile f) throws Exception{
 		
@@ -48,10 +48,10 @@ public class NoticeController {
 	}//insert
 	
 	/**
-	 * ÆÄÀÏÀ» ¼­¹ö¿¡ ÀúÀåÇÏ°í, ÆÄÀÏ ÀüÃ¼ °æ·Î¸¦ ¸®ÅÏÇÔ
-	 * @param ÆÄÀÏ°´Ã¼ 
-	 * @param ÆÄÀÏ°æ·Î
-	 * @return ½ÇÁ¦ÆÄÀÏÀúÀå°æ·Î(ÆÄÀÏ°æ·Î+ÆÄÀÏ¸í)
+	 * ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï°ï¿½, ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Ã¼ ï¿½ï¿½Î¸ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+	 * @param ï¿½ï¿½ï¿½Ï°ï¿½Ã¼ 
+	 * @param ï¿½ï¿½ï¿½Ï°ï¿½ï¿½
+	 * @return ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½(ï¿½ï¿½ï¿½Ï°ï¿½ï¿½+ï¿½ï¿½ï¿½Ï¸ï¿½)
 	 * @throws Exception
 	 * @throws  
 	 */
@@ -66,30 +66,31 @@ public class NoticeController {
 	}
 
 
-	//ÀüÃ¼ ¸ñ·Ï Á¶È¸(¹øÈ£)(·»´õ¸µ)?
+	//ï¿½ï¿½Ã¼ ï¿½ï¿½ï¿½ ï¿½ï¿½È¸(ï¿½ï¿½È£)(ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½)?
 	@GetMapping("list")
 	public Map<String, Object> list(Model model, String memberNo) {
 		
+
 		List<NoticeVo> voList = service.list(memberNo);
 		
 		Map<String, Object> map = new HashMap<>();
 		map.put("msg", "good");
-		map.put("voList", voList);
+//		map.put("voList", voList);
 //		System.out.println("voList : " + voList);
 		return map;
-	}//·»´õ¸µ
+	}//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 	
-//	//ÀüÃ¼ ¸ñ·Ï Á¶È¸(¹øÈ£)(µ¥ÀÌÅÍ)
+//	//ï¿½ï¿½Ã¼ ï¿½ï¿½ï¿½ ï¿½ï¿½È¸(ï¿½ï¿½È£)(ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½)
 //	@GetMapping("rest/list")
 //	@ResponseBody
 //	public List<NoticeVo> restList(){
 //		List<NoticeVo> voList = service.list();
 //		
 //		return voList;
-//	}//µ¥ÀÌÅÍ
+//	}//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 	
 	
-	//»ó¼¼ Á¶È¸(¹øÈ£)
+	//ï¿½ï¿½ ï¿½ï¿½È¸(ï¿½ï¿½È£)
 	@GetMapping("detail")
 	public String detail(NoticeVo vo, Model model) {
 		System.out.println(vo);
@@ -101,20 +102,20 @@ public class NoticeController {
 	}//detail
 	
 	
-	//¼öÁ¤
+	//ï¿½ï¿½ï¿½ï¿½
 	@PostMapping("edit")
 	public String edit(NoticeVo vo) throws Exception{
 		int result = service.edit(vo);
 		
 		if(result != 1) {
-			System.out.println("°øÁö»çÇ× ¼öÁ¤ ½ÇÆÐ");
+			System.out.println("ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½");
 			throw new Exception();
 		}
 		return "redirect:/notice/detail?noticeNo=" + vo.getNoticeNo();
 	}//edit
 	
 	
-	//»èÁ¦(¹øÈ£)
+	//ï¿½ï¿½ï¿½ï¿½(ï¿½ï¿½È£)
 	@PostMapping("delete")
 	public String delete(NoticeVo vo) throws Exception{
 		

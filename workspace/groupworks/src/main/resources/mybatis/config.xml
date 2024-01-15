@@ -14,7 +14,7 @@
         <typeAlias type="com.groupworks.app.member.vo.MemberVo" alias="MemberVo"/>
         <typeAlias type="com.groupworks.app.member.vo.AuthVo" alias="AuthVo"/>
         <typeAlias type="com.groupworks.app.member.vo.DepartVo" alias="DepartVo"/>
-        <typeAlias type="com.groupworks.app.member.vo.CompanyVo" alias="CompanyVo"/>
+        <typeAlias type="com.groupworks.app.company.vo.CompanyVo" alias="CompanyVo"/>
         <typeAlias type="com.groupworks.app.member.vo.PositionVo" alias="PositionVo"/>
         <typeAlias type="com.groupworks.app.member.vo.WorkStatusVo" alias="WorkStatVo"/>
         <typeAlias type="com.groupworks.app.member.vo.WorkStatusVo" alias="WorkStatVo"/>

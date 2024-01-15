@@ -163,15 +163,35 @@
         (
         NO
         , NAME
-        , MANAGER_NO
         )
         VALUES
         (
         SEQ_COMPANY_NO.NEXTVAL
         , #{companyName}
-        , #{no}
         )
     </insert>
+
+    <!-- 로그인 유저 정보 -->
+    <select id="getLoginMember" resultType="MemberVo">
+        SELECT
+        NO
+        , NAME
+        , ID
+        , PWD
+        , EMAIL
+        , TEL
+        , ADDRESS
+        , ANNUAL
+        , AUTH_NO
+        , DEPART_NO
+        , COMPANY_NO
+        , POSITION_NO
+        , WORK_STATUS_NO
+        , DEL_YN
+        FROM MEMBER
+        WHERE NO = #{no}
+        AND DEL_YN = 'N'
+    </select>
 
 
 </mapper>

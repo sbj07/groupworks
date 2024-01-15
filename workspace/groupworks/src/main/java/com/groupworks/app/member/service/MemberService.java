@@ -1,5 +1,6 @@
 package com.groupworks.app.member.service;
 
+import com.groupworks.app.company.vo.CompanyVo;
 import com.groupworks.app.member.dao.MemberDao;
 import com.groupworks.app.member.vo.*;
 import lombok.RequiredArgsConstructor;
@@ -7,7 +8,6 @@ import org.mybatis.spring.SqlSessionTemplate;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.lang.reflect.Member;
 import java.util.List;
 
 @Service
@@ -102,10 +102,9 @@ public class MemberService {
         return dao.editWorkStatus(sessionTemplate,vo);
     }
 
-    // 회사 추가
-    public int insertCompany(CompanyVo vo){
-        return dao.insertCompany(sessionTemplate, vo);
+    // 로그인 유저 정보
+    public MemberVo getLoginMember(String no) {
+        return dao.getLoginMember(sessionTemplate, no);
     }
-
 
 }
