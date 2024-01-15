@@ -68,9 +68,9 @@ public class NoticeController {
 
 	//전체 목록 조회(번호)(렌더링)?
 	@GetMapping("list")
-	public Map<String, Object> list(Model model) {
+	public Map<String, Object> list(Model model, String memberNo) {
 		
-		List<NoticeVo> voList = service.list();
+		List<NoticeVo> voList = service.list(memberNo);
 		
 		Map<String, Object> map = new HashMap<>();
 		map.put("msg", "good");
