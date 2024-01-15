@@ -9,7 +9,7 @@ import java.util.List;
 @Repository
 public class MemberDao {
 
-    // 화원가입
+    // 관리자 화원가입 || 구성원 추가
     public int signup(SqlSessionTemplate sessionTemplate, MemberVo vo){
         return sessionTemplate.insert("MemberMapper.signup",vo);
     }
@@ -22,6 +22,11 @@ public class MemberDao {
     // 로그인
     public MemberVo login(SqlSessionTemplate sessionTemplate, MemberVo vo){
         return sessionTemplate.selectOne("MemberMapper.login", vo);
+    }
+
+    // 회원정보수정
+    public int editMember(SqlSessionTemplate sessionTemplate, MemberVo editVo) {
+        return sessionTemplate.update("MemberMapper.editMember", editVo);
     }
 
     // 회원탈퇴

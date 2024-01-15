@@ -7,6 +7,7 @@ import org.mybatis.spring.SqlSessionTemplate;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.lang.reflect.Member;
 import java.util.List;
 
 @Service
@@ -16,7 +17,7 @@ public class MemberService {
     private final SqlSessionTemplate sessionTemplate;
     private final PasswordEncoder passwordEncoder;
 
-    // 화원가입
+    // 관리자 화원가입 || 구성원 추가
     public int signup(MemberVo vo){
         if (vo != null && vo.getId() != null && vo.getId().length() < 4){
             throw new IllegalStateException("아이디가 너무 짧음");
@@ -40,7 +41,7 @@ public class MemberService {
         return passwordEncoder.encode(pwd);
     }
 
-    //아이디 중복 확인
+    // 아이디 중복 확인
     public MemberVo checkDuplicateId(String id) {
         return dao.checkDuplicateId(sessionTemplate, id);
     }
@@ -54,6 +55,11 @@ public class MemberService {
             throw new IllegalStateException("비밀번호 틀림");
         };
         return loginMember;
+    }
+
+    // 정보 수정
+    public int edit(MemberVo editVo) {
+        return dao.editMember(sessionTemplate, editVo);
     }
 
     // 회원 탈퇴
