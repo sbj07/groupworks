@@ -31,9 +31,9 @@ public class NoticeService {
 	}
 
 	//전체 목록 조회
-	public List<NoticeVo> list() {
+	public List<NoticeVo> list(String memberNo) {
 
-		return dao.list(sst);
+		return dao.list(sst, memberNo);
 	}
 
 	//상세 조회(+조회수 증가)
