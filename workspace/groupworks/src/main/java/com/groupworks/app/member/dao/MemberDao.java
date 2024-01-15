@@ -1,5 +1,6 @@
 package com.groupworks.app.member.dao;
 
+import com.groupworks.app.company.vo.CompanyVo;
 import com.groupworks.app.member.vo.*;
 import org.mybatis.spring.SqlSessionTemplate;
 import org.springframework.stereotype.Repository;
@@ -69,9 +70,9 @@ public class MemberDao {
         return sessionTemplate.update("MemberMapper.editWorkStatus", vo);
     }
 
-    // 회사 추가
-    public int insertCompany(SqlSessionTemplate sessionTemplate, CompanyVo vo){
-        return sessionTemplate.insert("MemberMapper.insertCompany", vo);
+    // 로그인 유저 정보
+    public MemberVo getLoginMember(SqlSessionTemplate sessionTemplate, String no) {
+        return sessionTemplate.selectOne("MemberMapper.getLoginMember", no);
     }
 
 

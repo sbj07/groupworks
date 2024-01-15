@@ -1,4 +1,4 @@
-package com.groupworks.app.member.vo;
+package com.groupworks.app.company.vo;
 
 import lombok.Data;
 

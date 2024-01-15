@@ -12,6 +12,10 @@ import { useNavigate } from 'react-router-dom';
 function Cover() {
   const navigate = useNavigate();
 
+  const [companyVo, setCompanyVo] = useState({
+    name:""
+  });
+
   const [vo, setVo] = useState({
     name: "",
     id : "",
@@ -31,11 +35,11 @@ function Cover() {
   
   // Api호출
   useEffect( () => {
-    fetch(`http://127.0.0.1:8888/app/api/member/company`)
-    .then( (resp) => { return resp.json() })
-    .then( (data) => {
-      setCompanyList(data.list);
-    });
+    // fetch(`http://127.0.0.1:8888/app/api/member/company`)
+    // .then( (resp) => { return resp.json() })
+    // .then( (data) => {
+    //   setCompanyList(data.list);
+    // });
 
     fetch(`http://127.0.0.1:8888/app/api/member/depart`)
     .then( (resp) => { return resp.json() })
@@ -63,6 +67,34 @@ function Cover() {
     );
   };
 
+  const handleInputCompany = (event) => {
+    let {name , value} = event.target;
+    
+    setCompanyVo({
+      ...companyVo ,
+      [name] : value
+    });
+  }
+
+  const handleCompanyAdd = () => {
+    fetch(`http://127.0.0.1:8888/app/api/company`,{
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(companyVo)
+    })
+    .then( resp => resp.json() )
+    .then( data => {
+        if(data.msg === 'okay') {
+          alert("회사명 추가 완료 !");
+        } else{
+        alert("회사명 추가 실패");
+        }
+      })
+  };
+  
+
   // vo데이터 저장
   const handleInputChange = (event) => {
     const {name , value} = event.target;
@@ -74,9 +106,9 @@ function Cover() {
     
   };
 
+  // id 중복확인
   const handleIdCheck = () => {
     let idStr = vo.id;
-    console.log(idStr);
     fetch(`http://127.0.0.1:8888/app/api/member/check-id?id=${idStr}`)
     .then( resp => resp.json() )
     .then( data => {
@@ -102,7 +134,7 @@ function Cover() {
     .then( data => {
       if(data.msg === 'okay'){
         alert("회원가입 완료!");
-        navigate("/sign-in");
+        navigate("/authentication/sign-in");
       }else{
         alert('회원가입 실패');
       }
@@ -162,9 +194,12 @@ function Cover() {
             </MDBox>
 
             <MDBox mb={2}>
-              <ListSelectBox prop="company" list={companyList} />
-              <ListSelectBox prop="depart" list={departList} />
-              <ListSelectBox prop="position" list={positionList} />
+              <MDInput type="text" label="회사명" variant="standard" name="name" onChange={handleInputCompany} />
+              <MDButton variant="gradient" color="info" size="small" type="button" onClick={handleCompanyAdd}>
+                회사 등록
+              </MDButton>
+              {/* <ListSelectBox prop="depart" list={departList} /> */}
+              {/* <ListSelectBox prop="position" list={positionList} /> */}
             </MDBox>
 
             <MDBox mt={4} mb={1}>
