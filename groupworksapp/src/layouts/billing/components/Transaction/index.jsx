@@ -30,6 +30,7 @@ function Transaction({ icon, name, description, value, onDelete }) {
     .then(response => response.json())
     .then(data => {
       console.log('Success:', data);
+      alert("할일 등록 완료");
     })
     .catch((error) => {
       console.error('Error:', error);

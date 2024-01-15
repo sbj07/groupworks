@@ -51,9 +51,9 @@ const routes = [
   },
   {
     type: "collapse",
-    name: "결재",
+    name: "Documents",
     key: "documents",
-    icon: <Icon fontSize="small">receipt_long</Icon>,
+    icon: <Icon fontSize="small">notifications</Icon>,
     route: "/documents",
     component: <Tables />,
   },
@@ -67,9 +67,9 @@ const routes = [
   },
   {
     type: "collapse",
-    name: "Notifications",
+    name: "전자결재",
     key: "notifications",
-    icon: <Icon fontSize="small">notifications</Icon>,
+    icon: <Icon fontSize="small">receipt_long</Icon>,
     route: "/notifications",
     component: <Notifications />,
   },

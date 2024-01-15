@@ -68,9 +68,10 @@ public class NoticeController {
 
 	//��ü ��� ��ȸ(��ȣ)(������)?
 	@GetMapping("list")
-	public Map<String, Object> list(Model model) {
+	public Map<String, Object> list(Model model, String memberNo) {
 		
-//		List<NoticeVo> voList = service.list();
+
+		List<NoticeVo> voList = service.list(memberNo);
 		
 		Map<String, Object> map = new HashMap<>();
 		map.put("msg", "good");

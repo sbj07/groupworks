@@ -8,22 +8,23 @@ import { useState } from "react";
 function Transactions() {
 
   const [transactions, setTransactions] = useState([
-  ]);
-  
+  ]);   
+   
   const [isAdding, setIsAdding] = useState(false);
 
   const handleAddClick = () => {
-    if(transactions.length < 6){
+    if(transactions.length < 5){
       setIsAdding(true);
-      const newTransaction = { name:'새로운 할 일'};
+      const newTransaction = { id: new Date().getTime(), name:'새로운 할 일'};
       setTransactions([...transactions, newTransaction]);
     }
   };
 
-  const handleDeleteClick = (index) => {
-    console.log('handleDeleteClick called with index:', index);
-    setTransactions(transactions.filter((_, i) => i !== index));
+  const handleDeleteClick = (id) => {
+    console.log('handleDeleteClick called with id:', id);
+    setTransactions(transactions.filter((transaction) => transaction.id !== id));
   };
+  
   return (
     <Card sx={{ height: "100%" }}>
       <MDBox display="flex" justifyContent="space-between" alignItems="center" pt={3} px={2}>
@@ -43,15 +44,15 @@ function Transactions() {
               추가
             </MDButton>
           </MDBox>
-          {transactions.map((transaction, index) => (
+          {transactions.map((transaction) => (
             <Transaction
-              key={index}
+              key={transaction.id}
               color="secondary"
               icon="expand_more"
               name={transaction.name}
-              onDelete={ () => handleDeleteClick(index) }
+              onDelete={ () => handleDeleteClick(transaction.id) }
                >
-             <MDButton variant="gradient" color="error" size="small" type="button" onClick={() => handleDeleteClick(index)}>
+             <MDButton variant="gradient" color="error" size="small" type="button" onClick={() => handleDeleteClick(transaction.id)}>
                삭제
              </MDButton>
 
