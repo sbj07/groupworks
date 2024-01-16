@@ -17,7 +17,7 @@ public class OrganService {
 	private final SqlSessionTemplate sst;
 	private final OrganDao dao;
 	
-	//»ı¼º
+	//ìƒì„±
 	public int insert(OrganVo vo) {
 		
 		String str = vo.getProfile().replace("C:\\dev\\finalPrj\\workspace\\groupworks\\src\\main\\webapp", "http://127.0.0.1:8888/app");
@@ -27,32 +27,32 @@ public class OrganService {
 	}
 
 	
-	//ÀüÃ¼ ¸ñ·Ï Á¶È¸(¹øÈ£)
+	//ì „ì²´ ëª©ë¡ ì¡°íšŒ(ë²ˆí˜¸)
 	public List<OrganVo> list() {
 	
 		return dao.list(sst);
 	}
 
 	
-	//»ó¼¼ Á¶È¸
+	//ìƒì„¸ ì¡°íšŒ
 	public OrganVo detail(OrganVo vo) {
 
 		return dao.detail(sst, vo);
 	}
 	
 	
-	//¼öÁ¤
+	//ìˆ˜ì •
 	public int edit(OrganVo vo) {
 		
 		if(vo == null) {
-			throw new IllegalStateException("vo°¡ ¾ø¾î¼­ ¾÷µ¥ÀÌÆ® ºÒ°¡´É");
+			throw new IllegalStateException("voê°€ ì—†ì–´ì„œ ì—…ë°ì´íŠ¸ ë¶ˆê°€ëŠ¥");
 		}
 
 		return dao.edit(sst, vo);
 	}
 
 
-	//»èÁ¦
+	//ì‚­ì œ
 	public int delete(OrganVo vo) {
 
 		return dao.delete(sst, vo);

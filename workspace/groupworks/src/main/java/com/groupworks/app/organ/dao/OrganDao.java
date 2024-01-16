@@ -10,13 +10,13 @@ import com.groupworks.app.organ.vo.OrganVo;
 @Repository
 public class OrganDao {
 
-	//»ı¼º
+	//ìƒì„±
 	public int insert(SqlSessionTemplate sst, OrganVo vo) {
 
 		return sst.insert("OrganMapper.insert", vo);
 	}
 
-	//ÀüÃ¼ ¸ñ·Ï Á¶È¸(¹øÈ£)
+	//ì „ì²´ ëª©ë¡ ì¡°íšŒ(ë²ˆí˜¸)
 	public List<OrganVo> list(SqlSessionTemplate sst) {
 		
 		return sst.selectList("OrganMapper.list");
@@ -24,21 +24,21 @@ public class OrganDao {
 	}
 
 	
-	//»ó¼¼ Á¶È¸
+	//ìƒì„¸ ì¡°íšŒ
 	public OrganVo detail(SqlSessionTemplate sst, OrganVo vo) {
 
 		return sst.selectOne("OrganMapper.detail", vo);
 	}
 	
 	
-	//¼öÁ¤
+	//ìˆ˜ì •
 	public int edit(SqlSessionTemplate sst, OrganVo vo) {
 
 		return sst.update("OrganMapper.edit", vo);
 	}
 
 	
-	//»èÁ¦
+	//ì‚­ì œ
 	public int delete(SqlSessionTemplate sst, OrganVo vo) {
 
 		return sst.delete("OrganMapper.delete", vo);

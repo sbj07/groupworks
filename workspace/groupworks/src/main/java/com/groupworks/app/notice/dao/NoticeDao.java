@@ -10,36 +10,36 @@ import com.groupworks.app.notice.vo.NoticeVo;
 @Repository
 public class NoticeDao {
 	
-	//ÀÛ¼º
+	//ì‘ì„±
 	public int insert(SqlSessionTemplate sst, NoticeVo vo) {
 
 		return sst.insert("NoticeMapper.insert", vo);
 	}
 
-	//ÀüÃ¼ ¸ñ·Ï Á¶È¸(¹øÈ£)
+	//ëª©ë¡ ì¡°íšŒ
 	public List<NoticeVo> list(SqlSessionTemplate sst, String memberNo) {
 
 		return sst.selectList("NoticeMapper.list", memberNo);
 	}
 
-	//»ó¼¼ Á¶È¸(¹øÈ£)
+	//ìƒì„¸ ì¡°íšŒ
 	public NoticeVo detail(SqlSessionTemplate sst, NoticeVo vo) {
 
 		return sst.selectOne("NoticeMapper.detail", vo);
 	}
 	
-	//Á¶È¸¼ö Áõ°¡
+	//ì¡°íšŒìˆ˜ ì¦ê°€
 	public int increaseHit(SqlSessionTemplate sst, NoticeVo vo) {
 		return sst.update("NoticeMapper.increaseHit", vo);
 	}
 
-	//¼öÁ¤
+	//ìˆ˜ì •
 	public int edit(SqlSessionTemplate sst, NoticeVo vo) {
 
 		return sst.update("NoticeMapper.edit", vo);
 	}
 	
-	//»èÁ¦
+	//ì‚­ì œ
 	public int delete(SqlSessionTemplate sst, NoticeVo vo) {
 
 		return sst.delete("NoticeMapper.delete", vo);

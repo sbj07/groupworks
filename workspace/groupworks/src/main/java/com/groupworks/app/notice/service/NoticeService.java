@@ -17,7 +17,7 @@ public class NoticeService {
 	private final NoticeDao dao;
 	private final SqlSessionTemplate sst;
 	
-	//ÀÛ¼º	
+	//ì‘ì„±	
 	public int insert(NoticeVo vo) {
 		
 		String str = vo.getFilePath().replace("C:\\dev\\finalPrj\\workspace\\groupworks\\src\\main\\webapp", "http://127.0.0.1:8888/app");
@@ -30,13 +30,13 @@ public class NoticeService {
 		return dao.insert(sst, vo);
 	}
 
-	//ÀüÃ¼ ¸ñ·Ï Á¶È¸
+	//ëª©ë¡ ì¡°íšŒ
 	public List<NoticeVo> list(String memberNo) {
 
 		return dao.list(sst, memberNo);
 	}
 
-	//»ó¼¼ Á¶È¸(+Á¶È¸¼ö Áõ°¡)
+	//ìƒì„¸ì¡°íšŒ + ì¡°íšŒìˆ˜ ì¦ê°€
 	public NoticeVo detail(NoticeVo vo) {
 
 		int result = dao.increaseHit(sst, vo);
@@ -46,11 +46,11 @@ public class NoticeService {
 		return dao.detail(sst, vo);
 	}
 
-	//¼öÁ¤
+	//ìˆ˜ì •
 	public int edit(NoticeVo vo) {
 		
 		if(vo == null) {
-			throw new IllegalStateException("vo°¡ ¾ø¾î¼­ ¾÷µ¥ÀÌÆ® ºÒ°¡´É");
+			throw new IllegalStateException("voê°€ ì—†ì–´ì„œ ì—…ë°ì´íŠ¸ ë¶ˆê°€ëŠ¥");
 		}
 		if(vo.getTitle() != null && vo.getTitle().length() < 1) {
 			throw new IllegalStateException();
@@ -59,7 +59,7 @@ public class NoticeService {
 		return dao.edit(sst, vo);
 	}
 
-	//»èÁ¦
+	//ì‚­ì œ
 	public int delete(NoticeVo vo) {
 
 		return dao.delete(sst, vo);

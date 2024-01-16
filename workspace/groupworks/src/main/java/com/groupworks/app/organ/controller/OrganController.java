@@ -26,7 +26,7 @@ public class OrganController {
 
 	private final OrganService service;
 	
-	//»ı¼º
+	//ìƒì„±
 	@PostMapping("insert")
 	public Map<String, String> insert(OrganVo vo, MultipartFile f) throws Exception{
 		
@@ -50,10 +50,10 @@ public class OrganController {
 	
 	
 	/**
-	 * ÆÄÀÏÀ» ¼­¹ö¿¡ ÀúÀåÇÏ°í, ÆÄÀÏ ÀüÃ¼ °æ·Î¸¦ ¸®ÅÏÇÔ
-	 * @param ÆÄÀÏ°´Ã¼ 
-	 * @param ÆÄÀÏ°æ·Î
-	 * @return ½ÇÁ¦ÆÄÀÏÀúÀå°æ·Î(ÆÄÀÏ°æ·Î+ÆÄÀÏ¸í)
+	 * íŒŒì¼ì„ ì„œë²„ì— ì €ì¥í•˜ê³ , íŒŒì¼ ì „ì²´ ê²½ë¡œë¥¼ ë¦¬í„´í•¨
+	 * @param íŒŒì¼ê°ì²´ 
+	 * @param íŒŒì¼ê²½ë¡œ
+	 * @return ì‹¤ì œíŒŒì¼ì €ì¥ê²½ë¡œ(íŒŒì¼ê²½ë¡œ+íŒŒì¼ëª…)
 	 * @throws Exception
 	 * @throws  
 	 */
@@ -67,11 +67,11 @@ public class OrganController {
 		return path + originName;
 	}
 	
-	//ÀüÃ¼ ¸ñ·Ï Á¶È¸(¹øÈ£)(·»´õ¸µ)
+	//ì „ì²´ ëª©ë¡ ì¡°íšŒ(ë²ˆí˜¸)(ë Œë”ë§)
 	@GetMapping("list")
 	public Map<String, Object> list(Model model) {
 		
-		System.out.println("listttt");
+//		System.out.println("listttt");
 		
 		List<OrganVo> voList = service.list();
 		System.out.println(voList);
@@ -80,24 +80,24 @@ public class OrganController {
 		map.put("msg", "good");
 		map.put("voList", voList);
 		return map;
-	}//·»´õ¸µ
+	}//ë Œë”ë§
 	
 	
 	
-//	//ÀüÃ¼ ¸ñ·Ï Á¶È¸(¹øÈ£)(µ¥ÀÌÅÍ)
+//	//ì „ì²´ ëª©ë¡ ì¡°íšŒ(ë²ˆí˜¸)(ë°ì´í„°)
 //	@GetMapping("rest/list")
 //	@ResponseBody
 //	public List<OrganVo> restList(){
 //		List<OrganVo> voList = service.list();
 //		
 //		return voList;
-//	}//µ¥ÀÌÅÍ
+//	}//ë°ì´í„°
 	
 	
-	//»ó¼¼ Á¶È¸(¹øÈ£)
+	//ìƒì„¸ ì¡°íšŒ(ë²ˆí˜¸)
 	@GetMapping("detail")
 	public String detail(OrganVo vo, Model model) {
-		System.out.println(vo);
+//		System.out.println(vo);
 		OrganVo organVo = service.detail(vo);
 		model.addAttribute("organVo", organVo);
 		
@@ -106,24 +106,24 @@ public class OrganController {
 	}//detail
 	
 	
-	//¼öÁ¤
+	//ìˆ˜ì •
 	@PostMapping("edit")
 	public String edit(OrganVo vo) throws Exception{
 		int result = service.edit(vo);
 		if(result != 1) {
-			System.out.println("Á¶Á÷µµ ¼öÁ¤ ½ÇÆĞ");
+			System.out.println("ì¡°ì§ë„ ìˆ˜ì • ì‹¤íŒ¨");
 			throw new Exception();
 		}
 		return "redirect:/organ/list";
 	}
 	
 	
-	//»èÁ¦
+	//ì‚­ì œ
 	@PostMapping("delete")
 	public String delete(OrganVo vo) throws Exception{
 		int result = service.delete(vo);
 		if(result != 1) {
-			System.out.println("Á¶Á÷µµ »èÁ¦ ½ÇÆĞ");
+			System.out.println("ì¡°ì§ë„ ì‚­ì œ ì‹¤íŒ¨");
 			throw new Exception();
 		}
 		return "redirect:/organ/list";

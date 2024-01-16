@@ -17,135 +17,33 @@ import BillingInformation from "../BillingInformation";
 
 
 
-const Bill = () => {
+// const Bill = () => {
 
-  const [controller] = useMaterialUIController();
-  const { darkMode } = controller;
-
-
-  const navigate = useNavigate();
-
-    //fetch 를 이용해서 데이터 준비
-    const [noticeVoList , setNoticeVoList] = useState([]);
-    const loadNoticeVoList = () => {
-        fetch("http://127.0.0.1:8888/app/notice/list")
-        .then( resp => resp.json() )
-        .then( (x) => { setNoticeVoList(x); } )
-        ;
-    }
-
-    useEffect( () => {
-        console.log("useEffect 호출됨 ~~~");
-        loadNoticeVoList();
-    }, [] );
-
-
-
-
-  return (
-    
-    <MDBox
-      component="li"
-      display="flex"
-      justifyContent="space-between"
-      alignItems="flex-start"
-      bgColor={darkMode ? "transparent" : "grey-100"}
-      borderRadius="lg"
-      p={3}
-      mt={2}
-    >
-      {
-        noticeVoList.length ===0
-        ?
-        null
-        :
-        noticeVoList.map( vo => <tr key={vo.noticeNo}>
-            <td>{vo.noticeNo}</td>
-            <td>{vo.title}</td>
-            <td>{vo.writer}</td>
-            <td>{vo.hit}</td>
-            <td>{vo.enrollDate}</td>
-        </tr>
-                        )
-                    }
-        <button onClick={ () => {
-          navigate("/notice/detail/noticeNo=?");
-        }}>상세조회</button>
-      <MDBox width="100%" display="flex" flexDirection="column">
-        <MDBox
-          display="flex"
-          justifyContent="space-between"
-          alignItems={{ xs: "flex-start", sm: "center" }}
-          flexDirection={{ xs: "column", sm: "row" }}
-          mb={2}
-        >
-          <MDTypography variant="button" fontWeight="medium" textTransform="capitalize">
-            {/* {name} */}
-            {/* {vo.noticeNo[0]} */}
-          </MDTypography>
-
-          <MDBox display="flex" alignItems="center" mt={{ xs: 2, sm: 0 }} ml={{ xs: -1.5, sm: 0 }}>
-            <MDBox mr={1}>
-              <MDButton variant="text" color="error">
-              </MDButton>
-            </MDBox>
-            <MDButton variant="text" color={darkMode ? "white" : "dark"}>
-            </MDButton>
-          </MDBox>
-        </MDBox>
-        <MDBox mb={1} lineHeight={0}>
-          <MDTypography variant="caption" color="text">
-            Company Name:&nbsp;&nbsp;&nbsp;
-            <MDTypography variant="caption" fontWeight="medium" textTransform="capitalize">
-              {/* {company} */}
-            </MDTypography>
-          </MDTypography>
-        </MDBox>
-        <MDBox mb={1} lineHeight={0}>
-          <MDTypography variant="caption" color="text">
-            Email Address:&nbsp;&nbsp;&nbsp;
-            <MDTypography variant="caption" fontWeight="medium">
-              {/* {email} */}
-            </MDTypography>
-          </MDTypography>
-        </MDBox>
-        <MDTypography variant="caption" color="text">
-          VAT Number:&nbsp;&nbsp;&nbsp;
-          <MDTypography variant="caption" fontWeight="medium">
-            {/* {vat} */}
-          </MDTypography>
-        </MDTypography>
-      </MDBox>
-    </MDBox>
-    
-  );
-}
-
-// Setting default values for the props of Bill
-Bill.defaultProps = {
-  noGutter: false,
-};
-
-// Typechecking props for the Bill
-Bill.propTypes = {
-  name: PropTypes.string.isRequired,
-  company: PropTypes.string.isRequired,
-  email: PropTypes.string.isRequired,
-  vat: PropTypes.string.isRequired,
-  noGutter: PropTypes.bool,
-};
-
-export default Bill;
-
-
-
-
-
-// function Bill({ name, company, email, vat, noGutter }) {
 //   const [controller] = useMaterialUIController();
 //   const { darkMode } = controller;
 
+
+//   const navigate = useNavigate();
+
+//     //fetch 를 이용해서 데이터 준비
+//     const [noticeVoList , setNoticeVoList] = useState([]);
+//     const loadNoticeVoList = () => {
+//         fetch("http://127.0.0.1:8888/app/notice/list")
+//         .then( resp => resp.json() )
+//         .then( (x) => { setNoticeVoList(x); } )
+//         ;
+//     }
+
+//     useEffect( () => {
+//         console.log("useEffect 호출됨 ~~~");
+//         loadNoticeVoList();
+//     }, [] );
+
+
+
+
 //   return (
+    
 //     <MDBox
 //       component="li"
 //       display="flex"
@@ -154,9 +52,25 @@ export default Bill;
 //       bgColor={darkMode ? "transparent" : "grey-100"}
 //       borderRadius="lg"
 //       p={3}
-//       mb={noGutter ? 0 : 1}
 //       mt={2}
 //     >
+//       {
+//         noticeVoList.length ===0
+//         ?
+//         null
+//         :
+//         noticeVoList.map( vo => <tr key={vo.noticeNo}>
+//             <td>{vo.noticeNo}</td>
+//             <td>{vo.title}</td>
+//             <td>{vo.writer}</td>
+//             <td>{vo.hit}</td>
+//             <td>{vo.enrollDate}</td>
+//         </tr>
+//                         )
+//                     }
+//         <button onClick={ () => {
+//           navigate("/notice/detail/noticeNo=?");
+//         }}>상세조회</button>
 //       <MDBox width="100%" display="flex" flexDirection="column">
 //         <MDBox
 //           display="flex"
@@ -166,17 +80,16 @@ export default Bill;
 //           mb={2}
 //         >
 //           <MDTypography variant="button" fontWeight="medium" textTransform="capitalize">
-//             {name}
+//             {/* {name} */}
+//             {/* {vo.noticeNo[0]} */}
 //           </MDTypography>
 
 //           <MDBox display="flex" alignItems="center" mt={{ xs: 2, sm: 0 }} ml={{ xs: -1.5, sm: 0 }}>
 //             <MDBox mr={1}>
 //               <MDButton variant="text" color="error">
-//                 <Icon>delete</Icon>&nbsp;delete
 //               </MDButton>
 //             </MDBox>
 //             <MDButton variant="text" color={darkMode ? "white" : "dark"}>
-//               <Icon>edit</Icon>&nbsp;edit
 //             </MDButton>
 //           </MDBox>
 //         </MDBox>
@@ -184,7 +97,7 @@ export default Bill;
 //           <MDTypography variant="caption" color="text">
 //             Company Name:&nbsp;&nbsp;&nbsp;
 //             <MDTypography variant="caption" fontWeight="medium" textTransform="capitalize">
-//               {company}
+//               {/* {company} */}
 //             </MDTypography>
 //           </MDTypography>
 //         </MDBox>
@@ -192,18 +105,19 @@ export default Bill;
 //           <MDTypography variant="caption" color="text">
 //             Email Address:&nbsp;&nbsp;&nbsp;
 //             <MDTypography variant="caption" fontWeight="medium">
-//               {email}
+//               {/* {email} */}
 //             </MDTypography>
 //           </MDTypography>
 //         </MDBox>
 //         <MDTypography variant="caption" color="text">
 //           VAT Number:&nbsp;&nbsp;&nbsp;
 //           <MDTypography variant="caption" fontWeight="medium">
-//             {vat}
+//             {/* {vat} */}
 //           </MDTypography>
 //         </MDTypography>
 //       </MDBox>
 //     </MDBox>
+    
 //   );
 // }
 
@@ -222,3 +136,89 @@ export default Bill;
 // };
 
 // export default Bill;
+
+
+
+
+
+function Bill({ name, company, email, vat, noGutter }) {
+  const [controller] = useMaterialUIController();
+  const { darkMode } = controller;
+
+  return (
+    <MDBox
+      component="li"
+      display="flex"
+      justifyContent="space-between"
+      alignItems="flex-start"
+      bgColor={darkMode ? "transparent" : "grey-100"}
+      borderRadius="lg"
+      p={3}
+      mb={noGutter ? 0 : 1}
+      mt={2}
+    >
+      <MDBox width="100%" display="flex" flexDirection="column">
+        <MDBox
+          display="flex"
+          justifyContent="space-between"
+          alignItems={{ xs: "flex-start", sm: "center" }}
+          flexDirection={{ xs: "column", sm: "row" }}
+          mb={2}
+        >
+          <MDTypography variant="button" fontWeight="medium" textTransform="capitalize">
+            {name}
+          </MDTypography>
+
+          <MDBox display="flex" alignItems="center" mt={{ xs: 2, sm: 0 }} ml={{ xs: -1.5, sm: 0 }}>
+            <MDBox mr={1}>
+              <MDButton variant="text" color="error">
+                <Icon>delete</Icon>&nbsp;delete
+              </MDButton>
+            </MDBox>
+            <MDButton variant="text" color={darkMode ? "white" : "dark"}>
+              <Icon>edit</Icon>&nbsp;edit
+            </MDButton>
+          </MDBox>
+        </MDBox>
+        <MDBox mb={1} lineHeight={0}>
+          <MDTypography variant="caption" color="text">
+            Company Name:&nbsp;&nbsp;&nbsp;
+            <MDTypography variant="caption" fontWeight="medium" textTransform="capitalize">
+              {company}
+            </MDTypography>
+          </MDTypography>
+        </MDBox>
+        <MDBox mb={1} lineHeight={0}>
+          <MDTypography variant="caption" color="text">
+            Email Address:&nbsp;&nbsp;&nbsp;
+            <MDTypography variant="caption" fontWeight="medium">
+              {email}
+            </MDTypography>
+          </MDTypography>
+        </MDBox>
+        <MDTypography variant="caption" color="text">
+          VAT Number:&nbsp;&nbsp;&nbsp;
+          <MDTypography variant="caption" fontWeight="medium">
+            {vat}
+          </MDTypography>
+        </MDTypography>
+      </MDBox>
+    </MDBox>
+  );
+}
+
+// Setting default values for the props of Bill
+Bill.defaultProps = {
+  noGutter: false,
+};
+
+// Typechecking props for the Bill
+Bill.propTypes = {
+  name: PropTypes.string.isRequired,
+  company: PropTypes.string.isRequired,
+  email: PropTypes.string.isRequired,
+  vat: PropTypes.string.isRequired,
+  noGutter: PropTypes.bool,
+};
+
+export default Bill;
