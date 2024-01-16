@@ -24,7 +24,7 @@ function Transactions() {
     console.log('handleDeleteClick called with id:', id);
     setTransactions(transactions.filter((transaction) => transaction.id !== id));
   };
-  
+
   return (
     <Card sx={{ height: "100%" }}>
       <MDBox display="flex" justifyContent="space-between" alignItems="center" pt={3} px={2}>
@@ -44,14 +44,14 @@ function Transactions() {
               추가
             </MDButton>
           </MDBox>
-          {transactions.map((transaction) => (
-            <Transaction
+            {transactions.map((transaction) => (
+              <Transaction
               key={transaction.id}
               color="secondary"
               icon="expand_more"
               name={transaction.name}
               onDelete={ () => handleDeleteClick(transaction.id) }
-               >
+              >
              <MDButton variant="gradient" color="error" size="small" type="button" onClick={() => handleDeleteClick(transaction.id)}>
                삭제
              </MDButton>
