@@ -27,7 +27,17 @@ public class AttendanceDao {
     }
 
     // 출장 리스트
-    public List<BusinessTripVo> getBusinessTripList(SqlSessionTemplate sessionTemplate, String no) {
-        return sessionTemplate.selectList("AttendanceMapper.getBusinessTripList", no);
+    public List<BusinessTripVo> getBusinessTripList(SqlSessionTemplate sessionTemplate, String loginMemberNo) {
+        return sessionTemplate.selectList("AttendanceMapper.getBusinessTripList", loginMemberNo);
+    }
+
+    // 외근 리스트
+    public List<OutsideWorkVo> getOutsideWorkList(SqlSessionTemplate sessionTemplate, String no) {
+        return sessionTemplate.selectList("AttendanceMapper.getOutsideWorkList", no);
+    }
+
+    // 휴가 리스트
+    public List<VacationVo> getVacationList(SqlSessionTemplate sessionTemplate, String no) {
+        return sessionTemplate.selectList("AttendanceMapper.getVacationList", no);
     }
 }

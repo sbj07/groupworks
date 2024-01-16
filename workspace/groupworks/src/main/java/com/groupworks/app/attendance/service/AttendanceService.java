@@ -35,4 +35,14 @@ public class AttendanceService {
     public List<BusinessTripVo> getBusinessTripList(String no) {
         return dao.getBusinessTripList(sessionTemplate, no);
     }
+
+    // 외근 리스트
+    public List<OutsideWorkVo> getOutsideWorkList(String no) {
+        return dao.getOutsideWorkList(sessionTemplate, no);
+    }
+
+    // 휴가 리스트
+    public List<VacationVo> getVacationList(String no) {
+        return dao.getVacationList(sessionTemplate, no);
+    }
 }
