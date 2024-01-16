@@ -8,10 +8,12 @@ import java.util.Map;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.groupworks.app.notice.service.NoticeService;
@@ -19,14 +21,15 @@ import com.groupworks.app.notice.vo.NoticeVo;
 
 import lombok.RequiredArgsConstructor;
 
-@Controller
+@RestController
 @RequestMapping("notice")
 @RequiredArgsConstructor
+@CrossOrigin
 public class NoticeController {
 
 	private final NoticeService service;
 	
-	//�ۼ�
+	//작성
 	@PostMapping("insert")
 	public Map<String, String> insert(NoticeVo vo, MultipartFile f) throws Exception{
 		
@@ -48,10 +51,10 @@ public class NoticeController {
 	}//insert
 	
 	/**
-	 * ������ ������ �����ϰ�, ���� ��ü ��θ� ������
-	 * @param ���ϰ�ü 
-	 * @param ���ϰ��
-	 * @return ��������������(���ϰ��+���ϸ�)
+	 * 파일을 서버에 저장하고, 파일 전체 경로를 리턴함
+	 * @param 파일객체 
+	 * @param 파일경로
+	 * @return 실제파일저장경로(파일경로+파일명)
 	 * @throws Exception
 	 * @throws  
 	 */
@@ -66,31 +69,32 @@ public class NoticeController {
 	}
 
 
-	//��ü ��� ��ȸ(��ȣ)(������)?
+	//전체 목록 조회(번호)(렌더링)?
 	@GetMapping("list")
 	public Map<String, Object> list(Model model, String memberNo) {
+		System.out.println("listeeee");
 		
-
 		List<NoticeVo> voList = service.list(memberNo);
+		System.out.println(voList);
 		
 		Map<String, Object> map = new HashMap<>();
 		map.put("msg", "good");
-//		map.put("voList", voList);
+		map.put("voList", voList);
 //		System.out.println("voList : " + voList);
 		return map;
-	}//������
+	}//렌더링
 	
-//	//��ü ��� ��ȸ(��ȣ)(������)
+//	//전체 목록 조회(번호)(데이터)
 //	@GetMapping("rest/list")
 //	@ResponseBody
 //	public List<NoticeVo> restList(){
 //		List<NoticeVo> voList = service.list();
 //		
 //		return voList;
-//	}//������
+//	}//데이터
 	
 	
-	//�� ��ȸ(��ȣ)
+	//상세 조회(번호)
 	@GetMapping("detail")
 	public String detail(NoticeVo vo, Model model) {
 		System.out.println(vo);
@@ -102,20 +106,20 @@ public class NoticeController {
 	}//detail
 	
 	
-	//����
+	//수정
 	@PostMapping("edit")
 	public String edit(NoticeVo vo) throws Exception{
 		int result = service.edit(vo);
 		
 		if(result != 1) {
-			System.out.println("�������� ���� ����");
+			System.out.println("공지사항 수정 실패");
 			throw new Exception();
 		}
 		return "redirect:/notice/detail?noticeNo=" + vo.getNoticeNo();
 	}//edit
 	
 	
-	//����(��ȣ)
+	//삭제(번호)
 	@PostMapping("delete")
 	public String delete(NoticeVo vo) throws Exception{
 		
