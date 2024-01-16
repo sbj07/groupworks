@@ -12,22 +12,53 @@ const StyledCalendarDiv = styled.div`
 
 
 const MyCalendar = () => {
-    const [bTripList, setBTripList] = useState([]);
+    const loginMemberNo = sessionStorage.getItem("loginMemberNo");
 
+    const [bTripList, setBTripList] = useState([]);
+    const [outsideWorkList, setOutsideWorkList] = useState([]);
+    const [vacationList, setVacationList] = useState([]);
+    
     useEffect( () => {
-        fetch("http://127.0.0.1:8888/app/api/attendance/business-trip?loginMemberNo=5")
+        fetch(`http://127.0.0.1:8888/app/api/attendance/business-trip?loginMemberNo=${loginMemberNo}`)
         .then( resp => resp.json() )
         .then( data => {
             setBTripList(data.bTripList);
         });
+
+        fetch(`http://127.0.0.1:8888/app/api/attendance/outside-work?loginMemberNo=${loginMemberNo}`)
+        .then( resp => resp.json() )
+        .then( data => {
+            setOutsideWorkList(data.outsideWorkList);
+        });
+
+        fetch(`http://127.0.0.1:8888/app/api/attendance/vacation?loginMemberNo=${loginMemberNo}`)
+        .then( resp => resp.json() )
+        .then( data => {
+            setVacationList(data.vacationList);
+        });
     }, []);
 
-    const events = bTripList.map( (vo) => ({
-        title: '출장',
-        start: vo.startDate,
-        end: vo.endDate
-    }));
+    const events = () => {
 
+        bTripList.map( (vo) => ({
+            title: '출장',
+            start: vo.startDate,
+            end: vo.endDate
+        }));
+
+        outsideWorkList.map( (vo) => ({
+            title: '외근',
+            start: vo.startTime,
+            end: vo.endTime
+        }));
+
+        vacationList.map( (vo) => ({
+            title: '휴가',
+            start: vo.startDate,
+            end: vo.endDate
+        }));
+        
+    }
     return (
         <StyledCalendarDiv>
             <FullCalendar

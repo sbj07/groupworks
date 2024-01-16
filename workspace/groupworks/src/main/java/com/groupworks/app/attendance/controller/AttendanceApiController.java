@@ -68,8 +68,38 @@ public class AttendanceApiController {
         if(voList == null) {
             map.put("msg", "nope");
         }
+        System.out.println("출장 호출"+ voList);
         return map;
     }
 
+    // 외근 리스트
+    @GetMapping("outside-work")
+    public Map<String, Object> getOutsideWorkList(String loginMemberNo) {
+        System.out.println(loginMemberNo);
+        List<OutsideWorkVo> voList = service.getOutsideWorkList(loginMemberNo);
+        Map<String, Object> map = new HashMap<>();
+        map.put("msg", "okay");
+        map.put("outsideWorkList", voList);
+        if(voList == null) {
+            map.put("msg", "nope");
+        }
+        System.out.println("외근 호출" + voList);
+        return map;
+    }
+
+    // 휴가 리스트
+    @GetMapping("vacation")
+    public Map<String, Object> getVacationList(String loginMemberNo) {
+
+        List<VacationVo> voList = service.getVacationList(loginMemberNo);
+        Map<String, Object> map = new HashMap<>();
+        map.put("msg", "okay");
+        map.put("vacationList", voList);
+        if(voList == null) {
+            map.put("msg", "nope");
+        }
+        System.out.println("휴가 호출" + voList);
+        return map;
+    }
 
 }

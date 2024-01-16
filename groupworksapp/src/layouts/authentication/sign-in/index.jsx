@@ -39,7 +39,8 @@ function Basic() {
     .then( resp => resp.json() )
     .then( data => {
       if(data.msg === 'okay') {
-        sessionStorage.setItem("loginMemberNo", JSON.stringify(data.loginMemberNo));
+        console.log(data.loginMemberNo);
+        sessionStorage.setItem("loginMemberNo", data.loginMemberNo);
         navigate("/home");
       }else {
         alert("로그인 실패, 다시 시도해 주세요.");

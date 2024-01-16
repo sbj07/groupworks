@@ -80,6 +80,7 @@
         )
     </insert>
 
+    <!-- 출장 리스트 -->
     <select id="getBusinessTripList" resultType="BusinessTripVo">
         SELECT
         NO
@@ -88,6 +89,32 @@
         ,END_DATE
         ,MEMO
         FROM BUSINESS_TRIP
-        WHERE MEMBER_NO = ${no}
+        WHERE MEMBER_NO = #{loginMemberNo}
+    </select>
+
+    <!-- 외근 리스트 -->
+    <select id="getOutsideWorkList" resultType="OutsideWorkVo">
+        SELECT
+        NO
+        , MEMBER_NO
+        , START_TIME
+        , END_TIME
+        , ONSITE_START
+        , ONSITE_END
+        FROM OUTSIDE_WORK
+        WHERE MEMBER_NO = #{no}
+    </select>
+
+    <!-- 휴가 리스트 -->
+    <select id="getVacationList" resultType="VacationVo">
+        SELECT
+        NO
+        ,MEMBER_NO
+        ,START_DATE
+        ,END_DATE
+        ,USED_DAYS
+        ,HALF_DAY_TYPE
+        FROM VACATION
+        WHERE MEMBER_NO = #{no}
     </select>
 </mapper>
