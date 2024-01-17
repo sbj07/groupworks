@@ -3,14 +3,31 @@ import MDBox from "components/MDBox";
 import MDTypography from "components/MDTypography";
 import Transaction from "layouts/billing/components/Transaction";
 import MDButton from "components/MDButton";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 function Transactions() {
 
-  const [transactions, setTransactions] = useState([
-  ]);   
+  const [transactions, setTransactions] = useState([]);   
    
   const [isAdding, setIsAdding] = useState(false);
+
+  const loadTransactions = () => {
+    const loginMemberNo = sessionStorage.getItem("loginMemberNo");
+
+    fetch(`http://127.0.0.1:8888/app/api/todo/list?memberNo=${loginMemberNo}`)
+    .then( resp => resp.json() )
+    .then( data => {
+      console.log('Success', data);
+      if(data.msg === 'good'){
+        setTransactions(data.todoList);
+      }
+    } );
+  }
+
+  useEffect( () => {
+    loadTransactions();
+  } ,[]  )
+
 
   const handleAddClick = () => {
     if(transactions.length < 5){
