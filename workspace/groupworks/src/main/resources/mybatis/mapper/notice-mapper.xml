@@ -45,6 +45,22 @@ AND M.COMPANY_NO = (
                     FROM MEMBER
                     WHERE NO = #{loginMemberNo}
                     )
+
+<!-- 		SELECT -->
+<!-- 			N.NOTICE_NO -->
+<!-- 			, N.MEMBER_NO -->
+<!--             , M.NAME -->
+<!-- 			, N.TITLE -->
+<!-- 			, N.CLICK_NO -->
+<!-- 			, N.FILE_PATH -->
+<!-- 			, N.CATEGORY -->
+<!-- 			, N.EMERGENCY_YN -->
+<!-- 			, N.OPEN_DEPART -->
+<!-- 			, N.ENROLL_DATE -->
+<!-- 		FROM NOTICE N -->
+<!--         JOIN MEMBER M ON N.MEMBER_NO = M.NO -->
+<!-- 		WHERE DELETE_YN = 'N' -->
+<!-- 		ORDER BY NOTICE_NO DESC -->
 	</select>
 	
 <!-- 상세 조회(번호) -->

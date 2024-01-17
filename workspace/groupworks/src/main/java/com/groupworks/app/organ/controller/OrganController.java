@@ -74,7 +74,7 @@ public class OrganController {
 //		System.out.println("listttt");
 		
 		List<OrganVo> voList = service.list();
-		System.out.println(voList);
+//		System.out.println(voList);
 		
 		Map<String, Object> map = new HashMap<>();
 		map.put("msg", "good");
@@ -101,7 +101,7 @@ public class OrganController {
 		OrganVo organVo = service.detail(vo);
 		model.addAttribute("organVo", organVo);
 		
-		System.out.println("organVo : " + organVo);
+//		System.out.println("organVo : " + organVo);
 		return "organ/detail";
 	}//detail
 	
