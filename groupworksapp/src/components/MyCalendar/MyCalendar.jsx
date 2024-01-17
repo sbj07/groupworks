@@ -39,35 +39,50 @@ const MyCalendar = () => {
     }, []);
 
     const events = () => {
-
-        bTripList.map( (vo) => ({
-            title: '출장',
-            start: vo.startDate,
-            end: vo.endDate
-        }));
-
-        outsideWorkList.map( (vo) => ({
-            title: '외근',
-            start: vo.startTime,
-            end: vo.endTime
-        }));
-
-        vacationList.map( (vo) => ({
-            title: '휴가',
-            start: vo.startDate,
-            end: vo.endDate
-        }));
-        
-    }
+        const eventList = [];
+    
+        bTripList.forEach((vo) => {
+            eventList.push({
+                title: '출장'+vo.no,
+                start: vo.startDate,
+                end: vo.endDate,
+                color: 'orange'
+            });
+        });
+    
+        outsideWorkList.forEach((vo) => {
+            eventList.push({
+                title: '외근',
+                start: vo.startTime,
+                end: vo.endTime,
+                color: 'green'
+            });
+        });
+    
+        vacationList.forEach((vo) => {
+            eventList.push({
+                title: '휴가',
+                start: vo.startDate,
+                end: vo.endDate
+            });
+        });
+        return eventList;
+    };
+    
+    const handleEventClick = (event) => {
+        console.log(event);
+    };
+    
     return (
         <StyledCalendarDiv>
             <FullCalendar
             locale={koLocale}
-            defalutView="dayGridMonth"
+            defaultView="dayGridMonth"
             plugins={[dayGridPlugin]} 
             height="auto"
-            contentHeight={10}
-            events={events}
+            contentHeight={5}
+            events={events()}
+            eventClick={handleEventClick}
             />
         </StyledCalendarDiv>
     );

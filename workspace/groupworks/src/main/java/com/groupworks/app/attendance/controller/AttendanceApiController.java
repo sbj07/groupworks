@@ -75,7 +75,6 @@ public class AttendanceApiController {
     // 외근 리스트
     @GetMapping("outside-work")
     public Map<String, Object> getOutsideWorkList(String loginMemberNo) {
-        System.out.println(loginMemberNo);
         List<OutsideWorkVo> voList = service.getOutsideWorkList(loginMemberNo);
         Map<String, Object> map = new HashMap<>();
         map.put("msg", "okay");
