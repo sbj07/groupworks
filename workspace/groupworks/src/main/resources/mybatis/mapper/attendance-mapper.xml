@@ -89,7 +89,7 @@
         ,END_DATE
         ,MEMO
         FROM BUSINESS_TRIP
-        WHERE MEMBER_NO = #{loginMemberNo}
+        WHERE MEMBER_NO = #{no}
     </select>
 
     <!-- 외근 리스트 -->
