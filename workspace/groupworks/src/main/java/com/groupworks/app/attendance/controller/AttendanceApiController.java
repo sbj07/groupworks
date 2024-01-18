@@ -6,10 +6,7 @@ import com.groupworks.app.attendance.vo.OutsideWorkVo;
 import com.groupworks.app.attendance.vo.VacationVo;
 import lombok.RequiredArgsConstructor;
 import org.apache.ibatis.annotations.One;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
 import java.util.List;
@@ -22,7 +19,7 @@ public class AttendanceApiController {
     private final AttendanceService service;
 
     // 출장 등록
-    @PostMapping("businesstrip")
+    @PostMapping("business-trip")
     public Map<String, String> insertBusinessTrip(BusinessTripVo vo) {
         int result = service.insertBusinessTrip(vo);
         Map<String, String> map = new HashMap<String, String>();
@@ -35,7 +32,7 @@ public class AttendanceApiController {
 
 
     // 외근 등록
-    @PostMapping("outsidework")
+    @PostMapping("outside-work")
     public Map<String, String> insertOutsideWork(OutsideWorkVo vo) {
         int result = service.insertOutsideWork(vo);
         Map<String, String> map = new HashMap<String, String>();

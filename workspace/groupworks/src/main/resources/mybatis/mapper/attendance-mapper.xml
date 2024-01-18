@@ -32,14 +32,12 @@
         , MEMBER_NO
         , START_TIME
         , END_TIME
-        <trim prefixOverrides=",">
             <if test=" onsiteStart != null and onsiteStart != '' ">
-                ONSITE_START
+                , ONSITE_START
             </if>
             <if test=" onsiteEnd != null and onsiteEnd != '' ">
                 , ONSITE_END
             </if>
-        </trim>
         )
         VALUES
         (
@@ -47,14 +45,12 @@
         , #{memberNo}
         , #{startTime}
         , #{endTime}
-        <trim prefixOverrides=",">
             <if test=" onsiteStart != null and onsiteStart != '' ">
-                #{onsiteStart}
+                , #{onsiteStart}
             </if>
             <if test=" onsiteEnd != null and onsiteEnd != '' ">
                 , #{onsiteEnd}
             </if>
-        </trim>
         )
     </insert>
 
