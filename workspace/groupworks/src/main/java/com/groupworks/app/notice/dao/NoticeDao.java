@@ -17,10 +17,15 @@ public class NoticeDao {
 	}
 
 	//목록 조회
-	public List<NoticeVo> list(SqlSessionTemplate sst, String memberNo) {
+//	public List<NoticeVo> list(SqlSessionTemplate sst, String memberNo) {
+//
+//		return sst.selectList("NoticeMapper.list", memberNo);
+//	}
+	public List<NoticeVo> list(SqlSessionTemplate sst, String loginMember) {
 
-		return sst.selectList("NoticeMapper.list", memberNo);
+		return sst.selectList("NoticeMapper.list", loginMember);
 	}
+
 
 	//상세 조회
 	public NoticeVo detail(SqlSessionTemplate sst, NoticeVo vo) {

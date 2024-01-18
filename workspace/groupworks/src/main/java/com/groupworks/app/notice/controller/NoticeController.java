@@ -71,10 +71,10 @@ public class NoticeController {
 
 	//전체 목록 조회(번호)(렌더링)?
 	@GetMapping("list")
-	public Map<String, Object> list(Model model, String memberNo) {
+	public Map<String, Object> list(String loginMember) {
 		System.out.println("listeeee");
 		
-		List<NoticeVo> voList = service.list(memberNo);
+		List<NoticeVo> voList = service.list(loginMember);
 		System.out.println(voList);
 		
 		Map<String, Object> map = new HashMap<>();
@@ -115,7 +115,7 @@ public class NoticeController {
 			System.out.println("공지사항 수정 실패");
 			throw new Exception();
 		}
-		return "redirect:/notice/detail?noticeNo=" + vo.getNoticeNo();
+		return "redirect:/notice=" + vo.getNoticeNo();
 	}//edit
 	
 	
