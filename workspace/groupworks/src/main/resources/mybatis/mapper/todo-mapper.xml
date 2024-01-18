@@ -52,8 +52,8 @@
  		UPDATE TODO 
 		   	SET DEL_YN = 'Y'
 		   	, DELETE_DATE = SYSDATE 
-	   WHERE NO = 8 
- 	   AND MEMBER_NO = 31
+	   WHERE NO = {no}
+ 	   AND MEMBER_NO = {memberNo} 
  	</update>
  
 </mapper>

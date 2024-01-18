@@ -13,7 +13,6 @@ const StyledTodoDiv = styled.div`
         width: 100%;
         height: 100%;
         border: 2px solid black;
-        margin: auto;
     }
     & > button {
         width: 100%;
@@ -27,19 +26,26 @@ const TodoList = () => {
 
     const navigate = useNavigate();
 
+    const [memberNo, setMemberNo] = useState('31');
     const [todoVoList, setTodoVoList] = useState([]);
 
     const loadTodoVoList = () => {
-        fetch("http:127.0.0.1:8888/app/api/todo/list")
+        fetch(`http://127.0.0.1:8888/app/api/todo/list?memberNo=${memberNo}`)
         .then( resp => resp.json() )
-        .then( (x) => { setTodoVoList(x); } ) 
+        .then(data => {
+            if(data.msg === "good"){
+                setTodoVoList(data.todoList);
+            }else {
+                console.log("목록 가져오기 실패");
+            }
+        })
         ;
     }
 
     useEffect( () => {
         console.log("effect 호출");
         loadTodoVoList();
-    }, [] );
+    }, [memberNo] );
 
     return (
         <StyledTodoDiv>
@@ -67,9 +73,10 @@ const TodoList = () => {
                 </tbody>
             </table>
 
-            <button onClick = { () => {
-                navigate("todo/write")
+            <button onClick={ () => {
+                navigate("/todo/write");
             } }>todo 등록</button>
+
         </StyledTodoDiv>   
     );
 };
