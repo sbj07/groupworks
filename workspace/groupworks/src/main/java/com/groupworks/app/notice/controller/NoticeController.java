@@ -69,12 +69,28 @@ public class NoticeController {
 	}
 
 
+//	//전체 목록 조회(번호)(렌더링)?
+//	@GetMapping("list")
+//	public Map<String, Object> list(String loginMember) {
+//		System.out.println("listeeee");
+//		
+//		List<NoticeVo> voList = service.list(loginMember);
+//		System.out.println(voList);
+//		
+//		Map<String, Object> map = new HashMap<>();
+//		map.put("msg", "good");
+//		map.put("voList", voList);
+////		System.out.println("voList : " + voList);
+//		return map;
+//	}//렌더링
+	
+	
 	//전체 목록 조회(번호)(렌더링)?
 	@GetMapping("list")
-	public Map<String, Object> list(String loginMember) {
+	public Map<String, Object> list() {
 		System.out.println("listeeee");
 		
-		List<NoticeVo> voList = service.list(loginMember);
+		List<NoticeVo> voList = service.list();
 		System.out.println(voList);
 		
 		Map<String, Object> map = new HashMap<>();
@@ -83,6 +99,8 @@ public class NoticeController {
 //		System.out.println("voList : " + voList);
 		return map;
 	}//렌더링
+	
+	
 	
 //	//전체 목록 조회(번호)(데이터)
 //	@GetMapping("rest/list")
