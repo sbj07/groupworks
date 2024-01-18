@@ -21,11 +21,17 @@ public class NoticeDao {
 //
 //		return sst.selectList("NoticeMapper.list", memberNo);
 //	}
-	public List<NoticeVo> list(SqlSessionTemplate sst, String loginMember) {
 
-		return sst.selectList("NoticeMapper.list", loginMember);
+//	public List<NoticeVo> list(SqlSessionTemplate sst, String loginMember) {
+//
+//		return sst.selectList("NoticeMapper.list", loginMember);
+//	}
+
+	
+	public List<NoticeVo> list(SqlSessionTemplate sst) {
+
+		return sst.selectList("NoticeMapper.list");
 	}
-
 
 	//상세 조회
 	public NoticeVo detail(SqlSessionTemplate sst, NoticeVo vo) {
