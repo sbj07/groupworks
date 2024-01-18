@@ -3,11 +3,6 @@ import { Route, Routes } from 'react-router-dom';
 import TodoList from './TodoList';
 import TodoWrite from './TodoWrite';
 import TodoDelete from './TodoDelete';
-import styled from 'styled-components';
-
-const StyledTodoMainDiv = styled.div`
-    
-`;
 
 const TodoMain = () => {
     return (
