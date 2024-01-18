@@ -30,8 +30,8 @@ public class TodoService {
 	}
 	
 	//���ϻ���
-	public int delete(String no) {
-		return dao.delete(sst, no);
+	public int delete(TodoVo vo) {
+		return dao.delete(sst, vo);
 	}
 	
 }

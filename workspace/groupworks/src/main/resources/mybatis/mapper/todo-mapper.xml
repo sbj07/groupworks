@@ -15,6 +15,7 @@
 		FROM TODO 
 		WHERE DEL_YN = 'N'
 		AND MEMBER_NO = #{memberNo}
+		ORDER BY NO DESC
  	</select>
 	 
    	<!-- 할일등록 -->
@@ -51,8 +52,8 @@
  		UPDATE TODO 
 		   	SET DEL_YN = 'Y'
 		   	, DELETE_DATE = SYSDATE 
-	   WHERE NO = #{no} 
-<!-- 	   AND MEMBER_NO = #{memberNo} -->
+	   WHERE NO = 8 
+ 	   AND MEMBER_NO = 31
  	</update>
  
 </mapper>

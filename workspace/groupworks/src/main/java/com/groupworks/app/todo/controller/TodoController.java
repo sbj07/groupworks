@@ -68,14 +68,15 @@ public class TodoController {
 	}
 	
 	//할일 삭제
-	@DeleteMapping
-	public Map<String, String> delete(String no){
-		int result = service.delete(no);
-		Map<String, String> map = new HashMap<String, String>();
+	@PostMapping("delete")
+	public Map<String, Object> delete(@RequestBody TodoVo vo) {
+		int result = service.delete(vo);
+		Map<String, Object> map = new HashMap<>();
 		map.put("msg", "good");
 		if(result != 1) {
 			map.put("msg", "bad");
 		}
+		System.out.println(vo);
 		return map;
 	}
 }
