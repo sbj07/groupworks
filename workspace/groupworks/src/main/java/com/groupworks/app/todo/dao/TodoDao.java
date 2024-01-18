@@ -26,7 +26,7 @@ public class TodoDao {
 	}
 	
 	//���ϻ���
-	public int delete(SqlSessionTemplate sst, String no) {
-		return sst.update("TodoMapper.delete", no);
+	public int delete(SqlSessionTemplate sst, TodoVo vo) {
+		return sst.update("TodoMapper.delete", vo);
 	}
 }
