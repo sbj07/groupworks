@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import Main from './Main';
-import Sidebar from './Sidebar/Sidebar';
+import Sidebar from './sidebar/Sidebar';
 
 const StyledLayoutDiv = styled.div`
     width: 100vw;
