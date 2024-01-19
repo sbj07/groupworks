@@ -21,7 +21,7 @@ const StyeldLoginForm = styled.div`
     height: 50%;
     background-color: #effcff;
     border: 1px solid white;
-    border-radius: 30px;
+    border-radius: 10%;
     color: #2c5e6c;
     font-size: 2rem;
     & > label {
