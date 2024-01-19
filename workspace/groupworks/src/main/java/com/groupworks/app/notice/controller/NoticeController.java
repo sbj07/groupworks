@@ -162,11 +162,16 @@ public class NoticeController {
 	//수정
 	@PostMapping("edit")
 	public String edit(NoticeVo vo) throws Exception{
-		int result = service.edit(vo);
-		
-		if(result != 1) {
-			System.out.println("공지사항 수정 실패");
-			throw new Exception();
+		try {
+			
+			int result = service.edit(vo);
+			
+			if(result != 1) {
+				System.out.println("공지사항 수정 실패");
+				throw new Exception("공지사항 수정 실패");
+			}
+		}catch(Exception e) {
+			e.printStackTrace();
 		}
 		return "redirect:/notice=" + vo.getNoticeNo();
 	}//edit

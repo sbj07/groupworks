@@ -42,7 +42,7 @@ const OrganList = () => {
         });
     };
     useEffect( () => {
-        console.log("useEffect 호출");
+        // console.log("useEffect 호출");
         loadOrganVoList();
     }, [] );
 

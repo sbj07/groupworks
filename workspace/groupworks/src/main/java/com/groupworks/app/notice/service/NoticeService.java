@@ -82,16 +82,41 @@ public class NoticeService {
 	}
 
 	//수정
+//	public int edit(NoticeVo vo) {
+//		
+//		if(vo == null) {
+//			throw new IllegalStateException("vo가 없어서 업데이트 불가능");
+//		}
+////		if(vo.getTitle() != null && vo.getTitle().length() < 1) {
+////			throw new IllegalStateException();
+////		}
+//	    if ((vo.getTitle() == null || vo.getTitle().isEmpty()) && 
+//            (vo.getContent() == null || vo.getContent().isEmpty()) && 
+//            (vo.getFilePath() == null || vo.getFilePath().isEmpty()) && 
+//            (vo.getCategory() == null || vo.getCategory().isEmpty()) &&
+//            (vo.getOpenDepart() == null))
+//	    {
+//        throw new IllegalStateException("수정할 내용이 없습니다.");
+//        }
+//
+//		return dao.edit(sst, vo);
+//	}
+	//수정(지피티 수정본)
 	public int edit(NoticeVo vo) {
-		
-		if(vo == null) {
-			throw new IllegalStateException("vo가 없어서 업데이트 불가능");
-		}
-		if(vo.getTitle() != null && vo.getTitle().length() < 1) {
-			throw new IllegalStateException();
-		}
+	    if (vo == null) {
+	        throw new IllegalStateException("수정할 공지사항이 없습니다.");
+	    }
 
-		return dao.edit(sst, vo);
+	    // 수정할 내용이 없는 경우를 체크하는 로직을 변경합니다.
+	    boolean isAnyFieldPresent = vo.getTitle() != null || vo.getContent() != null || 
+	                                vo.getFilePath() != null || vo.getCategory() != null || 
+	                                vo.getOpenDepart() != null;
+
+	    if (!isAnyFieldPresent) {
+	        throw new IllegalStateException("수정할 내용이 없습니다.");
+	    }
+
+	    return dao.edit(sst, vo);
 	}
 
 	//삭제
