@@ -1,8 +1,10 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import styled from 'styled-components';
 import Main from './Main';
 import Sidebar from './sidebar/Sidebar';
-import Login from './login/Login';
+import { Link, useNavigate } from 'react-router-dom';
+import Login from './authentication/login/Login';
+import Home from './Home';
 
 const StyledLayoutDiv = styled.div`
     width: 100vw;
@@ -14,21 +16,21 @@ const StyledLayoutDiv = styled.div`
     place-items: center center;
 `;
 
-const loginMemberNo = sessionStorage.getItem("loginMemberNo");
 const Layout = () => {
-    return (
-        <>
-        {
-            loginMemberNo === null
-            ?
-            <Login />
-            :
-            <StyledLayoutDiv>
-                <Sidebar />
-                <Main />
-                </StyledLayoutDiv>
+    const loginMemberNo = sessionStorage.getItem("loginMemberNo");
+    const navigate = useNavigate();
+    useEffect(() => {
+        if (loginMemberNo === null) {
+            navigate("/login");
         }
-        </>
+    }, [loginMemberNo, navigate]);
+
+    return (
+        loginMemberNo !== null && 
+        <StyledLayoutDiv>
+            <Sidebar />
+            <Main />
+        </StyledLayoutDiv>
     );
 };
 
