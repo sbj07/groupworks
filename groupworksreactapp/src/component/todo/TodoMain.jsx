@@ -8,7 +8,7 @@ const TodoMain = () => {
     return (
         <Routes>
             <Route path='list' element={<TodoList />}/>
-            <Route path='write' element={<TodoWrite />}/>
+            <Route path='/write' element={<TodoWrite />}/>
             <Route path='delete' element={<TodoDelete />}/>
         </Routes>    
     );

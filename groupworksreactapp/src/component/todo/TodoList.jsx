@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
+import Modal from 'react-modal';
+import TodoWrite from './TodoWrite';
 
 const StyledTodoDiv = styled.div`
     width: 100%;
@@ -12,11 +14,31 @@ const StyledTodoDiv = styled.div`
     & > table {
         width: 100%;
         height: 100%;
-        border: 2px solid black;
+        border: 1px solid #282c34;
+        text-align: center;
+        border-collapse: collapse;
+    th{
+        background-color: #282c34;
+        color: white;
+    }
+    th, td {
+        vertical-align: middle;
+        padding: 8px;
+    }
+    button {
+        background-color: red;
+        border: none;
+        border-radius: 10px;
+        color: white;
+        font-weight: bold;
+    }
     }
     & > button {
-        width: 100%;
+        width: 30%;
         font-size: 2rem;
+        background-color: green;
+        color: white;
+        border-radius: 10px;
     }
 `;
 
@@ -25,9 +47,17 @@ const TodoList = () => {
     console.log("todoList 컴포넌트 랜더링");
 
     const navigate = useNavigate();
-
     const [memberNo, setMemberNo] = useState('31');
     const [todoVoList, setTodoVoList] = useState([]);
+    const [modalIsOpen, setModalIsOpen] = useState(false);
+
+    const openModal = () => {
+        setModalIsOpen(true);
+    };
+
+    const closeModal = () => {
+        setModalIsOpen(false);
+    };
 
     const loadTodoVoList = () => {
         fetch(`http://127.0.0.1:8888/app/api/todo/list?memberNo=${memberNo}`)
@@ -43,9 +73,27 @@ const TodoList = () => {
     }
 
     useEffect( () => {
-        console.log("effect 호출");
         loadTodoVoList();
     }, [memberNo] );
+
+    const handleDelete = (todoNo) => {
+        fetch(`http://127.0.0.1:8888/app/api/todo/delete`,{
+            method: 'POST',
+            headers: {
+                'Content-Type' : 'application/json',
+            },
+            body: JSON.stringify({no: todoNo, memberNo: '31'}),
+        })
+        .then( (resp) => resp.json() )
+        .then( (data) => {
+            if(data.msg === 'good'){
+                alert('todo 삭제 완료');
+                loadTodoVoList();
+            }else{
+                alert('todo 삭제 실패');
+            }
+        } );
+    };
 
     return (
         <StyledTodoDiv>
@@ -53,8 +101,9 @@ const TodoList = () => {
                 <thead>
                     <tr>
                         <th>번호</th>
-                        <th>내용</th>
+                        <th>Todo</th>
                         <th>작성일자</th>
+                        <th>삭제</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -67,16 +116,33 @@ const TodoList = () => {
                             <td>{vo.no}</td>
                             <td>{vo.content}</td>
                             <td>{vo.writeDate}</td>
+                            <td><button onClick={() => handleDelete(vo.no)}>삭제</button></td>
                         </tr>
                         )
                     }
                 </tbody>
             </table>
 
-            <button onClick={ () => {
-                navigate("/todo/write");
-            } }>todo 등록</button>
-
+            <button onClick={openModal}>Todo 추가</button>
+            <Modal
+                isOpen={modalIsOpen}
+                onRequestClose={closeModal}
+                contentLabel="Todo Write Modal"
+                style={{
+                    overlay: {
+                      backgroundColor: 'rgba(0, 0, 0, 0.75)' // semi-transparent black
+                    },
+                    content: {
+                      color: 'lightsteelblue',
+                      width: '40%', 
+                      height: '40%', 
+                      margin: 'auto' 
+                    }
+                  }}
+            >
+                <TodoWrite closeModal={closeModal} loadTodoVoList={loadTodoVoList} />
+                <button onClick={closeModal}>닫기</button>
+            </Modal>
         </StyledTodoDiv>   
     );
 };

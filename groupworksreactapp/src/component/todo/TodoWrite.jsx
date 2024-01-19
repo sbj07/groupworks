@@ -14,12 +14,10 @@ const StyledTodoWriteDiv = styled.div`
     }
 `;
 
-const TodoWrite = () => {
-
-    const str = sessionStorage.getItem("memberNo");
-    const vo = JSON.parse(str);
-    const memberNo = vo.no;
-
+const TodoWrite = ({closeModal, loadTodoVoList}) => {
+    // const str = sessionStorage.getItem("memberNo");
+    // const vo = JSON.parse(str);
+    const memberNo = '31';
     const [inputTodoVo, setInputTodoVo] = useState({
         "writerNo" : memberNo,
     }) 
@@ -33,13 +31,17 @@ const TodoWrite = () => {
             headers: {
                 "Content-Type" : "application/json",
             },
-            body: JSON.stringify(inputTodoVo),
+            body: JSON.stringify({
+                ...inputTodoVo,
+                memberNo: '31',
+            }),
         })
         .then( (resp) => resp.json() )
         .then( (data) => {
             if(data.msg === "good"){
                 alert("todo 작성 완료");
-                navigate("/todo/list");
+                closeModal();
+                loadTodoVoList();
             }else{
                 alert("todo 작성 실패");
             }
