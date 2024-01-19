@@ -88,10 +88,10 @@ public class NoticeController {
 	//전체 목록 조회(번호)(렌더링)?
 	@GetMapping("list")
 	public Map<String, Object> list() {
-		System.out.println("listeeee");
+//		System.out.println("listeeee");
 		
 		List<NoticeVo> voList = service.list();
-		System.out.println(voList);
+//		System.out.println(voList);
 		
 		Map<String, Object> map = new HashMap<>();
 		map.put("msg", "good");

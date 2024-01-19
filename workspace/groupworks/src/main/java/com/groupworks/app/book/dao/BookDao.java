@@ -10,30 +10,31 @@ import com.groupworks.app.book.vo.BookVo;
 @Repository
 public class BookDao {
 
-	//¿¹¾à
+	//ì˜ˆì•½
 	public int insert(SqlSessionTemplate sst, BookVo vo) {
 
 		return sst.insert("BookMapper.insert", vo);
 	}
 
-	//ÀüÃ¼ Á¶È¸
+	//ëª©ë¡ ì¡°íšŒ
 	public List<BookVo> list(SqlSessionTemplate sst) {
 
 		return sst.selectList("BookMapper.list");
 	}
 
-	//»ó¼¼ Á¶È¸
+	//ìƒì„¸ ì¡°íšŒ
 	public BookVo detail(SqlSessionTemplate sst, BookVo vo) {
 
 		return sst.selectOne("BookMapper.detail", vo);
 	}
 
-	//º¯°æ
+	//ìˆ˜ì •
 	public int edit(SqlSessionTemplate sst, BookVo vo) {
 
 		return sst.update("BookMapper.edit", vo);
 	}
 
+	//ì‚­ì œ
 	public int delete(SqlSessionTemplate sst, BookVo vo) {
 
 		return sst.update("BookMapper.delete", vo);
