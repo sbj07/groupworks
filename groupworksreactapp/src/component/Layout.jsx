@@ -2,6 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 import Main from './Main';
 import Sidebar from './sidebar/Sidebar';
+import Login from './login/Login';
 
 const StyledLayoutDiv = styled.div`
     width: 100vw;
@@ -13,12 +14,21 @@ const StyledLayoutDiv = styled.div`
     place-items: center center;
 `;
 
+const loginMemberNo = sessionStorage.getItem("loginMemberNo");
 const Layout = () => {
     return (
-        <StyledLayoutDiv>
-            <Sidebar />
-            <Main />
-        </StyledLayoutDiv>
+        <>
+        {
+            loginMemberNo === null
+            ?
+            <Login />
+            :
+            <StyledLayoutDiv>
+                <Sidebar />
+                <Main />
+                </StyledLayoutDiv>
+        }
+        </>
     );
 };
 

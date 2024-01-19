@@ -21,14 +21,6 @@ const StyledSideDiv = styled.div`
     }
 `;
 
-const StyledMenuDiv = styled.div`
-    width: 80%;
-    display: flex;
-    flex-direction: column;
-    font-size: 2rem;
-    color: white;
-`;
-
 const StyledLogoutDiv = styled.div`
     position: absolute;
     bottom: 15px;
