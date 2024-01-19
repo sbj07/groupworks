@@ -37,7 +37,6 @@ public class TodoController {
 		if(todoList == null) {
 			map.put("msg", "bad");
 		}
-		System.out.println(todoList);
 		return map;
 	}
 	
@@ -51,7 +50,6 @@ public class TodoController {
 		if(result != 1) {
 			map.put("msg", "bad");
 		}
-		System.out.println(result);
 		return map;
 	}
 	
@@ -76,7 +74,6 @@ public class TodoController {
 		if(result != 1) {
 			map.put("msg", "bad");
 		}
-		System.out.println(vo);
 		return map;
 	}
 }

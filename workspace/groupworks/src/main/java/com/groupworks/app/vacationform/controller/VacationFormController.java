@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.groupworks.app.member.vo.MemberVo;
 import com.groupworks.app.vacationform.service.VacationFormService;
 import com.groupworks.app.vacationform.vo.VacationFormVo;
 
@@ -23,6 +24,19 @@ import lombok.RequiredArgsConstructor;
 public class VacationFormController {
 
 	private final VacationFormService service;
+	
+	//같은회사사람들 리스트 조회
+	@GetMapping("member")
+	public Map<String, Object> memberList(String companyNo) {
+		List<MemberVo> memberList = service.memberList(companyNo);
+		Map<String, Object> map = new HashMap<>();
+		map.put("msg", "good");
+		map.put("memberList", memberList);
+		if(memberList == null) {
+			map.put("msg", "bad");
+		}
+		return map;
+	}
 	
 	//휴가신청서 조회
 	@GetMapping("list")
