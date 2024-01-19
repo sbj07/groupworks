@@ -12,13 +12,14 @@ const StyledNoticeListDiv = styled.div`
     align-items: center;
     flex-direction: column;
     & > table {
-        width: 80%;
-        height: 80%;
+        width: 100%;
+        height: 100%;
+        display: center;
         border: 3px solid black;
     }
     & > button {
         width: 30%;
-        font-size: 2rem;
+        /* font-size: 2rem; */
     }
 `;
 
@@ -42,10 +43,12 @@ const StyledNoticeListDiv = styled.div`
 //     }
 // };
 
-const NoticeList = () => {
-
+const NoticeList = ({ showTopFive, showWriteButton }) => {
     const navigate = useNavigate();
     const [selectedNotice, setSelectedNotice] = useState(null);
+    const [noticeVoList, setNoticeVoList] = useState([]);
+    const [currentPage, setCurrentPage] = useState(1);
+    const itemsPerPage = 10; // 페이지당 항목 수
 
     const handleNoticeClick = (notice) => {
         setSelectedNotice(notice);
@@ -61,24 +64,35 @@ const NoticeList = () => {
     //         setSelectedNotice(updatedNotice);
     //     }
     // };
+    const handlePreviousPage = () => {
+        if (currentPage > 1) {
+            setCurrentPage(currentPage - 1);
+        }
+    };
 
+    const handleNextPage = () => {
+        // 최대 페이지 수 확인 로직을 추가할 수 있습니다.
+        setCurrentPage(currentPage + 1);
+    };
 
     const handleCloseModal = () => {
         setSelectedNotice(null);
     };
 
 
-    const handleFileEdit = (noticeNo) => {
+    // const handleFileEdit = (noticeNo) => {
         
-    }
+    // }
 
-    const [noticeVoList, setNoticeVoList] = useState([]);
     const loadNoticeVoList = () => {
-        fetch("http://127.0.0.1:8888/app/notice/list")
+        // fetch("http://127.0.0.1:8888/app/notice/list")
+        fetch(`http://127.0.0.1:8888/app/notice/list?page=${currentPage}&size=${itemsPerPage}`)
         .then( resp => resp.json() )
         .then(data => {
+            console.log("가장 최근에 저장된 공지사항 데이터 : ", data);
             if (data.voList && Array.isArray(data.voList)) {
-                setNoticeVoList(data.voList);
+                const listToShow = showTopFive ? data.voList.slice(0, 5) : data.voList;
+                setNoticeVoList(listToShow);
             } else {
                 console.error('Data is not an array:', data);
                 setNoticeVoList([]); // 데이터가 배열이 아닌 경우 빈 배열로 설정
@@ -92,11 +106,23 @@ const NoticeList = () => {
     useEffect( () => {
         console.log("useEffect 호출");
         loadNoticeVoList();
-    }, [] );
+    }, [showTopFive, currentPage] );
+
+
+    const renderPagination = () => {
+        // 간단한 페이징 컴포넌트. 실제 구현에는 더 복잡한 로직이 필요할 수 있음
+        return (
+            <div>
+                <button onClick={handlePreviousPage} disabled={currentPage === 1}>이전</button>
+                <span>{currentPage}</span>
+                <button onClick={handleNextPage}>다음</button>
+            </div>
+        );
+    };
 
     return (
         <StyledNoticeListDiv>
-            <h1>공지사항</h1><button onClick={() => navigate("/notice/insert")}>공지사항 작성하기</button>
+            <h1>공지사항</h1>{showWriteButton && <button onClick={() => navigate("/notice/insert")}>공지사항 작성하기</button>}
             <table>
                 <thead>
                     <tr>
@@ -123,7 +149,8 @@ const NoticeList = () => {
                             <td>{notice.memberNo}</td>
                             <td>{notice.title}</td>
                             <td>{notice.clickNo}</td>
-                            <td>{notice.filePath}</td><button onClick={() => handleFileEdit(notice.noticeNo)}>첨부파일</button>
+                            <td>{notice.filePath}</td>
+                            {/* <button onClick={() => handleFileEdit(notice.noticeNo)}>첨부파일</button> */}
                             <td>{notice.category}</td>
                             <td>{notice.emergencyYn}</td>
                             <td>{notice.openDepart}</td>
@@ -138,6 +165,8 @@ const NoticeList = () => {
                 navigate("notice/write")
             } }>공지사항 작성</button> */}
             <NoticeModal notice={selectedNotice} onClose={handleCloseModal} />
+            
+            {renderPagination()}
         </StyledNoticeListDiv>
     );
 };

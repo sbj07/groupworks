@@ -124,7 +124,26 @@
 		WHERE NOTICE_NO = #{noticeNo}
 	</update>
 	
+<!-- 	전체 공지사항 수 조회 -->
+	<select id="getListCount" resultType="int">
+    	SELECT COUNT(*) FROM NOTICE
+	</select>
 	
+<!-- 	<select id="listPaged" resultType="com.groupworks.app.notice.vo.NoticeVo" parameterType="com.groupworks.app.page.vo.PageVo"> -->
+<!-- 	    SELECT * -->
+<!-- 	    FROM NOTICE -->
+<!-- 	    ORDER BY NOTICE_NO DESC -->
+<!-- 	    OFFSET #{startRow} ROWS FETCH NEXT #{boardLimit} ROWS ONLY -->
+<!-- 	</select> -->
+<select id="listPaged" resultType="com.groupworks.app.notice.vo.NoticeVo" parameterType="com.groupworks.app.page.vo.PageVo">
+    SELECT *
+    FROM (
+        SELECT ROW_NUMBER() OVER (ORDER BY NOTICE_NO DESC) AS rnum, N.*
+        FROM NOTICE N
+    ) WHERE rnum BETWEEN #{startRow} AND #{lastRow}
+</select>
+
+
 </mapper>
 
 

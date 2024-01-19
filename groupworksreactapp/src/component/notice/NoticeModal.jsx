@@ -32,7 +32,8 @@ const StyledModalHeader = styled.h2`
     margin-top: 0;
 `;
 
-const NoticeModal = ({ notice, onClose }) => {
+const NoticeModal = ({ notice, onClose, onEdit }) => {
+    
     if (!notice) return null;
 
     return (
@@ -50,6 +51,7 @@ const NoticeModal = ({ notice, onClose }) => {
                     <p><strong>작성일자:</strong> {notice.enrollDate}</p>
                 </StyledModalContent>
                 <button onClick={onClose}>닫기</button>
+                <button onClick={onEdit}>수정</button>
             </StyledModal>
         </>
     );

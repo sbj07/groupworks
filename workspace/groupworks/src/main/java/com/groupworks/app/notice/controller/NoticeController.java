@@ -12,12 +12,14 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.groupworks.app.notice.service.NoticeService;
 import com.groupworks.app.notice.vo.NoticeVo;
+import com.groupworks.app.page.vo.PageVo;
 
 import lombok.RequiredArgsConstructor;
 
@@ -33,21 +35,39 @@ public class NoticeController {
 	@PostMapping("insert")
 	public Map<String, String> insert(NoticeVo vo, MultipartFile f) throws Exception{
 		
-		System.out.println("vo : " + vo);
-		System.out.println("f : " + f.getOriginalFilename());
+//		System.out.println("vo : " + vo);
+//	    if (f != null && !f.isEmpty()) {
+//	        System.out.println("f : " + f.getOriginalFilename());
+//	        String filePath = saveFile(f);
+//	        vo.setFilePath(filePath);
+//	    }
 		
-		String filePath = saveFile(f);
-		vo.setFilePath(filePath);
 		
-		int result = service.insert(vo);
-		
-		Map<String, String> map = new HashMap<String, String>();
-		map.put("msg", "good");
-		
-		if(result != 1) {
-			map.put("msg", "bad");
-		}
-		return map;
+//		String filePath = saveFile(f);
+//		vo.setFilePath(filePath);
+//		
+//		int result = service.insert(vo);
+//		
+//		Map<String, String> map = new HashMap<String, String>();
+//		map.put("msg", "good");
+//		
+//		if(result != 1) {
+//			map.put("msg", "bad");
+//		}
+//		return map;
+	    System.out.println("vo : " + vo);
+	    if (f != null && !f.isEmpty()) {
+	        String filePath = saveFile(f);
+	        if (filePath != null) { // 파일 경로가 null이 아닌 경우에만 설정
+	            vo.setFilePath(filePath);
+	        }
+	    }
+	    int result = service.insert(vo);
+	    
+	    Map<String, String> map = new HashMap<>();
+	    map.put("msg", result == 1 ? "good" : "bad");
+	    return map;
+
 	}//insert
 	
 	/**
@@ -59,6 +79,9 @@ public class NoticeController {
 	 * @throws  
 	 */
 	private String saveFile(MultipartFile f) throws Exception {
+	    if (f == null || f.isEmpty()) {
+	        return null; // 파일이 없으면 null을 반환
+	    }
 		String path = "C:\\dev\\finalPrj\\workspace\\groupworks\\src\\main\\webapp\\resources\\upload\\notice\\img";
 		String originName = f.getOriginalFilename();
 	
@@ -69,7 +92,7 @@ public class NoticeController {
 	}
 
 
-//	//전체 목록 조회(번호)(렌더링)?
+//	//전체 목록 조회(번호)(렌더링)?  지섭 로그인멤버코드
 //	@GetMapping("list")
 //	public Map<String, Object> list(String loginMember) {
 //		System.out.println("listeeee");
@@ -86,20 +109,32 @@ public class NoticeController {
 	
 	
 	//전체 목록 조회(번호)(렌더링)?
-	@GetMapping("list")
-	public Map<String, Object> list() {
-//		System.out.println("listeeee");
-		
-		List<NoticeVo> voList = service.list();
-//		System.out.println(voList);
-		
-		Map<String, Object> map = new HashMap<>();
-		map.put("msg", "good");
-		map.put("voList", voList);
-//		System.out.println("voList : " + voList);
-		return map;
-	}//렌더링
+//	@GetMapping("list")
+//	public Map<String, Object> list() {
+//		
+//		List<NoticeVo> voList = service.list();
+//		
+//		Map<String, Object> map = new HashMap<>();
+//		map.put("msg", "good");
+//		map.put("voList", voList);
+//		return map;
+//	}//렌더링
 	
+	
+	@GetMapping("list")	//페이징처리 gpt
+	public Map<String, Object> list(@RequestParam(value = "page", defaultValue = "1") int currentPage, 
+	                                @RequestParam(value = "limit", defaultValue = "10") int boardLimit) {
+	    int listCount = service.getListCount(); // 전체 공지사항 수를 가져옵니다.
+	    PageVo pageVo = new PageVo(listCount, currentPage, 10, boardLimit); // 페이지 정보 생성
+
+	    List<NoticeVo> voList = service.listPaged(pageVo); // 페이징 처리된 목록 조회
+
+	    Map<String, Object> map = new HashMap<>();
+	    map.put("msg", "good");
+	    map.put("voList", voList);
+	    map.put("pageInfo", pageVo); // 페이지 정보도 같이 반환
+	    return map;
+	}
 	
 	
 //	//전체 목록 조회(번호)(데이터)

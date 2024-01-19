@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 
 import com.groupworks.app.notice.dao.NoticeDao;
 import com.groupworks.app.notice.vo.NoticeVo;
+import com.groupworks.app.page.vo.PageVo;
 
 import lombok.RequiredArgsConstructor;
 
@@ -20,14 +21,26 @@ public class NoticeService {
 	//작성	
 	public int insert(NoticeVo vo) {
 		
-		String str = vo.getFilePath().replace("C:\\dev\\finalPrj\\workspace\\groupworks\\src\\main\\webapp", "http://127.0.0.1:8888/app");
-		vo.setFilePath(str);
+//		String str = vo.getFilePath().replace("C:\\dev\\finalPrj\\workspace\\groupworks\\src\\main\\webapp", "http://127.0.0.1:8888/app");
+//		vo.setFilePath(str);
+//		
+//		if(vo.getTitle().length() < 1) {
+//			throw new IllegalStateException();
+//		}
+//		
+//		return dao.insert(sst, vo);
 		
-		if(vo.getTitle().length() < 1) {
-			throw new IllegalStateException();
-		}
 		
-		return dao.insert(sst, vo);
+	    if (vo.getFilePath() != null) {
+	        String str = vo.getFilePath().replace("C:\\dev\\finalPrj\\workspace\\groupworks\\src\\main\\webapp", "http://127.0.0.1:8888/app");
+	        vo.setFilePath(str);
+	    }
+	    
+	    if (vo.getTitle().length() < 1) {
+	        throw new IllegalStateException();
+	    }
+	    
+	    return dao.insert(sst, vo);
 	}
 
 	//목록 조회
@@ -41,10 +54,22 @@ public class NoticeService {
 //		return dao.list(sst, loginMember);
 //	}
 	
+	//전체 목록 조회(기존)
 	public List<NoticeVo> list() {
 
 		return dao.list(sst);
 	}
+	
+	//페이징 처리
+	public List<NoticeVo> listPaged(PageVo pageVo) {
+	    return dao.listPaged(sst, pageVo);
+	}
+	//전체 갯수 조회
+	public int getListCount() {
+	    return dao.getListCount(sst);
+	}
+
+	
 
 	//상세조회 + 조회수 증가
 	public NoticeVo detail(NoticeVo vo) {
