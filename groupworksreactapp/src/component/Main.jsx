@@ -4,6 +4,7 @@ import { Route, Routes } from 'react-router-dom';
 import Home from './Home';
 import NoticeMain from './notice/NoticeMain';
 import OrganMain from './organ/OrganMain';
+import DocumentMain from './document/DocumentMain';
 
 const StyledMainDiv = styled.div`
     width: 100%;
@@ -12,6 +13,7 @@ const StyledMainDiv = styled.div`
     grid-template-columns: 6fr 4fr; 
     grid-template-rows: 1fr 1fr;
     place-items: center center;
+    grid-gap: 1%;
 `;
 
 const Main = () => {
@@ -20,7 +22,7 @@ const Main = () => {
             <Routes>
                 <Route path='/' element={<Home />}></Route>
                 <Route path='/notice/*' element={<NoticeMain />}></Route>
-                {/* <Route path='/document/*' element={<DocumentMain />}></Route> */}
+                <Route path='/document/*' element={<DocumentMain />}></Route>
                 <Route path='/organ/*' element={<OrganMain />}></Route>
             </Routes>
         </StyledMainDiv>

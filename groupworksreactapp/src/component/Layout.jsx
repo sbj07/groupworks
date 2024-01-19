@@ -2,18 +2,24 @@ import React, { useEffect } from 'react';
 import styled from 'styled-components';
 import Main from './Main';
 import Sidebar from './sidebar/Sidebar';
-import { Link, useNavigate } from 'react-router-dom';
-import Login from './authentication/login/Login';
-import Home from './Home';
+import { useNavigate } from 'react-router-dom';
 
 const StyledLayoutDiv = styled.div`
     width: 100vw;
-    height: 100vh;
+    height: 100%;
     background-color: white;
     display: grid;
-    grid-template-columns: 1.5fr 8.5fr;
+    grid-template-columns: 1fr 8fr;
     grid-template-rows: 1fr;
     place-items: center center;
+    grid-gap: 2vw;
+    a{
+        color:inherit;
+        text-decoration: none;
+        &:hover{
+            color: gray;
+        }
+    }
 `;
 
 const Layout = () => {

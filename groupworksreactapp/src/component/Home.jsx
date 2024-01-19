@@ -1,12 +1,14 @@
 import React from 'react';
 import TodoList from './todo/TodoList';
 import NoticeList from './notice/NoticeList';
+import Calendar from './calendar/Calendar';
+import AttandanceMain from './attandance/AttandanceMain';
 
 const Home = () => {
     return (
         <>
-            <div>1</div>
-            <div>2</div>
+            <Calendar />
+            <AttandanceMain />
             <NoticeList showTopFive={true} showWriteButton={false} />
             <TodoList />
         </>
