@@ -50,10 +50,10 @@
  	<!-- 할일삭제 -->
  	<update id="delete">
  		UPDATE TODO 
-		   	SET DEL_YN = 'Y'
-		   	, DELETE_DATE = SYSDATE 
-	   WHERE NO = {no}
- 	   AND MEMBER_NO = {memberNo} 
+		    SET DEL_YN = 'Y'
+		    , DELETE_DATE = SYSDATE 
+	    WHERE NO = #{no}
+	    AND MEMBER_NO = #{memberNo}  
  	</update>
  
 </mapper>
