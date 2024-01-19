@@ -6,6 +6,7 @@ import org.mybatis.spring.SqlSessionTemplate;
 import org.springframework.stereotype.Repository;
 
 import com.groupworks.app.notice.vo.NoticeVo;
+import com.groupworks.app.page.vo.PageVo;
 
 @Repository
 public class NoticeDao {
@@ -27,10 +28,19 @@ public class NoticeDao {
 //		return sst.selectList("NoticeMapper.list", loginMember);
 //	}
 
-	
+	//목록 조회
 	public List<NoticeVo> list(SqlSessionTemplate sst) {
 
 		return sst.selectList("NoticeMapper.list");
+	}
+	
+	//목록 조회 페이징 기능
+	public List<NoticeVo> listPaged(SqlSessionTemplate sst, PageVo pageVo) {
+	    return sst.selectList("NoticeMapper.listPaged", pageVo);
+	}
+	//전체 수 조회
+	public int getListCount(SqlSessionTemplate sst) {
+	    return sst.selectOne("NoticeMapper.getListCount");
 	}
 
 	//상세 조회

@@ -12,7 +12,7 @@ const NoticeMain = () => {
     return (
         <Routes>
             <Route path='insert' element={<NoticeWrite/>}/>
-            <Route path='list' element={<NoticeList/>}/>
+            <Route path='list' element={<NoticeList showTopFive={false} showWriteButton={true} />} /> {/* 또는 여기에 추가 */}
             <Route path='detail' element={<NoticeDetail/>}/>
             <Route path='edit' element={<NoticeEdit/>}/>
             <Route path='delete' element={<NoticeDelete/>}/>

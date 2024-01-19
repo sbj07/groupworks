@@ -7,7 +7,7 @@ const Home = () => {
         <>
             <div>1</div>
             <div>2</div>
-            <NoticeList />
+            <NoticeList showTopFive={true} showWriteButton={false} />
             <TodoList />
         </>
     );

@@ -85,7 +85,12 @@ const NoticeWrite = () => {
         const formData = new FormData();
         formData.append('title', noticeData.title);
         formData.append('content', noticeData.content);
-        formData.append('file', noticeData.file);
+        formData.append('memberNo', noticeData.memberNo);
+        formData.append('category', noticeData.category);
+        formData.append('openDepart', noticeData.openDepart);
+        if (noticeData.file) {
+            formData.append('file', noticeData.file);
+        }
 
         try {
             const response = await fetch('http://127.0.0.1:8888/app/notice/insert', {
@@ -127,8 +132,9 @@ const NoticeWrite = () => {
             </Label>
             <Label>
                 작성자:
-                <TextArea
-                    name="text"
+                <input
+                    type="text"
+                    name="memberNo"
                     value={noticeData.memberNo}
                     onChange={handleInputChange}
                 />
@@ -154,10 +160,9 @@ const NoticeWrite = () => {
             <Label>
                 파일첨부:
                 <Input
-                    type="text"
+                    type="file"
                     name="file"
-                    value={noticeData.filePath}
-                    onChange={handleInputChange}
+                    onChange={handleFileChange}
                 />
             </Label>
             {/* 기타 필드 */}
