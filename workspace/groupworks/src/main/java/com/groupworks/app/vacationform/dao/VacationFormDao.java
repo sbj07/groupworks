@@ -3,6 +3,8 @@ package com.groupworks.app.vacationform.dao;
 import java.util.List;
 import org.mybatis.spring.SqlSessionTemplate;
 import org.springframework.stereotype.Repository;
+
+import com.groupworks.app.member.vo.MemberVo;
 import com.groupworks.app.vacationform.vo.VacationFormVo;
 
 @Repository
@@ -41,5 +43,9 @@ public class VacationFormDao {
 	//�ް���û�� ����
 	public int delete(SqlSessionTemplate sst, String no) {
 		return sst.update("VacationFormMapper.delete", no);
+	}
+
+	public List<MemberVo> memberList(SqlSessionTemplate sst, String companyNo) {
+		return sst.selectList("VacationFormMapeer.member", companyNo);
 	}
 }

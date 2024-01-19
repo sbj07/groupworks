@@ -5,6 +5,7 @@ import java.util.List;
 import org.mybatis.spring.SqlSessionTemplate;
 import org.springframework.stereotype.Service;
 
+import com.groupworks.app.member.vo.MemberVo;
 import com.groupworks.app.vacationform.dao.VacationFormDao;
 import com.groupworks.app.vacationform.vo.VacationFormVo;
 
@@ -51,6 +52,10 @@ public class VacationFormService {
 	//�ް���û�� ����
 	public int delete(String no) {
 		return dao.delete(sst, no);
+	}
+
+	public List<MemberVo> memberList(String companyNo) {
+		return dao.memberList(sst, companyNo);
 	}
 	
 }

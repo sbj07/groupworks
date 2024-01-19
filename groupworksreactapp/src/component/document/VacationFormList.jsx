@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
-
 
 const StyledVacationFormListDiv = styled.div`
     width: 100%;
@@ -12,13 +12,20 @@ const StyledVacationFormListDiv = styled.div`
     & > table {
         width: 80%;
         height: 80%;
-        border: 3px solid black;
+        border: 3px solid #282c34;
+        text-align: center;
+        border-collapse: collapse;
   }
 `;
 
 const VacationFormList = () => {
     const[formList, SetFormList] = useState([]);
     const writerNo = 3;
+    const navigate = useNavigate();
+    
+    const handleClick = () => {
+        navigate('/document/write');
+    };
 
     useEffect( () => {
         fetch(`http://127.0.0.1:8888/app/api/vacation-form/list?writerNo=${writerNo}`)
@@ -59,6 +66,7 @@ const VacationFormList = () => {
                     }
                 </tbody>
             </table>
+            <button onClick={handleClick}>휴가신청서 등록</button>
         </StyledVacationFormListDiv>
     );
 };

@@ -27,7 +27,7 @@ const DocumentList = () => {
             {formType === 'vacationForm' && <VacationFormList />}
             {formType === 'businessForm' && <BusinessFormList />}
        </StyledDocumentListDiv>
-    );
+    );  
 };
 
 export default DocumentList;
