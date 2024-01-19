@@ -1,4 +1,5 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router';
 import styled from 'styled-components';
 
 const StyledModal = styled.div`
@@ -32,14 +33,54 @@ const StyledModalHeader = styled.h2`
     margin-top: 0;
 `;
 
-const NoticeModal = ({ notice, onClose, onEdit }) => {
-    
+const NoticeModal = ({ notice, onClose, onSave }) => {
+    const [isEditing, setIsEditing] = useState(false);
+    const [editedNotice, setEditedNotice] = useState(notice);
+
+    useEffect(() => {
+        setEditedNotice(notice);
+    }, [notice]);
+
+    const navigate = useNavigate();
+
+    const handleChange = (e) => {
+        setEditedNotice({ ...editedNotice, [e.target.name]: e.target.value });
+    };
+
+    // const handleEdit = () => {
+    //     setIsEditing(true);
+    // };
+
+        const handleEdit = () => {
+        // NoticeEdit 컴포넌트로 이동
+        navigate("/notice/edit", { state: { notice: notice } });
+    };
+
+    const handleSave = () => {
+        onSave(editedNotice);
+        setIsEditing(false);
+    };
+
+    const handleCancel = () => {
+        setIsEditing(false);
+        setEditedNotice(notice); // 원래 데이터로 초기화
+    };
     if (!notice) return null;
 
     return (
         <>
             <Overlay onClick={onClose} />
             <StyledModal>
+            {isEditing ? (
+            <>
+                        <input type="text" name="title" value={editedNotice.title} onChange={handleChange} />
+                        <textarea name="content" value={editedNotice.content} onChange={handleChange} />
+                        {/* 기타 필요한 입력 필드 추가 */}
+                        <button onClick={handleSave}>저장</button>
+                        <button onClick={handleCancel}>취소</button>
+                    </>
+                ) : (
+                    <>
                 <StyledModalHeader>{notice.title}</StyledModalHeader>
                 <StyledModalContent>
                     <p><strong>내용:</strong> {notice.content}</p>
@@ -51,7 +92,9 @@ const NoticeModal = ({ notice, onClose, onEdit }) => {
                     <p><strong>작성일자:</strong> {notice.enrollDate}</p>
                 </StyledModalContent>
                 <button onClick={onClose}>닫기</button>
-                <button onClick={onEdit}>수정</button>
+                <button onClick={handleEdit}>수정</button>
+                </>
+                )}
             </StyledModal>
         </>
     );

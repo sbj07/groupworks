@@ -50,6 +50,10 @@ const NoticeList = ({ showTopFive, showWriteButton }) => {
     const [currentPage, setCurrentPage] = useState(1);
     const itemsPerPage = 10; // 페이지당 항목 수
 
+    // useEffect(() => {
+    //     // 공지사항 데이터 로드 로직
+    // }, [currentPage]);
+
     const handleNoticeClick = (notice) => {
         setSelectedNotice(notice);
     };
@@ -71,14 +75,51 @@ const NoticeList = ({ showTopFive, showWriteButton }) => {
     };
 
     const handleNextPage = () => {
-        // 최대 페이지 수 확인 로직을 추가할 수 있습니다.
-        setCurrentPage(currentPage + 1);
+        
+        const totalItems = 100; 
+        const maxPage = Math.ceil(totalItems / itemsPerPage);
+    
+        // 현재 페이지가 최대 페이지보다 작을 경우에만 페이지 번호를 증가시킵니다.
+        if (currentPage < maxPage) {
+            setCurrentPage(currentPage + 1);
+        }
     };
 
     const handleCloseModal = () => {
         setSelectedNotice(null);
     };
+    
+    // const handleEdit = (notice) => {
+    //     // NoticeEdit 컴포넌트로 이동
+    //     navigate("/notice/edit", { state: { notice: notice } });
+    // };
 
+    const handleSave = (editedNotice) => {
+        // API 호출 URL 설정
+        const apiUrl = `http://127.0.0.1:8888/app/notice/edit`;
+        fetch(apiUrl, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(editedNotice),
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('서버 오류 발생');
+            }
+            return response.json();
+        })
+        .then(data => {
+            console.log('수정 성공:', data);
+            alert("공지사항 수정 성공");
+        })
+        .catch(error => {
+            console.error('수정 실패:', error);
+            alert("공지사항 수정 실패");
+        });
+    };
+    
 
     // const handleFileEdit = (noticeNo) => {
         
@@ -89,7 +130,7 @@ const NoticeList = ({ showTopFive, showWriteButton }) => {
         fetch(`http://127.0.0.1:8888/app/notice/list?page=${currentPage}&size=${itemsPerPage}`)
         .then( resp => resp.json() )
         .then(data => {
-            console.log("가장 최근에 저장된 공지사항 데이터 : ", data);
+            // console.log("가장 최근에 저장된 공지사항 데이터 : ", data);
             if (data.voList && Array.isArray(data.voList)) {
                 const listToShow = showTopFive ? data.voList.slice(0, 5) : data.voList;
                 setNoticeVoList(listToShow);
@@ -104,7 +145,7 @@ const NoticeList = ({ showTopFive, showWriteButton }) => {
         });
     };
     useEffect( () => {
-        console.log("useEffect 호출");
+        // console.log("useEffect 호출");
         loadNoticeVoList();
     }, [showTopFive, currentPage] );
 
@@ -155,6 +196,7 @@ const NoticeList = ({ showTopFive, showWriteButton }) => {
                             <td>{notice.emergencyYn}</td>
                             <td>{notice.openDepart}</td>
                             <td>{notice.enrollDate}</td>
+                            {/* <button onClick={() => handleEdit(notice)}>수정</button> */}
                         </tr>
                             ))
                     }
@@ -164,7 +206,13 @@ const NoticeList = ({ showTopFive, showWriteButton }) => {
             {/* <button onClick = { () => {
                 navigate("notice/write")
             } }>공지사항 작성</button> */}
-            <NoticeModal notice={selectedNotice} onClose={handleCloseModal} />
+            {selectedNotice && (
+                <NoticeModal 
+                    notice={selectedNotice} 
+                    onClose={handleCloseModal} 
+                    onSave={handleSave}
+                />
+                )}
             
             {renderPagination()}
         </StyledNoticeListDiv>
