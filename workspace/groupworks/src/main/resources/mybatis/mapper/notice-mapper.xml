@@ -51,6 +51,7 @@
 			, N.MEMBER_NO
             , M.NAME
 			, N.TITLE
+			, N.CONTENT
 			, N.CLICK_NO
 			, N.FILE_PATH
 			, N.CATEGORY

@@ -17,41 +17,41 @@ public class BookService {
 	private final BookDao dao;
 	private final SqlSessionTemplate sst;
 	
-	//¿¹¾à
+	//ì˜ˆì•½
 	public int insert(BookVo vo) {
 		
 		return dao.insert(sst, vo);
 	}
 
-	//ÀüÃ¼ Á¶È¸
+	//ëª©ë¡ ì¡°íšŒ
 	public List<BookVo> list() {
 
 		return dao.list(sst);
 	}
 
-	//»ó¼¼ Á¶È¸
+	//ìƒì„¸ ì¡°íšŒ
 	public BookVo detail(BookVo vo) {
 
 		return dao.detail(sst, vo);
 	}
 
-	//º¯°æ
+	//ìˆ˜ì •
 	public int edit(BookVo vo) {
 		
 		if(vo == null) {
-			throw new IllegalStateException("vo°¡ ¾ø¾î¼­ ¾÷µ¥ÀÌÆ® ºÒ°¡´É");
+			throw new IllegalStateException("voê°€ ì—†ì–´ì„œ ì—…ë°ì´íŠ¸ ë¶ˆê°€ëŠ¥");
 		}
 		
 		return dao.edit(sst, vo);
 	
 	}
-
+	
+	//ì‚­ì œ
 	public int delete(BookVo vo) {
 
 		return dao.delete(sst, vo);
 	}
 	
-	//¼­ºñ½º
 
 }//class
 

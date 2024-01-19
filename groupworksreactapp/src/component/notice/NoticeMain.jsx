@@ -11,7 +11,7 @@ import NoticeWrite from './NoticeWrite';
 const NoticeMain = () => {
     return (
         <Routes>
-            <Route path='write' element={<NoticeWrite/>}/>
+            <Route path='insert' element={<NoticeWrite/>}/>
             <Route path='list' element={<NoticeList/>}/>
             <Route path='detail' element={<NoticeDetail/>}/>
             <Route path='edit' element={<NoticeEdit/>}/>

@@ -24,21 +24,21 @@ public class BookController {
 	
 	private final BookService service;
 	
-	//¿¹¾à
+	//ì˜ˆì•½
 	@PostMapping("insert")
 	public String insert(BookVo vo) throws Exception{
 		System.out.println(vo);
 		int result = service.insert(vo);
 		
 		if(result != 1) {
-			System.out.println("¿¹¾à ½ÇÆĞ");
+			System.out.println("ì˜ˆì•½ ì‹¤íŒ¨");
 			throw new Exception();
 		}
 		return "redirect:/book/list";
 	}
 	
 	
-	//ÀüÃ¼Á¶È¸(·»´õ¸µ)
+	//ì˜ˆì•½ ëª©ë¡ ì¡°íšŒ(ë²ˆí˜¸)(ë Œë”ë§)
 	@GetMapping("list")
 	public Map<String, Object> list(Model model) {
 		
@@ -51,17 +51,17 @@ public class BookController {
 		return map;
 	}
 	
-//	//ÀüÃ¼ ¸ñ·Ï Á¶È¸(¹øÈ£)(µ¥ÀÌÅÍ)
+//	//ì˜ˆì•½ ëª©ë¡ ì¡°íšŒ(ë²ˆí˜¸)(ë°ì´í„°)
 //	@GetMapping("rest/list")
 //	@ResponseBody
 //	public List<NoticeVo> restList(){
 //		List<NoticeVo> voList = service.list();
 //		
 //		return voList;
-//	}//µ¥ÀÌÅÍ
+//	}
 	
 	
-	//»ó¼¼Á¶È¸
+	//ìƒì„¸ì¡°íšŒ
 	@GetMapping("detail")
 	public String detail(BookVo vo, Model model) {
 		
@@ -73,13 +73,13 @@ public class BookController {
 		return "redirect:/book/list";
 	}
 	
-	//º¯°æ
+	//ìˆ˜ì •
 	@PostMapping("edit")
 	public String edit(BookVo vo) throws Exception {
 		int result = service.edit(vo);
 		
 		if(result != 1) {
-			System.out.println("¿¹¾à º¯°æ ½ÇÆĞ");
+			System.out.println("ì˜ˆì•½ ìˆ˜ì • ì‹¤íŒ¨");
 			throw new Exception();
 		}
 		
@@ -87,7 +87,7 @@ public class BookController {
 	}
 	
 	
-	//»èÁ¦
+	//ì‚­ì œ
 	@PostMapping("delete")
 	public String delete(BookVo vo) throws Exception{
 		
