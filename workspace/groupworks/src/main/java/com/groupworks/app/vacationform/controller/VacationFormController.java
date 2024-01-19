@@ -26,8 +26,8 @@ public class VacationFormController {
 	
 	//휴가신청서 조회
 	@GetMapping("list")
-	public Map<String, Object> list() {
-		List<VacationFormVo> vacationVoList = service.list();
+	public Map<String, Object> list(String writerNo) {
+		List<VacationFormVo> vacationVoList = service.list(writerNo);
 		Map<String, Object> map = new HashMap<>();
 		map.put("msg", "good");
 		map.put("vacationVoList", vacationVoList);
