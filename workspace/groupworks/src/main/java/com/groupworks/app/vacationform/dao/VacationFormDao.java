@@ -8,37 +8,37 @@ import com.groupworks.app.vacationform.vo.VacationFormVo;
 @Repository
 public class VacationFormDao {
 
-	//ÈÞ°¡½ÅÃ»¼­ ÀüÃ¼Á¶È¸
-	public List<VacationFormVo> list(SqlSessionTemplate sst) {
-		return sst.selectList("VacationFormMapper.list");
+	//ï¿½Þ°ï¿½ï¿½ï¿½Ã»ï¿½ï¿½ ï¿½ï¿½Ã¼ï¿½ï¿½È¸
+	public List<VacationFormVo> list(SqlSessionTemplate sst, String writerNo) {
+		return sst.selectList("VacationFormMapper.list", writerNo);
 	}
 	
-	//°áÀç´ë±â ¸ñ·Ï Á¶È¸
+	//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½È¸
 	public List<VacationFormVo> ingApprove(SqlSessionTemplate sst) {
 		return sst.selectList("VacationFormMapper.selectIng");
 	}
 	
-	//°áÀç¿Ï·á ¸ñ·Ï Á¶È¸
+	//ï¿½ï¿½ï¿½ï¿½Ï·ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½È¸
 	public List<VacationFormVo> edApprove(SqlSessionTemplate sst) {
 		return sst.selectList("VacationFormMapper.selectEd");
 	}
 	
-	//ÈÞ°¡½ÅÃ»¼­ ÀÛ¼º
+	//ï¿½Þ°ï¿½ï¿½ï¿½Ã»ï¿½ï¿½ ï¿½Û¼ï¿½
 	public int write(SqlSessionTemplate sst, VacationFormVo vo) {
 		return sst.insert("VacationFormMapper.insert");
 	}
 	
-	//ÈÞ°¡½ÅÃ»¼­ ½ÂÀÎ
+	//ï¿½Þ°ï¿½ï¿½ï¿½Ã»ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 	public int apply(SqlSessionTemplate sst, VacationFormVo vo) {
 		return sst.update("VacationFormMapper.apply", vo);
 	}
 	
-	//ÈÞ°¡½ÅÃ»¼­ ¹Ý·Á
+	//ï¿½Þ°ï¿½ï¿½ï¿½Ã»ï¿½ï¿½ ï¿½Ý·ï¿½
 	public int rejection(SqlSessionTemplate sst, VacationFormVo vo) {
 		return sst.update("VacationFormMapper.rejection", vo);
 	}
 	
-	//ÈÞ°¡½ÅÃ»¼­ »èÁ¦
+	//ï¿½Þ°ï¿½ï¿½ï¿½Ã»ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 	public int delete(SqlSessionTemplate sst, String no) {
 		return sst.update("VacationFormMapper.delete", no);
 	}

@@ -18,37 +18,37 @@ public class VacationFormService {
 	private final SqlSessionTemplate sst;
 	
 
-	//ÈÞ°¡½ÅÃ»¼­ ÀüÃ¼Á¶È¸
-	public List<VacationFormVo> list() {
-		return dao.list(sst);
+	//ï¿½Þ°ï¿½ï¿½ï¿½Ã»ï¿½ï¿½ ï¿½ï¿½Ã¼ï¿½ï¿½È¸
+	public List<VacationFormVo> list(String writerNo) {
+		return dao.list(sst, writerNo);
 	}
 	
-	//°áÀç´ë±â ¸ñ·Ï Á¶È¸
+	//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½È¸
 	public List<VacationFormVo> ingApprove() {
 		return dao.ingApprove(sst);
 	}
 	
-	//°áÀç¿Ï·á ¸ñ·Ï Á¶È¸
+	//ï¿½ï¿½ï¿½ï¿½Ï·ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½È¸
 	public List<VacationFormVo> edApprove() {
 		return dao.edApprove(sst);
 	}
 	
-	//ÈÞ°¡½ÅÃ»¼­ ÀÛ¼º
+	//ï¿½Þ°ï¿½ï¿½ï¿½Ã»ï¿½ï¿½ ï¿½Û¼ï¿½
 	public int write(VacationFormVo vo) {
 		return dao.write(sst, vo);
 	}
 	
-	//ÈÞ°¡½ÅÃ»¼­ ½ÂÀÎ
+	//ï¿½Þ°ï¿½ï¿½ï¿½Ã»ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 	public int apply(VacationFormVo vo) {
 		return dao.apply(sst, vo);
 	}
 	
-	//ÈÞ°¡½ÅÃ»¼­ ¹Ý·Á
+	//ï¿½Þ°ï¿½ï¿½ï¿½Ã»ï¿½ï¿½ ï¿½Ý·ï¿½
 	public int rejection(VacationFormVo vo) {
 		return dao.rejection(sst, vo);
 	}
 	
-	//ÈÞ°¡½ÅÃ»¼­ »èÁ¦
+	//ï¿½Þ°ï¿½ï¿½ï¿½Ã»ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 	public int delete(String no) {
 		return dao.delete(sst, no);
 	}
