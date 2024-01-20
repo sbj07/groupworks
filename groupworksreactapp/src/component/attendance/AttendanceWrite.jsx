@@ -4,7 +4,7 @@ import styled from 'styled-components';
 const StyledSelectType = styled.div`
 
 `;
-const AttandanceWrite = () => {
+const AttendanceWrite = () => {
     return (
         <StyledSelectType>
             
@@ -12,4 +12,4 @@ const AttandanceWrite = () => {
     );
 };
 
-export default AttandanceWrite;
+export default AttendanceWrite;

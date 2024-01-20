@@ -10,8 +10,10 @@ const StyledCalendarDiv = styled.div`
   width: 100%;
 `;
 
-const Calendar = ({ refresh }) => {
+const TestCalendar = ({ refresh }) => {
   const loginMemberNo = sessionStorage.getItem("loginMemberNo");
+
+  const [eventList, setEventList] = useState([]);  // 이벤트 리스트 상태 추가
 
   const [bTripList, setBTripList] = useState([]);
   const [outsideWorkList, setOutsideWorkList] = useState([]);
@@ -20,31 +22,49 @@ const Calendar = ({ refresh }) => {
   const [selectedEvent, setSelectedEvent] = useState(null);
 
   useEffect(() => {
-    console.log("렌더중");
-    fetch(
-      `http://127.0.0.1:8888/app/api/attendance/business-trip?loginMemberNo=${loginMemberNo}`
-    )
-      .then((resp) => resp.json())
-      .then((data) => {
-        setBTripList(data.bTripList);
+    // ...
+
+    Promise.all([
+      fetch(`http://127.0.0.1:8888/app/api/attendance/business-trip?loginMemberNo=${loginMemberNo}`).then(resp => resp.json()),
+      fetch(`http://127.0.0.1:8888/app/api/attendance/outside-work?loginMemberNo=${loginMemberNo}`).then(resp => resp.json()),
+      fetch(`http://127.0.0.1:8888/app/api/attendance/vacation?loginMemberNo=${loginMemberNo}`).then(resp => resp.json()),
+    ])
+    .then(([bTripData, outsideWorkData, vacationData]) => {
+      const newEventList = [];
+
+      bTripData.bTripList.forEach((vo) => {
+        newEventList.push({
+          id: vo.no,
+          title: "출장",
+          start: vo.startDate,
+          end: vo.endDate,
+          color: "orange",
+        });
       });
 
-    fetch(
-      `http://127.0.0.1:8888/app/api/attendance/outside-work?loginMemberNo=${loginMemberNo}`
-    )
-      .then((resp) => resp.json())
-      .then((data) => {
-        setOutsideWorkList(data.outsideWorkList);
+      outsideWorkData.outsideWorkList.forEach((vo) => {
+        newEventList.push({
+          id: vo.no,
+          title: "외근",
+          start: vo.startTime,
+          end: vo.endTime,
+          color: "green",
+        });
       });
 
-    fetch(
-      `http://127.0.0.1:8888/app/api/attendance/vacation?loginMemberNo=${loginMemberNo}`
-    )
-      .then((resp) => resp.json())
-      .then((data) => {
-        setVacationList(data.vacationList);
+      vacationData.vacationList.forEach((vo) => {
+        newEventList.push({
+          id: vo.no,
+          title: "휴가",
+          start: vo.startDate,
+          end: vo.endDate,
+        });
       });
+
+      setEventList(newEventList);  // 상태 업데이트
+    });
   }, [refresh]);
+
 
   const events = () => {
     const eventList = [];
@@ -99,7 +119,7 @@ const Calendar = ({ refresh }) => {
         plugins={[dayGridPlugin]}
         aspectRatio="2.5"
         contentHeight={600}
-        events={events()}
+        events={eventList}
         eventClick={handleEventClick}
       />
 
@@ -117,4 +137,4 @@ const Calendar = ({ refresh }) => {
   );
 };
 
-export default Calendar;
+export default TestCalendar;

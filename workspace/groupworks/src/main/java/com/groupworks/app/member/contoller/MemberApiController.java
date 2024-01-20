@@ -47,7 +47,7 @@ public class MemberApiController {
         Map<String, Object> map = new HashMap<>();
         map.put("msg", "okay");
         map.put("loginMemberNo", loginMember.getNo());
-        if(loginMember == null){
+        if(loginMember == null) {
             map.put("msg", "nope");
         }
         return map;
