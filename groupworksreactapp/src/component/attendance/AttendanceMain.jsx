@@ -33,7 +33,7 @@ const StyledSelectType = styled.div`
     grid-template-columns: 1fr 1fr;
 `;
 
-const AttendanceMain = () => {
+const AttendanceMain = ( ) => {
     const [workEvent , setWorkEvent] = useState('');
 
     

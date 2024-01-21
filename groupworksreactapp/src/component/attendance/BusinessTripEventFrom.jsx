@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Button, Form } from 'react-bootstrap';
 
-const BusinessTripEventFrom = () => {
+const BusinessTripEventFrom = ( ) => {
     const loginMemberNo = sessionStorage.getItem("loginMemberNo");
 
     const [ businessTripVo , setBusinessTripVo] = useState({
@@ -33,6 +33,7 @@ const BusinessTripEventFrom = () => {
         .then( data => {
             if(data.msg === 'okay'){
                 alert("일정등록 완료");
+                window.location.reload();
             }else{
                 alert("일정등록 실패");
             }

@@ -44,7 +44,7 @@ const Calendar = ({ refresh }) => {
       .then((data) => {
         setVacationList(data.vacationList);
       });
-  }, [refresh]);
+  }, [refresh, loginMemberNo]);
 
   const events = () => {
     const eventList = [];

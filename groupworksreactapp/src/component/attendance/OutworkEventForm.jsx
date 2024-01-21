@@ -60,6 +60,7 @@ const OutworkEventForm = () => {
         .then( data => {
             if(data.msg === 'okay'){
                 alert("일정등록 완료");
+                window.location.reload();
             }else{
                 alert("일정등록 실패");
             }

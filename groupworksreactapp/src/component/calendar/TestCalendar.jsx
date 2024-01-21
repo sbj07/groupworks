@@ -15,14 +15,10 @@ const TestCalendar = ({ refresh }) => {
 
   const [eventList, setEventList] = useState([]);  // 이벤트 리스트 상태 추가
 
-  const [bTripList, setBTripList] = useState([]);
-  const [outsideWorkList, setOutsideWorkList] = useState([]);
-  const [vacationList, setVacationList] = useState([]);
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedEvent, setSelectedEvent] = useState(null);
 
   useEffect(() => {
-    // ...
 
     Promise.all([
       fetch(`http://127.0.0.1:8888/app/api/attendance/business-trip?loginMemberNo=${loginMemberNo}`).then(resp => resp.json()),
@@ -35,7 +31,7 @@ const TestCalendar = ({ refresh }) => {
       bTripData.bTripList.forEach((vo) => {
         newEventList.push({
           id: vo.no,
-          title: "출장",
+          title: vo.memo !== null ? "출장 : " + vo.memo : "출장",
           start: vo.startDate,
           end: vo.endDate,
           color: "orange",
@@ -63,43 +59,8 @@ const TestCalendar = ({ refresh }) => {
 
       setEventList(newEventList);  // 상태 업데이트
     });
-  }, [refresh]);
+  }, [refresh, loginMemberNo]);
 
-
-  const events = () => {
-    const eventList = [];
-    
-    bTripList.forEach((vo) => {
-      eventList.push({
-        id: vo.no,
-        title: "출장",
-        start: vo.startDate,
-        end: vo.endDate,
-        color: "orange",
-      });
-    });
-
-    outsideWorkList.forEach((vo) => {
-      eventList.push({
-        id: vo.no,
-        title: "외근",
-        start: vo.startTime,
-        end: vo.endTime,
-        color: "green",
-      });
-    });
-
-    vacationList.forEach((vo) => {
-      eventList.push({
-        id: vo.no,
-        title: "휴가",
-        start: vo.startDate,
-        end: vo.endDate,
-      });
-    });
-
-    return eventList;
-  };
 
   const handleEventClick = (info) => {
     console.log("클릭호출");
