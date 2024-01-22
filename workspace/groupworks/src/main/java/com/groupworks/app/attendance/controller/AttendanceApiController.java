@@ -5,6 +5,7 @@ import com.groupworks.app.attendance.vo.BusinessTripVo;
 import com.groupworks.app.attendance.vo.OutsideWorkVo;
 import com.groupworks.app.attendance.vo.VacationVo;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.annotations.One;
 import org.springframework.web.bind.annotation.*;
 
@@ -15,13 +16,14 @@ import java.util.Map;
 @RestController
 @RequestMapping("api/attendance")
 @RequiredArgsConstructor
+@Slf4j
 public class AttendanceApiController {
     private final AttendanceService service;
 
     // 출장 등록
     @PostMapping("business-trip")
-    public Map<String, String> insertBusinessTrip(BusinessTripVo vo) {
-        int result = service.insertBusinessTrip(vo);
+    public Map<String, String> insertBusinessTrip(@RequestBody BusinessTripVo businessTripVo) {
+        int result = service.insertBusinessTrip(businessTripVo);
         Map<String, String> map = new HashMap<String, String>();
         map.put("msg", "okay");
         if(result != 1){
@@ -33,8 +35,9 @@ public class AttendanceApiController {
 
     // 외근 등록
     @PostMapping("outside-work")
-    public Map<String, String> insertOutsideWork(OutsideWorkVo vo) {
-        int result = service.insertOutsideWork(vo);
+    public Map<String, String> insertOutsideWork(@RequestBody OutsideWorkVo outSideWorkVo) {
+        log.info("외근 등록 : {}", outSideWorkVo);
+        int result = service.insertOutsideWork(outSideWorkVo);
         Map<String, String> map = new HashMap<String, String>();
         map.put("msg", "okay");
         if(result != 1){
@@ -45,8 +48,9 @@ public class AttendanceApiController {
 
     // 휴가 등록
     @PostMapping("vacation")
-    public Map<String, String> insertVacation(VacationVo vo) {
-        int result = service.insertVacation(vo);
+    public Map<String, String> insertVacation(@RequestBody VacationVo vacationVo) {
+        log.info("휴가 등록 : {}", vacationVo);
+        int result = service.insertVacation(vacationVo);
         Map<String, String> map = new HashMap<String, String>();
         map.put("msg", "okay");
         if(result != 1){
@@ -65,7 +69,6 @@ public class AttendanceApiController {
         if(voList == null) {
             map.put("msg", "nope");
         }
-        System.out.println("출장 호출"+ voList);
         return map;
     }
 
@@ -79,7 +82,6 @@ public class AttendanceApiController {
         if(voList == null) {
             map.put("msg", "nope");
         }
-        System.out.println("외근 호출" + voList);
         return map;
     }
 
@@ -94,7 +96,6 @@ public class AttendanceApiController {
         if(voList == null) {
             map.put("msg", "nope");
         }
-        System.out.println("휴가 호출" + voList);
         return map;
     }
 

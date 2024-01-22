@@ -4,6 +4,7 @@ import com.groupworks.app.company.vo.CompanyVo;
 import com.groupworks.app.member.dao.MemberDao;
 import com.groupworks.app.member.vo.*;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.mybatis.spring.SqlSessionTemplate;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -12,6 +13,7 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class MemberService {
     private final MemberDao dao;
     private final SqlSessionTemplate sessionTemplate;
@@ -49,6 +51,9 @@ public class MemberService {
     // 로그인
     public MemberVo login(MemberVo vo){
         MemberVo loginMember = dao.login(sessionTemplate, vo);
+        if (loginMember == null){
+            return null;
+        }
         String rawPwd = vo.getPwd();
         String encodedPwd = loginMember.getPwd();
         if(! passwordEncoder.matches(rawPwd, encodedPwd)){

@@ -44,11 +44,11 @@ const Calendar = ({ refresh }) => {
       .then((data) => {
         setVacationList(data.vacationList);
       });
-  }, [refresh]);
+  }, [refresh, loginMemberNo]);
 
   const events = () => {
     const eventList = [];
-
+    
     bTripList.forEach((vo) => {
       eventList.push({
         id: vo.no,
@@ -77,6 +77,7 @@ const Calendar = ({ refresh }) => {
         end: vo.endDate,
       });
     });
+
     return eventList;
   };
 
@@ -97,6 +98,7 @@ const Calendar = ({ refresh }) => {
         // defaultView="dayGridMonth"
         plugins={[dayGridPlugin]}
         aspectRatio="2.5"
+        contentHeight={600}
         events={events()}
         eventClick={handleEventClick}
       />

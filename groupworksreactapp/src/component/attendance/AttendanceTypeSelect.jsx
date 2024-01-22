@@ -7,7 +7,7 @@ const StyledSelectType = styled.div`
     grid-template-columns: 1fr 1fr;
 `;
 
-const AttandanceTypeSelect = () => {
+const AttendanceTypeSelect = () => {
     return (
         <StyledSelectType>
             <div>
@@ -20,4 +20,4 @@ const AttandanceTypeSelect = () => {
     );
 };
 
-export default AttandanceTypeSelect;
+export default AttendanceTypeSelect;
