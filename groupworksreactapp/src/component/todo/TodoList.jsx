@@ -44,10 +44,9 @@ const StyledTodoDiv = styled.div`
 
 const TodoList = () => {
 
-    console.log("todoList 컴포넌트 랜더링");
-
+    const loginMemberNo = sessionStorage.getItem('loginMemberNo');
     const navigate = useNavigate();
-    const [memberNo, setMemberNo] = useState('31');
+    const [memberNo, setMemberNo] = useState(loginMemberNo);
     const [todoVoList, setTodoVoList] = useState([]);
     const [modalIsOpen, setModalIsOpen] = useState(false);
 
@@ -82,7 +81,7 @@ const TodoList = () => {
             headers: {
                 'Content-Type' : 'application/json',
             },
-            body: JSON.stringify({no: todoNo, memberNo: '31'}),
+            body: JSON.stringify({no: todoNo, memberNo: loginMemberNo}),
         })
         .then( (resp) => resp.json() )
         .then( (data) => {
@@ -110,7 +109,9 @@ const TodoList = () => {
                     {
                         todoVoList.length === 0
                         ?
-                        <h1>로딩중...</h1>
+                        <tr>
+                            <td colSpan="4">로딩중...</td>
+                        </tr>
                         :
                         todoVoList.map( vo => <tr key = {vo.no}>
                             <td>{vo.no}</td>

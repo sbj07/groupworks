@@ -27,7 +27,7 @@ public class VacationFormDao {
 	
 	//�ް���û�� �ۼ�
 	public int write(SqlSessionTemplate sst, VacationFormVo vo) {
-		return sst.insert("VacationFormMapper.insert");
+		return sst.insert("VacationFormMapper.insert", vo);
 	}
 	
 	//�ް���û�� ����
