@@ -5,6 +5,7 @@ import java.util.List;
 import org.mybatis.spring.SqlSessionTemplate;
 import org.springframework.stereotype.Repository;
 
+import com.groupworks.app.member.vo.MemberVo;
 import com.groupworks.app.organ.vo.OrganVo;
 
 @Repository
@@ -17,9 +18,9 @@ public class OrganDao {
 	}
 
 	//전체 목록 조회(번호)
-	public List<OrganVo> list(SqlSessionTemplate sst) {
+	public List<OrganVo> list(SqlSessionTemplate sst, MemberVo loginMember) {
 		
-		return sst.selectList("OrganMapper.list");
+		return sst.selectList("OrganMapper.list", loginMember);
 	
 	}
 

@@ -53,12 +53,16 @@ const StyledTable = styled.table`
 const OrganList = () => {
 
     const navigate = useNavigate();
+    const loginMemberNo = sessionStorage.getItem("loginMemberNo");
 
     const [organVoList, setOrganVoList] = useState([]);
     const loadOrganVoList = () => {
-        fetch(`http://127.0.0.1:8888/app/organ/list`)
+        fetch(`http://127.0.0.1:8888/app/organ/list?loginMemberNo=${loginMemberNo}`)
         .then(resp => resp.json())
         .then(data => {
+            console.log("데이터 갖고옴");
+            console.log(data.voList);
+
             if (data.voList && Array.isArray(data.voList)) {
                 setOrganVoList(data.voList);
             } else {
@@ -76,6 +80,9 @@ const OrganList = () => {
         loadOrganVoList();
     }, [] );
 
+    const handleOrganWrite = () => {
+        navigate('/organ/insert');
+    }
 
     return (
         // <StyledOrganListDiv>
@@ -113,6 +120,7 @@ const OrganList = () => {
         // </StyledOrganListDiv>
         <StyledOrganListDiv>
         <h1>조직도 목록 조회</h1>
+        <button onClick={handleOrganWrite}>조직도 작성</button>
         {
                 Array.isArray(organVoList) && organVoList.length === 0
                 ?
@@ -134,7 +142,7 @@ const OrganList = () => {
                         </thead>
                         <tbody>
                             {list.map(vo => (
-                                <tr key={vo.no}>
+                                <tr key={vo.orgNo}>
                                     <td>{vo.name}</td>
                                     <td>{vo.departNo}</td>
                                     <td>{vo.positionNo}</td>
@@ -144,7 +152,8 @@ const OrganList = () => {
                             ))}
                         </tbody>
                     </StyledTable>
-                ))
+                )
+                )
             }
     </StyledOrganListDiv>
     );

@@ -5,12 +5,15 @@ import java.util.List;
 import org.mybatis.spring.SqlSessionTemplate;
 import org.springframework.stereotype.Service;
 
+import com.groupworks.app.member.vo.MemberVo;
 import com.groupworks.app.organ.dao.OrganDao;
 import com.groupworks.app.organ.vo.OrganVo;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @Service
+@Slf4j
 @RequiredArgsConstructor
 public class OrganService {
 
@@ -20,17 +23,23 @@ public class OrganService {
 	//생성
 	public int insert(OrganVo vo) {
 		
-		String str = vo.getProfile().replace("C:\\dev\\finalPrj\\workspace\\groupworks\\src\\main\\webapp", "http://127.0.0.1:8888/app");
-		vo.setProfile(str);
+		//기존
+//		String str = vo.getProfile().replace("C:\\dev\\finalPrj\\workspace\\groupworks\\src\\main\\webapp", "http://127.0.0.1:8888/app");
+//		vo.setProfile(str);
 
+	    if (vo.getProfile() != null) {
+	        String str = vo.getProfile().replace("C:\\dev\\finalPrj\\workspace\\groupworks\\src\\main\\webapp", "http://127.0.0.1:8888/app");
+	        vo.setProfile(str);
+	    }
+	    
 		return dao.insert(sst, vo);
 	}
 
 	
 	//전체 목록 조회(번호)
-	public List<OrganVo> list() {
+	public List<OrganVo> list(MemberVo loginMember) {
 	
-		return dao.list(sst);
+		return dao.list(sst, loginMember);
 	}
 
 	
@@ -43,7 +52,6 @@ public class OrganService {
 	
 	//수정
 	public int edit(OrganVo vo) {
-		
 		if(vo == null) {
 			throw new IllegalStateException("vo가 없어서 업데이트 불가능");
 		}

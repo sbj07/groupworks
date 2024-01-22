@@ -13,38 +13,57 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.groupworks.app.member.service.MemberService;
+import com.groupworks.app.member.vo.MemberVo;
 import com.groupworks.app.organ.service.OrganService;
 import com.groupworks.app.organ.vo.OrganVo;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @RestController
 @RequestMapping("organ")
 @RequiredArgsConstructor
 @CrossOrigin
+@Slf4j
 public class OrganController {
 
 	private final OrganService service;
+	private final MemberService memberService;
 	
 	//생성
 	@PostMapping("insert")
 	public Map<String, String> insert(OrganVo vo, MultipartFile f) throws Exception{
 		
-		System.out.println("vo : " + vo);
+		//기존
+//		System.out.println("vo : " + vo);
+//		
+//		System.out.println("f : " + f.getOriginalFilename());
+//		
+//		String profile = saveFile(f);
+//		vo.setProfile(profile);
+//		
+//		int result = service.insert(vo);
+//		
+//		Map<String, String> map = new HashMap<String, String>();
+//		map.put("msg", "good");
+//		
+//		if(result != 1) {
+//			map.put("msg", "bad");
+//		}
 		
-		System.out.println("f : " + f.getOriginalFilename());
-		
-		String profile = saveFile(f);
-		vo.setProfile(profile);
-		
-		int result = service.insert(vo);
-		
-		Map<String, String> map = new HashMap<String, String>();
-		map.put("msg", "good");
-		
-		if(result != 1) {
-			map.put("msg", "bad");
-		}
+		//수정(gpt)
+	    System.out.println("vo : " + vo);
+	    if (f != null && !f.isEmpty()) {
+	        String profile = saveFile(f);
+	        if (profile != null) { // 파일 경로가 null이 아닌 경우에만 설정
+	            vo.setProfile(profile);
+	        }
+	    }
+	    int result = service.insert(vo);
+	    
+	    Map<String, String> map = new HashMap<>();
+	    map.put("msg", result == 1 ? "good" : "bad");
 		return map;
 	}
 	
@@ -58,6 +77,9 @@ public class OrganController {
 	 * @throws  
 	 */
 	private String saveFile(MultipartFile f) throws Exception {
+	    if (f == null || f.isEmpty()) {
+	        return null; // 파일이 없으면 null을 반환
+	    }
 		String path = "C:\\dev\\finalPrj\\workspace\\groupworks\\src\\main\\webapp\\resources\\upload\\organ\\img";
 		String originName = f.getOriginalFilename();
 	
@@ -69,12 +91,11 @@ public class OrganController {
 	
 	//전체 목록 조회(번호)(렌더링)
 	@GetMapping("list")
-	public Map<String, Object> list(Model model) {
+	public Map<String, Object> list(String loginMemberNo) {
 		
-//		System.out.println("listttt");
+		MemberVo loginMember = memberService.getLoginMember(loginMemberNo);
 		
-		List<OrganVo> voList = service.list();
-//		System.out.println(voList);
+		List<OrganVo> voList = service.list(loginMember);
 		
 		Map<String, Object> map = new HashMap<>();
 		map.put("msg", "good");

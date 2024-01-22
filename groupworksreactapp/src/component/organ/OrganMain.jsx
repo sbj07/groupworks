@@ -8,7 +8,7 @@ import { Route, Routes } from 'react-router-dom';
 const OrganMain = () => {
     return (
         <Routes>
-            <Route path='write' element={<OrganWrite/>}/>
+            <Route path='insert' element={<OrganWrite/>}/>
             <Route path='list' element={<OrganList/>}/>
             <Route path='edit' element={<OrganEdit/>}/>
             <Route path='delete' element={<OrganDelete/>}/>
