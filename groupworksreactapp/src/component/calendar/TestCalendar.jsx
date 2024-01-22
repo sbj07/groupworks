@@ -30,6 +30,7 @@ const TestCalendar = ({ refresh }) => {
 
       bTripData.bTripList.forEach((vo) => {
         newEventList.push({
+          groupId: "출장",
           id: vo.no,
           title: vo.memo !== null ? "출장 : " + vo.memo : "출장",
           start: vo.startDate,
@@ -64,8 +65,8 @@ const TestCalendar = ({ refresh }) => {
 
   const handleEventClick = (info) => {
     console.log("클릭호출");
-    setSelectedEvent(info.event);
-    setModalVisible(true);
+    console.log(info.event.groupId);
+    console.log(info.event.id);
   };
 
   const closeModal = () => {
