@@ -10,4 +10,5 @@ public class OutsideWorkVo {
     private String endTime;
     private String onsiteStart;
     private String onsiteEnd;
+    private String delYn;
 }

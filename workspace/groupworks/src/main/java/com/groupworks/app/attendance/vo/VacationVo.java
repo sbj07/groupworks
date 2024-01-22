@@ -10,4 +10,5 @@ public class VacationVo {
     private String endDate;
     private String usedDays;
     private String halfDayType;
+    private String delYn;
 }

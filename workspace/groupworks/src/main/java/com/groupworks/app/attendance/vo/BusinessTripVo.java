@@ -9,4 +9,5 @@ public class BusinessTripVo {
     private String startDate;
     private String endDate;
     private String memo;
+    private String delYn;
 }
