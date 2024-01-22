@@ -54,8 +54,8 @@ public class VacationFormService {
 		return dao.delete(sst, no);
 	}
 
-	public List<MemberVo> memberList(String companyNo) {
-		return dao.memberList(sst, companyNo);
+	public List<MemberVo> memberList(MemberVo vo) {
+		return dao.memberList(sst, vo);
 	}
 	
 }

@@ -45,7 +45,7 @@ public class VacationFormDao {
 		return sst.update("VacationFormMapper.delete", no);
 	}
 
-	public List<MemberVo> memberList(SqlSessionTemplate sst, String companyNo) {
-		return sst.selectList("VacationFormMapeer.member", companyNo);
+	public List<MemberVo> memberList(SqlSessionTemplate sst, MemberVo vo) {
+		return sst.selectList("VacationFormMapper.member", vo);
 	}
 }
