@@ -4,13 +4,13 @@
         "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="VacationFormMapper">
 
-	<select id="member" resultType="MemberVo">
+	<select id="member" resultType="com.groupworks.app.member.vo.MemberVo">
 		SELECT
 			M.NO
-			,M.NAME
+			,M.NAME			AS NAME
 			,M.AUTH_NO
 			,M.COMPANY_NO
-			,A.NAME
+			,A.NAME			AS AUTHORITY_NAME
 		FROM MEMBER M
 		JOIN AUTHORITY A ON A.NO = M.AUTH_NO
 		WHERE M.COMPANY_NO = #{companyNo}
@@ -115,10 +115,10 @@
 		    ,#{midApplyNo}
 		    ,#{lastApplyNo}
 		    ,#{categoryNo}
-			,DATE(#{startTime})
-	      	,DATE(#{finishTime})
+			,TO_DATE(#{startTime}, 'YYYY-MM-DD')
+        	,TO_DATE(#{finishTime}, 'YYYY-MM-DD')
 		    ,#{content}
-		    ,#{writeDate}
+		    ,SYSDATE
 		)
  	</insert>
  	

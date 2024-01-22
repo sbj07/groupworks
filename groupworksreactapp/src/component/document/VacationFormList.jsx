@@ -18,17 +18,17 @@ const StyledVacationFormListDiv = styled.div`
   }
 `;
 
-const VacationFormList = () => {
+const VacationFormList = ({}) => {
     const[formList, SetFormList] = useState([]);
-    const writerNo = 3;
     const navigate = useNavigate();
     
     const handleClick = () => {
         navigate('/document/write');
     };
 
+    const loginMemberNo = sessionStorage.getItem("loginMemberNo");
     useEffect( () => {
-        fetch(`http://127.0.0.1:8888/app/api/vacation-form/list?writerNo=${writerNo}`)
+        fetch(`http://127.0.0.1:8888/app/api/vacation-form/list?writerNo=${loginMemberNo}`)
         .then( resp => resp.json() )
         .then( data => {
             if(data.msg === 'good'){
@@ -37,7 +37,7 @@ const VacationFormList = () => {
                 console.log("목록 조회 실패");
             }
         } );
-    } , [] );
+    } , [loginMemberNo] );
     return (
         <StyledVacationFormListDiv>
             <h1>휴가신청서 목록</h1>
