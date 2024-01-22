@@ -6,9 +6,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -16,7 +20,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.config.annotation.CorsRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
+import com.groupworks.app.member.vo.MemberVo;
 import com.groupworks.app.notice.service.NoticeService;
 import com.groupworks.app.notice.vo.NoticeVo;
 import com.groupworks.app.page.vo.PageVo;
@@ -159,36 +166,69 @@ public class NoticeController {
 	}//detail
 	
 	
-	//수정
+	//수정(기존)
+//	@PostMapping("edit")
+//	public String edit(NoticeVo vo) throws Exception{
+//		try {
+//			
+//			int result = service.edit(vo);
+//			
+//			if(result != 1) {
+//				System.out.println("공지사항 수정 실패");
+//				throw new Exception("공지사항 수정 실패");
+//			}
+//		}catch(Exception e) {
+//			e.printStackTrace();
+//		}
+////		return "redirect:/notice=" + vo.getNoticeNo();
+//		return "redirect:/notice/list";
+//	}//edit
+	
+	//수정(지피티) / json형태 응답 반환
 	@PostMapping("edit")
-	public String edit(NoticeVo vo) throws Exception{
-		try {
-			
-			int result = service.edit(vo);
-			
-			if(result != 1) {
-				System.out.println("공지사항 수정 실패");
-				throw new Exception("공지사항 수정 실패");
-			}
-		}catch(Exception e) {
-			e.printStackTrace();
-		}
-		return "redirect:/notice=" + vo.getNoticeNo();
+	public ResponseEntity<?> edit(NoticeVo vo) {
+	    try {
+	        int result = service.edit(vo);
+	        if(result != 1) {
+	            throw new Exception("공지사항 수정 실패");
+	        }
+	        System.out.println("수정 요청된 NoticeVo : " + vo);
+	        return ResponseEntity.ok().body(Map.of("message", "공지사항 수정 성공"));
+	    } catch(Exception e) {
+	    	System.out.println("수정 중 오류 발생 : " + e.getMessage());
+	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of("message", "공지사항 수정 실패"));
+	    }
 	}//edit
+
 	
 	
-	//삭제(번호)
-	@PostMapping("delete")
-	public String delete(NoticeVo vo) throws Exception{
-		
-		int result = service.delete(vo);
-		
-		if(result != 1) {
-			throw new Exception();
-		}
-		return "redirect:/notice/list";
-	}//delete
-	
+	//삭제(번호)(기존)
+//	@DeleteMapping("delete/{noticeNo}")
+//	public String delete(NoticeVo vo) throws Exception{
+//		
+//		int result = service.delete(vo);
+//		
+//		if(result != 1) {
+//			throw new Exception();
+//		}
+//		return "redirect:/notice/list";
+//	}//delete
+//	
+
+	//삭제(gpt)
+	@DeleteMapping("delete/{noticeNo}")
+	public ResponseEntity<?> delete(NoticeVo vo) {
+	    try {
+	        int result = service.delete(vo);
+	        if(result != 1) {
+	            throw new Exception("삭제 실패");
+	        }
+	        return ResponseEntity.ok().body(Map.of("message", "공지사항 삭제 성공"));
+	    } catch(Exception e) {
+	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of("message", "공지사항 삭제 실패"));
+	    }
+	}
+
 	
 	
 }//class

@@ -96,24 +96,24 @@
 	<update id="edit">
 		UPDATE NOTICE
 		SET
-		UPDATE_DATE = SYSDATE,
 		<trim prefixOverrides=",">
 		<if test=" title != null and title != '' ">
 	 		TITLE = #{title},
 		</if>
 		<if test=" content != null and content != '' ">
-		    , CONTENT = #{content},
+		    CONTENT = #{content},
 	    </if>
      	<if test=" filePath != null and filePath != '' ">
-	        , FILE_PATH = #{filePath},
+	        FILE_PATH = #{filePath},
         </if>
         <if test=" category != null and category != '' ">
-	        , CATEGORY = #{category},
+	        CATEGORY = #{category},
         </if>
         <if test=" openDepart != null and openDepart != '' ">
-	        , OPEN_DEPART = #{openDepart},
+	        OPEN_DEPART = #{openDepart},
         </if>
 	    </trim>
+		UPDATE_DATE = SYSDATE
 		WHERE NOTICE_NO = #{noticeNo}
 		AND DELETE_YN = 'N'
 	</update>

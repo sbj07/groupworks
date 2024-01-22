@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 
@@ -64,9 +64,9 @@ const NoticeWrite = () => {
         category: '',
         emergencyYn: '',
         openDepart: ''
-
+        
     });
-
+    
     const handleInputChange = (e) => {
         setNoticeData({ ...noticeData, [e.target.name]: e.target.value });
     };
