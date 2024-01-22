@@ -9,20 +9,22 @@
 		INSERT INTO ORGAN(
 		    ORG_NO
 		    , MEMBER_NO
-		    , PROFILE
-		    , DEPARTMENT
-		    , POSITION
 		    , NAME
+		    , PROFILE
+		    , ID
+		    , EMAIL
 		    , TEL
+		    , ADDRESS
 		    )
 		VALUES (
 		    SEQ_ORGAN_NO.NEXTVAL
 		    , #{memberNo}
-		    , #{profile}
-		    , #{department}
-		    , #{position}
 		    , #{name}
+		    , #{profile}
+		    , #{id}
+		    , #{email}
 		    , #{tel}
+		    , #{address}
 		    )	
 	</insert>
 	
@@ -41,17 +43,35 @@
 <!-- 		ORDER BY ORG_NO DESC -->
 <!-- 	</select> -->
 	<select id="list" resultType="com.groupworks.app.organ.vo.OrganVo">
+<!-- 		SELECT -->
+<!-- 		    NO -->
+<!-- 		    , NAME -->
+<!-- 		    , DEPART_NO -->
+<!-- 		    , POSITION_NO -->
+<!-- 		    , TEL -->
+<!-- 		    , EMAIL -->
+<!-- 		FROM MEMBER -->
+<!-- 		WHERE DEL_YN = 'N' -->
+<!-- 		AND DEPART_NO = #{departNo} -->
+<!-- 		AND COMPANY_NO = #{companyNo} -->
+<!-- 		ORDER BY NO DESC -->
 		SELECT
-		    NO
+		    ORG_NO
+		    , MEMBER_NO
 		    , NAME
-		    , DEPART_NO
-		    , POSITION_NO
-		    , TEL
+		    , PROFILE
+		    , ID
 		    , EMAIL
-		FROM MEMBER
-		WHERE DEL_YN = 'N'
+		    , TEL
+		    , ADDRESS
+		    , DEPART_NO
+		    , COMPANY_NO
+		    , POSITION_NO
+		FROM ORGAN
+		WHERE DELETE_YN = 'N'
 		AND DEPART_NO = #{departNo}
-		ORDER BY NO DESC
+		AND COMPANY_NO = #{companyNo}
+		ORDER BY ORG_NO DESC
 	</select>
 	
 	<select id="detail" resultType="com.groupworks.app.organ.vo.OrganVo">
