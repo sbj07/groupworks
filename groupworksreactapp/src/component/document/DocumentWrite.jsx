@@ -1,6 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import VacationFormWrite from './VacationFormWrite';
+import BusinessFormWrite from './BusinessFormWrite';
 
 
 const StyledDocumentWriteDiv = styled.div`
@@ -12,6 +13,7 @@ const DocumentWrite = () => {
     return (
         <StyledDocumentWriteDiv>
             <VacationFormWrite />
+            <BusinessFormWrite />
         </StyledDocumentWriteDiv>
             
     );

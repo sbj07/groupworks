@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 
 import com.groupworks.app.businessform.dao.BusinessTripFormDao;
 import com.groupworks.app.businessform.vo.BusinessTripFormVo;
+import com.groupworks.app.member.vo.MemberVo;
 
 import lombok.RequiredArgsConstructor;
 
@@ -17,38 +18,41 @@ public class BusinessTripFormService {
 	private final BusinessTripFormDao dao;
 	private final SqlSessionTemplate sst;
 	
-	//ÃâÀå½ÅÃ»¼­ ÀüÃ¼Á¶È¸
-	public List<BusinessTripFormVo> list() {
-		return dao.list(sst);
+	//ï¿½ï¿½ï¿½ï¿½ï¿½Ã»ï¿½ï¿½ ï¿½ï¿½Ã¼ï¿½ï¿½È¸
+	public List<BusinessTripFormVo> list(String writerNo) {
+		return dao.list(sst, writerNo);
 	}
 	
-	//°áÀç´ë±â ¸ñ·Ï Á¶È¸
+	//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½È¸
 	public List<BusinessTripFormVo> ingApprove() {
 		return dao.ingApprove(sst);
 	}
 	
-	//°áÀç¿Ï·á ¸ñ·Ï Á¶È¸
+	//ï¿½ï¿½ï¿½ï¿½Ï·ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½È¸
 	public List<BusinessTripFormVo> edApprove() {
 		return dao.edApprove(sst);
 	}
 	
-	//ÃâÀå½ÅÃ»¼­ ÀÛ¼º
+	//ï¿½ï¿½ï¿½ï¿½ï¿½Ã»ï¿½ï¿½ ï¿½Û¼ï¿½
 	public int write(BusinessTripFormVo vo) {
 		return dao.write(sst, vo);
 	}
 	
-	//ÃâÀå½ÅÃ»¼­ ½ÂÀÎ
+	//ï¿½ï¿½ï¿½ï¿½ï¿½Ã»ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 	public int apply(BusinessTripFormVo vo) {
 		return dao.apply(sst, vo);
 	}
 	
-	//ÃâÀå½ÅÃ»¼­ ¹Ý·Á
+	//ï¿½ï¿½ï¿½ï¿½ï¿½Ã»ï¿½ï¿½ ï¿½Ý·ï¿½
 	public int rejection(BusinessTripFormVo vo) {
 		return dao.rejection(sst, vo);
 	}
 	
-	//ÃâÀå½ÅÃ»¼­ »èÁ¦
+	//ï¿½ï¿½ï¿½ï¿½ï¿½Ã»ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 	public int delete(String no) {
 		return dao.delete(sst, no);
+	}
+	public List<MemberVo> memberList(MemberVo vo) {
+		return dao.memberList(sst, vo);
 	}
 }

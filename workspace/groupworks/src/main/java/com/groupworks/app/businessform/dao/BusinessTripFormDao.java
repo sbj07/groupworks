@@ -4,43 +4,48 @@ import java.util.List;
 import org.mybatis.spring.SqlSessionTemplate;
 import org.springframework.stereotype.Repository;
 import com.groupworks.app.businessform.vo.BusinessTripFormVo;
+import com.groupworks.app.member.vo.MemberVo;
 
 @Repository
 public class BusinessTripFormDao {
 
-	//ÃâÀå½ÅÃ»¼­ ÀüÃ¼Á¶È¸
-	public List<BusinessTripFormVo> list(SqlSessionTemplate sst) {
-		return sst.selectList("BusinessTripFormMapper.list");
+	//ï¿½ï¿½ï¿½ï¿½ï¿½Ã»ï¿½ï¿½ ï¿½ï¿½Ã¼ï¿½ï¿½È¸
+	public List<BusinessTripFormVo> list(SqlSessionTemplate sst, String writerNo) {
+		return sst.selectList("BusinessTripFormMapper.list", writerNo);
 	}
 	
-	//°áÀç´ë±â ¸ñ·Ï Á¶È¸
+	//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½È¸
 	public List<BusinessTripFormVo> ingApprove(SqlSessionTemplate sst) {
 		return sst.selectList("BusinessTripFormMapper.selectIng");
 	}
 	
-	//°áÀç¿Ï·á ¸ñ·Ï Á¶È¸
+	//ï¿½ï¿½ï¿½ï¿½Ï·ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½È¸
 	public List<BusinessTripFormVo> edApprove(SqlSessionTemplate sst) {
 		return sst.selectList("BusinessTripFormMapper.selectEd");
 	}
 	
-	//ÃâÀå½ÅÃ»¼­ ÀÛ¼º
+	//ï¿½ï¿½ï¿½ï¿½ï¿½Ã»ï¿½ï¿½ ï¿½Û¼ï¿½
 	public int write(SqlSessionTemplate sst, BusinessTripFormVo vo) {
-		return sst.insert("BusinessTripFormMapper.insert");
+		return sst.insert("BusinessTripFormMapper.insert", vo);
 	}
 	
-	//ÃâÀå½ÅÃ»¼­ ½ÂÀÎ
+	//ï¿½ï¿½ï¿½ï¿½ï¿½Ã»ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 	public int apply(SqlSessionTemplate sst, BusinessTripFormVo vo) {
 		return sst.update("BusinessTripFormMapper.apply", vo);
 	}
 	
-	//ÃâÀå½ÅÃ»¼­ ¹Ý·Á
+	//ï¿½ï¿½ï¿½ï¿½ï¿½Ã»ï¿½ï¿½ ï¿½Ý·ï¿½
 	public int rejection(SqlSessionTemplate sst, BusinessTripFormVo vo) {
 		return sst.update("BusinessTripFormMapper.rejection", vo);
 	}
 	
-	//ÃâÀå½ÅÃ»¼­ »èÁ¦
+	//ï¿½ï¿½ï¿½ï¿½ï¿½Ã»ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 	public int delete(SqlSessionTemplate sst, String no) {
 		return sst.update("BusinessTripFormMapper.delete", no);
+	}
+	
+	public List<MemberVo> memberList(SqlSessionTemplate sst, MemberVo vo) {
+		return sst.selectList("BusinessTripFormMapper.member", vo);
 	}
 	
 }

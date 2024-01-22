@@ -46,7 +46,9 @@ const VacationFormList = ({}) => {
                     <tr>
                         <th>번호</th>
                         <th>내용</th>
-                        <th>작성일</th>
+                        <th>결재상태</th>
+                        <th>등록일시</th>
+                        <th>결재일시</th>
                         <th>반려사유</th>
                     </tr>
                 </thead>
@@ -59,7 +61,9 @@ const VacationFormList = ({}) => {
                         formList.map( vo => <tr key = {vo.no}>
                             <td>{vo.no}</td>    
                             <td>{vo.content}</td>    
-                            <td>{vo.writeDate}</td>    
+                            <td>{vo.categoryNo}</td>    
+                            <td>{vo.writeDate}</td>
+                            <td>{vo.documentDate}</td>
                             <td>{vo.rejection}</td>   
                         </tr> 
                         )

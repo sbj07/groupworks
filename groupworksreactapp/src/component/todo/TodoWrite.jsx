@@ -15,11 +15,11 @@ const StyledTodoWriteDiv = styled.div`
 `;
 
 const TodoWrite = ({closeModal, loadTodoVoList}) => {
-    // const str = sessionStorage.getItem("memberNo");
-    // const vo = JSON.parse(str);
-    const memberNo = '31';
+    const str = sessionStorage.getItem("loginMemberNo");
+    const vo = JSON.parse(str);
+    const memberNo = str;
     const [inputTodoVo, setInputTodoVo] = useState({
-        "writerNo" : memberNo,
+        "writerNo" : str,
     }) 
     const navigate = useNavigate();
 

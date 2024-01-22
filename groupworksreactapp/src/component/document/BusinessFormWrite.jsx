@@ -3,7 +3,7 @@ import Modal from 'react-modal';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 
-const StyledVacationFormDiv = styled.div`
+const StyledBusinessTripFormDiv = styled.div`
   width: 100%;
   height: 100%;
   display: flex;
@@ -190,12 +190,11 @@ th, td {
 
 Modal.setAppElement('#root');
 
-const VacationFormWrite = () => {
+const BusinessTripFormWrite = () => {
   const navigate = useNavigate();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [companyMember, setCompanyMember] = useState([]);
   const [currentApplyType, setCurrentApplyType] = useState('');
-  const [leaveType, setLeaveType] = useState('');
   const [content, setContent] = useState('');
   const [sign, setSign] = useState('');
   const [loginMember, setLoginMember] = useState([]);
@@ -210,7 +209,7 @@ const VacationFormWrite = () => {
   });
 
   const fetchCompanyMember = () => {
-    fetch(`http://127.0.0.1:8888/app/api/vacation-form/member?companyNo=${loginMember.companyNo}`, {
+    fetch(`http://127.0.0.1:8888/app/api/business-trip-form/member?companyNo=${loginMember.companyNo}`, {
       method: 'GET',
       headers : {
         'Content-Type' : 'application/json'
@@ -251,7 +250,7 @@ const VacationFormWrite = () => {
   const loginMemberNo = sessionStorage.getItem("loginMemberNo");
   const queryParam = encodeURIComponent(loginMemberNo);
 
-  const url = `http://127.0.0.1:8888/app/api/vacation-form/login-member?no=${queryParam}`;
+  const url = `http://127.0.0.1:8888/app/api/business-trip-form/login-member?no=${queryParam}`;
   const fetchLoginMember = () => {
     fetch(url)
     .then( (resp) => resp.json() )
@@ -275,11 +274,6 @@ const VacationFormWrite = () => {
     }));
   };
 
-  const handleLeaveTypeChange = (event) => {
-    setLeaveType(event.target.value);
-    console.log('leaveType:', event.target.value);
-  };
-
   const handleContentChange = (event) => {
     setContent(event.target.value);
   };
@@ -293,34 +287,20 @@ const VacationFormWrite = () => {
     return member ? member.no : null;
   };
 
-  const leaveTypeMap = {
-    '연차': "1",
-    '반차': "2",
-    '병가': "3",
-    '육아': "4",
-  };
-
   const handleSubmit = (event) => {
     event.preventDefault();
 
-    const vacationNo = leaveTypeMap[leaveType];
-    if (!vacationNo) {
-      console.error('Invalid leaveType:', leaveType);
-      return; // 유효하지 않은 leaveType인 경우, 함수를 빠져나옵니다.
-    }
-    
     const formData = {
       firstApplyNo: selectApply.firstApply.no,
       midApplyNo: selectApply.midApply.no,
       lastApplyNo: selectApply.lastApply.no,
       writerNo: loginMemberNo, 
-      vacationNo: vacationNo,
       ...vacationDate,
       content,
       sign
     };
     console.log('formData:', formData);
-    fetch("http://127.0.0.1:8888/app/api/vacation-form/write" , {
+    fetch("http://127.0.0.1:8888/app/api/business-trip-form/write" , {
       method: 'POST',
       headers: {
         'Content-Type' : 'application/json'
@@ -344,7 +324,7 @@ const VacationFormWrite = () => {
   };
 
     return (
-        <StyledVacationFormDiv>
+        <StyledBusinessTripFormDiv>
             <form name="leaveWriteForm" onSubmit={handleSubmit}> 
                 <div className="cash-form-section">
                     <div className="cash-disbursement">
@@ -352,7 +332,7 @@ const VacationFormWrite = () => {
                             <tbody>
                                 <tr>
                                     <td rowSpan="2" colSpan="4" style={{ width: '300px', height: '100px', fontSize: '35px', fontWeight: 600 }}>
-                                        휴 가 신 청 서
+                                        출 장 신 청 서
                                     </td>
                                     
                                     <td rowSpan="2" style={{ width: '15px', paddingTop: '20px', fontSize: '20px' }}>
@@ -408,31 +388,6 @@ const VacationFormWrite = () => {
                                         <span>
                                             <input style={{ width: '160px', fontSize: '18px' }} type="date" name="finishTime" value={vacationDate.finishTime} onChange={handleDateChange} />
                                         </span>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td style={{ width: '80px', height: '70px' }}>
-                                        휴가 구분
-                                    </td>
-                                    <td colSpan="8">
-                                        <div className="form-checkbox-wrap">
-                                            <span className="form-inline">
-                                                <input type="radio" name="leaveClassify" className="input-radio" id="radio1" value="연차" onChange={(event) => { handleLeaveTypeChange(event); console.log('radio button clicked'); }}/>&nbsp;&nbsp;&nbsp;
-                                                <label htmlFor="radio1" className="form-radio">연차</label>
-                                            </span>
-                                            <span className="form-inline">
-                                                <input type="radio" name="leaveClassify" className="input-radio" id="radio2" value="반차" onChange={handleLeaveTypeChange}/>&nbsp;&nbsp;&nbsp;
-                                                <label htmlFor="radio2" className="form-radio">반차</label>
-                                            </span>
-                                            <span className="form-inline">
-                                                <input type="radio" name="leaveClassify" className="input-radio" id="radio3" value="병가" onChange={handleLeaveTypeChange}/>&nbsp;&nbsp;&nbsp;
-                                                <label htmlFor="radio3" className="form-radio">병가</label>
-                                            </span>
-                                            <span className="form-inline">
-                                                <input type="radio" name="leaveClassify" className="input-radio" id="radio4" value="육아" onChange={handleLeaveTypeChange}/>&nbsp;&nbsp;&nbsp;
-                                                <label htmlFor="radio4" className="form-radio">육아</label>
-                                            </span>
-                                        </div>
                                     </td>
                                 </tr>
                                 <tr>
@@ -500,8 +455,8 @@ const VacationFormWrite = () => {
               </ul>
               <button onClick={handleCloseModal}>닫기</button>
             </Modal>
-        </StyledVacationFormDiv>
+        </StyledBusinessTripFormDiv>
     );
 };
 
-export default VacationFormWrite;
+export default BusinessTripFormWrite;

@@ -30,8 +30,8 @@
 	 		, START_TIME
 	 		, FINISH_TIME
 	 		, CONTENT
-	 		, WRITE_DATE
-	 		, DOCUMENT_DATE
+	 		, TO_CHAR(WRITE_DATE, 'YYYY-MM-DD') AS WRITE_DATE
+    		, TO_CHAR(DOCUMENT_DATE, 'YYYY-MM-DD') AS DOCUMENT_DATE
 	 		, REJECTION
 	 	FROM VACATION_FORM 
 		WHERE WRITER_NO = #{writerNo}
@@ -100,7 +100,6 @@
 	 		,FIRST_APPLY_NO
 	 		,MID_APPLY_NO
 	 		,LAST_APPLY_NO
-	 		,CATEGORY_NO
 	 		,START_TIME
 	 		,FINISH_TIME
 	 		,CONTENT
@@ -114,7 +113,6 @@
 		    ,#{firstApplyNo}
 		    ,#{midApplyNo}
 		    ,#{lastApplyNo}
-		    ,#{categoryNo}
 			,TO_DATE(#{startTime}, 'YYYY-MM-DD')
         	,TO_DATE(#{finishTime}, 'YYYY-MM-DD')
 		    ,#{content}

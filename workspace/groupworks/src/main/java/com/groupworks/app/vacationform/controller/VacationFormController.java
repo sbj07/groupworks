@@ -15,18 +15,19 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-
 import com.groupworks.app.member.service.MemberService;
 import com.groupworks.app.member.vo.MemberVo;
 import com.groupworks.app.vacationform.service.VacationFormService;
 import com.groupworks.app.vacationform.vo.VacationFormVo;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @RestController 
 @RequestMapping("api/vacation-form")
 @RequiredArgsConstructor
 @CrossOrigin("*")
+@Slf4j
 public class VacationFormController {
 
 	private final VacationFormService service;
@@ -101,12 +102,12 @@ public class VacationFormController {
 	//휴가신청서 작성
 	@PostMapping("write")
 	public Map<String, Object> write(@RequestBody VacationFormVo vo) {
+		log.info("vo : {}", vo);
 		int result = service.write(vo);
 		Map<String, Object> map = new HashMap<String, Object>();
 		map.put("msg", "good");
 		if(result != 1) {
 			map.put("msg", "bad");
-			System.out.println(vo);
 		}
 		return map;
 	}
