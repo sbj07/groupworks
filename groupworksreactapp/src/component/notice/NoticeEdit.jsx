@@ -32,23 +32,27 @@ const NoticeEdit = () => {
     const handleSubmit = (e) => {
         e.preventDefault();
     
-        const hasValidData = editedNotice.title || editedNotice.content ||
-        editedNotice.category || editedNotice.openDepart; // 기타 필요한 필드 추가
-
-        if (!hasValidData) {
-        alert("수정할 내용을 입력하세요.");
-        return;
+        const formData = new FormData();
+        formData.append('noticeNo', editedNotice.noticeNo);
+        formData.append('memberNo', editedNotice.memberNo);
+        formData.append('title', editedNotice.title);
+        formData.append('content', editedNotice.content);
+        formData.append('clickNo', editedNotice.clickNo);
+        formData.append('category', editedNotice.category);
+        formData.append('emergencyYn', editedNotice.emergencyYn);
+        formData.append('openDepart', editedNotice.openDepart);
+        formData.append('enrollDate', editedNotice.enrollDate);
+        // 파일이 첨부되었는지 확인하고 추가
+        if (editedNotice.file) {
+            formData.append('file', editedNotice.file);
         }
 
 
         // 수정된 공지사항 데이터를 서버로 전송합니다.
         fetch('http://127.0.0.1:8888/app/notice/edit', {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(editedNotice)
-        })
+            body: formData // JSON.stringify를 사용하지 않고, FormData를 직접 전달
+            })
         .then(response => {
             if (!response.ok) {
                 throw new Error('서버 오류 발생');
@@ -65,6 +69,10 @@ const NoticeEdit = () => {
         });
     };
     
+    // 파일 첨부 처리
+    const handleFileChange = (e) => {
+        setEditedNotice({ ...editedNotice, file: e.target.files[0] });
+    };
 
     if (!editedNotice) return <div>로딩 중...</div>;
 
@@ -116,7 +124,7 @@ const NoticeEdit = () => {
                     <input
                         type="file"
                         name="file"
-                        onChange={handleChange}
+                        onChange={handleFileChange}
                     />
                 </label>
                 <br />

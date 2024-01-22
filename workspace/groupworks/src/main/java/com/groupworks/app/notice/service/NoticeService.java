@@ -5,6 +5,8 @@ import java.util.List;
 import org.mybatis.spring.SqlSessionTemplate;
 import org.springframework.stereotype.Service;
 
+import com.groupworks.app.member.service.MemberService;
+import com.groupworks.app.member.vo.MemberVo;
 import com.groupworks.app.notice.dao.NoticeDao;
 import com.groupworks.app.notice.vo.NoticeVo;
 import com.groupworks.app.page.vo.PageVo;
@@ -17,6 +19,7 @@ public class NoticeService {
 
 	private final NoticeDao dao;
 	private final SqlSessionTemplate sst;
+	private final MemberService memberService;
 	
 	//작성	
 	public int insert(NoticeVo vo) {
@@ -108,11 +111,13 @@ public class NoticeService {
 	    }
 
 	    // 수정할 내용이 없는 경우를 체크하는 로직을 변경합니다.
-	    boolean isAnyFieldPresent = vo.getTitle() != null || vo.getContent() != null || 
-	                                vo.getFilePath() != null || vo.getCategory() != null || 
-	                                vo.getOpenDepart() != null;
+	    boolean isAnyFieldToUpdate = (vo.getTitle() != null && !vo.getTitle().trim().isEmpty()) ||
+                (vo.getContent() != null && !vo.getContent().trim().isEmpty()) ||
+                (vo.getFilePath() != null && !vo.getFilePath().trim().isEmpty()) ||
+                (vo.getCategory() != null && !vo.getCategory().trim().isEmpty()) ||
+                (vo.getOpenDepart() != null && !vo.getOpenDepart().trim().isEmpty());
 
-	    if (!isAnyFieldPresent) {
+	    if (!isAnyFieldToUpdate) {
 	        throw new IllegalStateException("수정할 내용이 없습니다.");
 	    }
 
@@ -122,11 +127,11 @@ public class NoticeService {
 	//삭제
 	public int delete(NoticeVo vo) {
 
+
 		return dao.delete(sst, vo);
 	}
 
 }//class
-
 
 
 

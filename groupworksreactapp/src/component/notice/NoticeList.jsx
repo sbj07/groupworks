@@ -94,6 +94,65 @@ const NoticeList = ({ showTopFive, showWriteButton }) => {
     //     navigate("/notice/edit", { state: { notice: notice } });
     // };
 
+    //공지사항 삭제
+    // const handleDelete = noticeNo => {
+    //     fetch(`http://127.0.0.1:8888/app/notice/delete/${noticeNo}`, {
+    //         method: 'DELETE',
+    //         headers: {
+    //             'Content-Type': 'application/json',
+    //         },
+    //     })
+    //     .then(response => {
+    //         // 응답이 OK인지 확인
+    //         if (!response.ok) {
+    //             throw new Error('서버 오류 발생');
+    //         }
+
+    //         const contentType = response.headers.get('content-type');
+    //         if (contentType && contentType.includes('application/json')) {
+    //             return response.json(); // 응답이 JSON 형식이면 JSON으로 파싱
+    //         } else {
+    //             return response.text(); // 응답이 JSON 형식이 아니면 텍스트로 처리
+    //         }
+    //     })
+    //     .then(data => {
+    //         // data는 JSON 객체 또는 텍스트 문자열입니다.
+    //         console.log('삭제 성공:', data);
+    //         alert("공지사항 삭제 성공");
+    //         loadNoticeVoList(); // 공지사항 목록 다시 로드
+    //     })
+    //     .catch(error => {
+    //         console.error('삭제 실패:', error);
+    //         alert("공지사항 삭제 실패");
+    //     });
+    // };
+    const handleDelete = noticeNo => {
+        fetch(`http://127.0.0.1:8888/app/notice/delete/${noticeNo}`, {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('서버 오류 발생');
+            }
+            return response.text(); // 이 경우, 서버 응답이 JSON이 아닐 수 있으므로 text() 사용
+        })
+        .then(data => {
+            console.log('삭제 성공:', data);
+            alert("공지사항 삭제 성공");
+            loadNoticeVoList(); // 공지사항 목록 다시 로드
+        })
+        .catch(error => {
+            console.error('삭제 실패:', error);
+            alert("공지사항 삭제 실패");
+        });
+    };
+    
+
+
+
     const handleSave = (editedNotice) => {
         // API 호출 URL 설정
         const apiUrl = `http://127.0.0.1:8888/app/notice/edit`;
@@ -121,29 +180,46 @@ const NoticeList = ({ showTopFive, showWriteButton }) => {
     };
     
 
-    // const handleFileEdit = (noticeNo) => {
-        
-    // }
+
+
+
+    // const loadNoticeVoList = () => {
+    //     // fetch("http://127.0.0.1:8888/app/notice/list")
+    //     fetch(`http://127.0.0.1:8888/app/notice/list?page=${currentPage}&size=${itemsPerPage}`)
+    //     .then( resp => resp.json() )
+    //     .then(data => {
+    //         // console.log("가장 최근에 저장된 공지사항 데이터 : ", data);
+    //         if (data.voList && Array.isArray(data.voList)) {
+    //             const listToShow = showTopFive ? data.voList.slice(0, 5) : data.voList;
+    //             setNoticeVoList(listToShow);
+    //         } else {
+    //             console.error('Data is not an array:', data);
+    //             setNoticeVoList([]); // 데이터가 배열이 아닌 경우 빈 배열로 설정
+    //         }
+    //     })
+    //     .catch(error => {
+    //         console.error('Fetch error:', error);
+    //         setNoticeVoList([]); // 에러 발생 시 빈 배열로 설정
+    //     });
+    // };
 
     const loadNoticeVoList = () => {
-        // fetch("http://127.0.0.1:8888/app/notice/list")
         fetch(`http://127.0.0.1:8888/app/notice/list?page=${currentPage}&size=${itemsPerPage}`)
-        .then( resp => resp.json() )
+        .then(response => response.json())
         .then(data => {
-            // console.log("가장 최근에 저장된 공지사항 데이터 : ", data);
             if (data.voList && Array.isArray(data.voList)) {
-                const listToShow = showTopFive ? data.voList.slice(0, 5) : data.voList;
-                setNoticeVoList(listToShow);
+                setNoticeVoList(data.voList);
             } else {
-                console.error('Data is not an array:', data);
-                setNoticeVoList([]); // 데이터가 배열이 아닌 경우 빈 배열로 설정
+                setNoticeVoList([]);
             }
         })
         .catch(error => {
             console.error('Fetch error:', error);
-            setNoticeVoList([]); // 에러 발생 시 빈 배열로 설정
+            setNoticeVoList([]);
         });
     };
+    
+
     useEffect( () => {
         // console.log("useEffect 호출");
         loadNoticeVoList();
@@ -185,32 +261,29 @@ const NoticeList = ({ showTopFive, showWriteButton }) => {
                         <tr><td colSpan="9">로딩 중...</td></tr>
                         :
                         noticeVoList.map( notice => (
+                            // notice.deleteYn === 'y' ? null : (
                             <tr key={notice.noticeNo} onClick={() => handleNoticeClick(notice)}>
                             <td>{notice.noticeNo}</td>
                             <td>{notice.memberNo}</td>
                             <td>{notice.title}</td>
                             <td>{notice.clickNo}</td>
                             <td>{notice.filePath}</td>
-                            {/* <button onClick={() => handleFileEdit(notice.noticeNo)}>첨부파일</button> */}
                             <td>{notice.category}</td>
                             <td>{notice.emergencyYn}</td>
                             <td>{notice.openDepart}</td>
                             <td>{notice.enrollDate}</td>
-                            {/* <button onClick={() => handleEdit(notice)}>수정</button> */}
                         </tr>
                             ))
+                            // )
                     }
                 </tbody>
             </table>
-
-            {/* <button onClick = { () => {
-                navigate("notice/write")
-            } }>공지사항 작성</button> */}
             {selectedNotice && (
                 <NoticeModal 
-                    notice={selectedNotice} 
-                    onClose={handleCloseModal} 
-                    onSave={handleSave}
+                notice={selectedNotice} 
+                onClose={handleCloseModal} 
+                onSave={handleSave}
+                onDelete={handleDelete}
                 />
                 )}
             

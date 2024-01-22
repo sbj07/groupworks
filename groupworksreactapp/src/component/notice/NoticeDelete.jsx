@@ -7,9 +7,11 @@ const StyledNoticeDetailDiv = styled.div`
 `;
 
 const NoticeDelete = () => {
+    
+    
     return (
         <StyledNoticeDetailDiv>
-            <h1>공지사항 상세 조회</h1>
+            <h1>공지사항 삭제</h1>
         </StyledNoticeDetailDiv>
     );
 };

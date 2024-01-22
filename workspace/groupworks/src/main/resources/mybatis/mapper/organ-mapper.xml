@@ -27,18 +27,31 @@
 	</insert>
 	
 <!-- 	전체 목록 조회 -->
+<!-- 	<select id="list" resultType="com.groupworks.app.organ.vo.OrganVo"> -->
+<!-- 		SELECT -->
+<!-- 		    ORG_NO -->
+<!-- 		    , MEMBER_NO -->
+<!-- 		    , PROFILE -->
+<!-- 		    , DEPARTMENT -->
+<!-- 		    , POSITION -->
+<!-- 		    , NAME -->
+<!-- 		    , TEL -->
+<!-- 		FROM ORGAN -->
+<!-- 		WHERE DELETE_YN = 'N' -->
+<!-- 		ORDER BY ORG_NO DESC -->
+<!-- 	</select> -->
 	<select id="list" resultType="com.groupworks.app.organ.vo.OrganVo">
 		SELECT
-		    ORG_NO
-		    , MEMBER_NO
-		    , PROFILE
-		    , DEPARTMENT
-		    , POSITION
+		    NO
 		    , NAME
+		    , DEPART_NO
+		    , POSITION_NO
 		    , TEL
-		FROM ORGAN
-		WHERE DELETE_YN = 'N'
-		ORDER BY ORG_NO DESC
+		    , EMAIL
+		FROM MEMBER
+		WHERE DEL_YN = 'N'
+		AND DEPART_NO = #{departNo}
+		ORDER BY NO DESC
 	</select>
 	
 	<select id="detail" resultType="com.groupworks.app.organ.vo.OrganVo">

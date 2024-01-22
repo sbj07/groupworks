@@ -33,7 +33,7 @@ const StyledModalHeader = styled.h2`
     margin-top: 0;
 `;
 
-const NoticeModal = ({ notice, onClose, onSave }) => {
+const NoticeModal = ({ notice, onClose, onSave, onDelete }) => {
     const [isEditing, setIsEditing] = useState(false);
     const [editedNotice, setEditedNotice] = useState(notice);
 
@@ -51,28 +51,40 @@ const NoticeModal = ({ notice, onClose, onSave }) => {
     //     setIsEditing(true);
     // };
 
-        const handleEdit = () => {
+    //수정버튼 함수
+    const handleEdit = () => {
         // NoticeEdit 컴포넌트로 이동
         navigate("/notice/edit", { state: { notice: notice } });
     };
 
+
+    //작성(저장) 버튼 함수
     const handleSave = () => {
         onSave(editedNotice);
         setIsEditing(false);
     };
 
+    //취소 버튼 함수
     const handleCancel = () => {
         setIsEditing(false);
         setEditedNotice(notice); // 원래 데이터로 초기화
     };
+
+    const handleDelete = () => {
+        if (window.confirm("정말로 삭제하시겠습니까?")) {
+            onDelete(notice.noticeNo);
+        }
+    };
+
+
     if (!notice) return null;
 
     return (
         <>
             <Overlay onClick={onClose} />
             <StyledModal>
-            {isEditing ? (
-            <>
+                {isEditing ? (
+                    <>
                         <input type="text" name="title" value={editedNotice.title} onChange={handleChange} />
                         <textarea name="content" value={editedNotice.content} onChange={handleChange} />
                         {/* 기타 필요한 입력 필드 추가 */}
@@ -93,6 +105,7 @@ const NoticeModal = ({ notice, onClose, onSave }) => {
                 </StyledModalContent>
                 <button onClick={onClose}>닫기</button>
                 <button onClick={handleEdit}>수정</button>
+                <button onClick={handleDelete}>삭제</button>
                 </>
                 )}
             </StyledModal>

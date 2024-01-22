@@ -5,6 +5,7 @@ import java.util.List;
 import org.mybatis.spring.SqlSessionTemplate;
 import org.springframework.stereotype.Repository;
 
+import com.groupworks.app.member.vo.MemberVo;
 import com.groupworks.app.notice.vo.NoticeVo;
 import com.groupworks.app.page.vo.PageVo;
 
