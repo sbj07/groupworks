@@ -1,6 +1,8 @@
 package com.groupworks.app.book.dao;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.mybatis.spring.SqlSessionTemplate;
 import org.springframework.stereotype.Repository;
@@ -16,10 +18,23 @@ public class BookDao {
 		return sst.insert("BookMapper.insert", vo);
 	}
 
-	//목록 조회
-	public List<BookVo> list(SqlSessionTemplate sst) {
-
-		return sst.selectList("BookMapper.list");
+//	//목록 조회(기존)
+//	public List<BookVo> list(SqlSessionTemplate sst) {
+//
+//		return sst.selectList("BookMapper.list");
+//	}
+	
+	//목록조회(날짜 선택 안 했을 때 초기)
+    public List<BookVo> list(SqlSessionTemplate sst) {
+        return sst.selectList("BookMapper.list");
+    }
+    
+	//목록 조회(gpt)
+	public List<BookVo> listByDateRange(SqlSessionTemplate sst, String startDate, String endDate) {
+	    Map<String, Object> params = new HashMap<>();
+	    params.put("startDate", startDate);
+	    params.put("endDate", endDate);
+	    return sst.selectList("BookMapper.listByDateRange", params);
 	}
 
 	//상세 조회

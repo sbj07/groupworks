@@ -20,7 +20,7 @@
 			)
 	</insert>
 	
-<!-- 	전체 조회 -->
+<!-- 	전체 조회 	//처음 페이지 렌더링 시 모든 데이터 조회	 -->
 	<select id="list" resultType="com.groupworks.app.book.vo.BookVo">
 		SELECT
 		    BOOK_NO
@@ -31,9 +31,41 @@
 		    , UPDATE_DATE
 		    , CANCEL_DATE
 		FROM BOOK
-<!-- 		WHERE CANCEL_DATE = NULL -->
+		WHERE CANCEL_DATE = NULL
 		ORDER BY BOOK_NO DESC
 	</select>
+	
+<!-- 	날짜 입력 후 조건에 맞는 데이터 조회 -->
+<select id="listByDateRange" resultType="com.groupworks.app.book.vo.BookVo">
+    <choose>
+        <when test="startDate != null and endDate != null">
+            SELECT
+                BOOK_NO,
+                MEMBER_NO,
+                USE_DATE,
+                BOOK_PURPOSE,
+                BOOK_DATE,
+                UPDATE_DATE,
+                CANCEL_DATE
+            FROM BOOK
+            WHERE USE_DATE BETWEEN #{startDate} AND #{endDate}
+            ORDER BY BOOK_NO DESC
+        </when>
+        <otherwise>
+            SELECT
+                BOOK_NO,
+                MEMBER_NO,
+                USE_DATE,
+                BOOK_PURPOSE,
+                BOOK_DATE,
+                UPDATE_DATE,
+                CANCEL_DATE
+            FROM BOOK
+            ORDER BY BOOK_NO DESC
+        </otherwise>
+    </choose>
+</select>
+
 
 <!-- 상세 조회 -->
 	<select id="detail" resultType="com.groupworks.app.book.vo.BookVo">
