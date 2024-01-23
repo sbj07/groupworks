@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import styled from 'styled-components';
 import { Button } from 'react-bootstrap';
 import AttendanceAdd from './AttendanceAdd';
+import UserInfoMain from './UserInfoMain';
 
 const StyeldAttendDiv = styled.div`
     border: 2px solid black;
@@ -18,7 +19,6 @@ const StyledUserInfoDiv = styled.div`
     background-color: aqua;
 
     & > :first-child {
-        background-color: green;
     }
 
 `;
@@ -40,9 +40,7 @@ const AttendanceMain = ( ) => {
     return (
         <StyeldAttendDiv>
             <StyledUserInfoDiv>
-                <div>
-                    로그인 유저정보
-                </div>
+                <UserInfoMain />
                 <div>
                     남은 연차일
                     사용 연차일

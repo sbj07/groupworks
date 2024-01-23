@@ -17,6 +17,7 @@ import java.util.Map;
 @RequestMapping("api/attendance")
 @RequiredArgsConstructor
 @Slf4j
+@CrossOrigin("*")
 public class AttendanceApiController {
     private final AttendanceService service;
 
@@ -24,6 +25,34 @@ public class AttendanceApiController {
     @PostMapping("business-trip")
     public Map<String, String> insertBusinessTrip(@RequestBody BusinessTripVo businessTripVo) {
         int result = service.insertBusinessTrip(businessTripVo);
+        Map<String, String> map = new HashMap<String, String>();
+        map.put("msg", "okay");
+        if(result != 1){
+            map.put("msg", "nope");
+        }
+        return map;
+    }
+
+    // 출장 수정
+    @PutMapping("business-trip")
+    public Map<String, String> putBusinessTrip(@RequestBody BusinessTripVo businessTripVo) {
+        log.info("vo : {}", businessTripVo);
+        int result = service.putBusinessTrip(businessTripVo);
+        log.info("result : {}", result);
+
+        Map<String, String> map = new HashMap<String, String>();
+        map.put("msg", "okay");
+        if(result != 1){
+            map.put("msg", "nope");
+        }
+        return map;
+    }
+
+    // 출장 삭제
+    @DeleteMapping("business-trip/{eventNo}")
+    public Map<String, String> deleteBusinessTrip(@PathVariable String eventNo){
+        log.info("이벤트번호 : {}",eventNo);
+        int result = service.deleteBusinessTrip(eventNo);
         Map<String, String> map = new HashMap<String, String>();
         map.put("msg", "okay");
         if(result != 1){

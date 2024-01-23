@@ -1,10 +1,13 @@
 import React, { useState } from 'react';
 import { Button, Form } from 'react-bootstrap';
 
-const BusinessTripEventFrom = ( ) => {
+const BusinessTripEventFrom = ( props ) => {
+    let fetchType = props.type;
+    let putId = props.putId;
     const loginMemberNo = sessionStorage.getItem("loginMemberNo");
 
     const [ businessTripVo , setBusinessTripVo] = useState({
+        no: putId,
         memberNo: loginMemberNo,
         startDate: "",
         endDate: "",
@@ -22,23 +25,48 @@ const BusinessTripEventFrom = ( ) => {
 
     const handleFormSubmit = (event) => {
         event.preventDefault();
-        fetch("http://127.0.0.1:8888/app/api/attendance/business-trip",{
-            method: "POST" ,
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify(businessTripVo)
-        })
-        .then( resp => resp.json())
-        .then( data => {
-            if(data.msg === 'okay'){
-                alert("일정등록 완료");
-                window.location.reload();
-            }else{
+        console.log(fetchType);
+        
+        if (fetchType !== "put") {
+
+            fetch("http://127.0.0.1:8888/app/api/attendance/business-trip",{
+                method: "POST" ,
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(businessTripVo)
+            })
+            .then( resp => resp.json())
+            .then( data => {
+                if(data.msg === 'okay'){
+                    alert("일정등록 완료");
+                    window.location.reload();
+                }else{
                 alert("일정등록 실패");
-            }
-        })
-    };
+                }
+            })
+        } 
+        else {
+           
+            console.log(businessTripVo);
+            fetch("http://127.0.0.1:8888/app/api/attendance/business-trip",{
+                method: "PUT" ,
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(businessTripVo)
+            })
+            .then( resp => resp.json())
+            .then( data => {
+                if(data.msg === 'okay'){
+                    alert("일정 수정 완료");
+                    window.location.reload();
+                }else{
+                    alert("일정 수정 실패");
+                }
+            })
+        };
+    }
     return (
         <>
             <h2>출장</h2>

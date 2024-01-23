@@ -24,6 +24,29 @@
         )
     </insert>
 
+    <!-- 출장 수정 -->
+    <update id="putBusinessTrip">
+        UPDATE BUSINESS_TRIP
+        <set>
+            <if test="startDate != null">
+                START_DATE = #{startDate} ,
+                END_DATE = #{endDate},
+            </if>
+            <if test="memo != null">
+                MEMO = #{memo}
+            </if>
+        </set>
+        WHERE NO = #{no}
+    </update>
+
+    <!-- 출장 삭제 -->
+    <update id="deleteBusinessTrip">
+        UPDATE BUSINESS_TRIP
+        SET
+        DEL_YN = 'Y'
+        WHERE NO = #{no}
+    </update>
+
     <!-- 외근 등록 -->
     <insert id="insertOutsideWork">
         INSERT INTO OUTSIDE_WORK

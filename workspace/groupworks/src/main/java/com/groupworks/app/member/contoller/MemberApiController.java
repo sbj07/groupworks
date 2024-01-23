@@ -53,6 +53,18 @@ public class MemberApiController {
         return map;
     }
 
+    @GetMapping("{loginMemberNo}")
+    public Map<String, Object>  userInfo(@PathVariable String loginMemberNo) {
+        MemberVo loginMemberVo = service.getLoginMember(loginMemberNo);
+        Map<String, Object> map = new HashMap<>();
+        map.put("msg", "okay");
+        map.put("loginMemberVo", loginMemberVo);
+        if(loginMemberVo == null) {
+            map.put("msg", "nope");
+        }
+        return map;
+    }
+
     // 회원정보수정
     @PutMapping
     public Map<String, Object> edit(@RequestBody MemberVo editVo) {

@@ -25,6 +25,16 @@ public class AttendanceService {
         return dao.insertBusinessTrip(sessionTemplate, vo);
     }
 
+    // 출장 수정
+    public int putBusinessTrip(BusinessTripVo vo){
+        return dao.putBusinessTrip(sessionTemplate, vo);
+    }
+
+    //출장 삭제
+    public int deleteBusinessTrip(String eventNo) {
+        return dao.deleteBusinessTrip(sessionTemplate, eventNo);
+    }
+
     // 외근등록
     public int insertOutsideWork(OutsideWorkVo vo){
         return dao.insertOutsideWork(sessionTemplate, vo);
