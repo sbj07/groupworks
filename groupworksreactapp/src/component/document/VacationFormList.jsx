@@ -19,20 +19,24 @@ const StyledVacationFormListDiv = styled.div`
 `;
 
 const VacationFormList = ({}) => {
-    const[formList, SetFormList] = useState([]);
+    const [formList, SetFormList] = useState([]);
     const [applyList, setApplyList] = useState([]);
-    const [currentPage, setCurrentPage] = useState(1);
     const [isShowingApplyList, setIsShowingApplyList] = useState(false);
-    const [totalPages, setTotalPages] = useState(0)
+    const [currentPage, setCurrentPage] = useState(1);
+    const [applyCurrentPage, setApplyCurrentPage] = useState(1);
+    const [totalPages, setTotalPages] = useState(0);
+    const [applyTotalPages, setApplyTotalPages] = useState(0);
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [selectedItem, setSelectedItem] = useState(null);
     const limit = 10;
     const navigate = useNavigate();
+    const loginMemberNo = sessionStorage.getItem("loginMemberNo");
     
     const handleClick = () => {
         navigate('/document/write');
     };
 
     //내가올린거 조회
-    const loginMemberNo = sessionStorage.getItem("loginMemberNo");
     useEffect( () => {
         fetch(`http://127.0.0.1:8888/app/api/vacation-form/list?writerNo=${loginMemberNo}&page=${currentPage}&limit=${limit}`)
         .then( resp => resp.json() )
@@ -48,15 +52,21 @@ const VacationFormList = ({}) => {
 
     //승인자로 선택된 리스트 조회
     const loadApplyList = () => {
-        fetch(`http://127.0.0.1:8888/app/api/vacation-form/apply-list?loginMemberNo=${loginMemberNo}`)
+        fetch(`http://127.0.0.1:8888/app/api/vacation-form/apply-list?loginMemberNo=${loginMemberNo}&page=${applyCurrentPage}&limit=${limit}`)
         .then( resp => resp.json() )
         .then( data => {
             if(data.msg === 'good'){
                 setApplyList(data.applyVoList);
+                setApplyTotalPages(data.pageInfo.maxPage);
+                setIsShowingApplyList(true);
             } else{
                 console.log("목록 조회 실패");
             }
         })
+    };
+
+    const showMyVacationList = () => {
+        setIsShowingApplyList(false);
     };
 
     const handleApplyListClick = () => {
@@ -71,15 +81,24 @@ const VacationFormList = ({}) => {
         setCurrentPage(currentPage + 1);
     };
 
-    const renderPagination = () => {
+    const handleApplyPreviousPage = () => {
+        setApplyCurrentPage(applyCurrentPage - 1);
+    };
+
+    const handleApplyNextPage = () => {
+        setApplyCurrentPage(applyCurrentPage + 1);
+    };
+
+    const renderPagination = (currentPage, setCurrentPage, totalPages) => {
     return (
         <div>
-            <button onClick={handlePreviousPage} disabled={currentPage === 1}>이전</button>
+            <button onClick={() => setCurrentPage(currentPage - 1)} disabled={currentPage === 1}>이전</button>
             <span>{currentPage}</span>
-            <button onClick={handleNextPage} disabled={currentPage === totalPages}>다음</button>
+            <button onClick={() => setCurrentPage(currentPage + 1)} disabled={currentPage === totalPages}>다음</button>
         </div>
         );
     };
+
     //여기서부터 추가
     const renderFormList = () => {
         return(
@@ -175,7 +194,7 @@ const VacationFormList = ({}) => {
     //                         <td>{vo.rejection}</td>   
     //                     </tr> 
     //                     )
-    //                 }
+    //                 }  
     //             </tbody>
     //         </table>
     //         {renderPagination()}
@@ -184,11 +203,24 @@ const VacationFormList = ({}) => {
 
     return (
         <StyledVacationFormListDiv>
-            <button onClick={() => navigate('/document/write')}>휴가신청서 등록</button>
-            <button onClick={() => {handleApplyListClick(); setIsShowingApplyList(true);}}>승인대기목록</button>
+            <div>
+                <button onClick={() => navigate('/document/write')}>휴가신청서 등록</button>
+                <button onClick={showMyVacationList}>결재목록</button>
+                <button onClick={loadApplyList}>승인대기목록</button>
+            </div>
 
-            {isShowingApplyList ? renderApplyList() : renderFormList()}
-            {renderPagination()}
+
+            {isShowingApplyList ? (
+                <>
+                    {renderApplyList()}
+                    {renderPagination(applyCurrentPage, setApplyCurrentPage, applyTotalPages)}
+                </>
+            ) : (
+                <>
+                    {renderFormList()}
+                    {renderPagination(currentPage, setCurrentPage, totalPages)}
+                </>
+            )}
         </StyledVacationFormListDiv>
     );
 };

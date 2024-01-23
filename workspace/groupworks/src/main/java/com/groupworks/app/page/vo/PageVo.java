@@ -5,6 +5,7 @@ import lombok.Data;
 @Data
 public class PageVo {
 	private String writerNo;
+	private String loginMemberNo;
 	private int listCount;		
 	private int currentPage;
 	private int pageLimit;		
