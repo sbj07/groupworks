@@ -179,10 +179,14 @@
 	 	WHERE NO = #{no}
  	</update>
  	
+ 	<!-- 전체 휴가신청서 개수 조회  -->
  	<select id="getListCount" resultType="int" parameterType="String">
-    	SELECT COUNT(*) FROM VACATION_FORM WHERE WRITER_NO = #{writerNo}
+    	SELECT COUNT(*) 
+    	FROM VACATION_FORM 
+    	WHERE WRITER_NO = #{writerNo}
 	</select>
 	
+	<!-- 휴가신청서 페이징  -->
  	<select id="listPaged" resultType="VacationFormVo" parameterType="com.groupworks.app.page.vo.PageVo">
     SELECT *
     FROM (
@@ -192,4 +196,24 @@
     ) WHERE rnum BETWEEN #{startRow} AND #{lastRow}
 	</select>
  	
+ 	<!-- 승인자로 선택된 휴가신청서 전체 조회  -->
+ 	<select id="getApplyListCount" resultType="int" parameterType="String">
+    	SELECT COUNT(*) 
+    	FROM VACATION_FORM 
+    	WHERE FIRST_APPLY_NO = #{loginMemberNo}
+        OR MID_APPLY_NO = #{loginMemberNo}
+        OR LAST_APPLY_NO = #{loginMemberNo}
+	</select>
+	
+	<!-- 승인대기목록 페이징  -->
+ 	<select id="applyListPage" resultType="VacationFormVo" parameterType="com.groupworks.app.page.vo.PageVo">
+	    SELECT *
+	    FROM (
+	        SELECT ROW_NUMBER() OVER (ORDER BY NO DESC) AS rnum, V.*
+	        FROM VACATION_FORM V
+	        WHERE V.FIRST_APPLY_NO = #{loginMemberNo}
+	           OR V.MID_APPLY_NO = #{loginMemberNo}
+	           OR V.LAST_APPLY_NO = #{loginMemberNo} 
+	    ) WHERE rnum BETWEEN #{startRow} AND #{lastRow}
+	</select>
 </mapper>

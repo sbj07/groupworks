@@ -64,5 +64,11 @@ public class VacationFormService {
 		return dao.applyList(sst, loginMemberNo);
 	}
 
+	public List<VacationFormVo> applyListPage(PageVo pageVo) {
+		return dao.applyListPage(sst, pageVo);
+	}
 
+	public int getApplyListCount(String loginMemberNo) {
+		return dao.getApplyListCount(sst, loginMemberNo);
+	}
 }

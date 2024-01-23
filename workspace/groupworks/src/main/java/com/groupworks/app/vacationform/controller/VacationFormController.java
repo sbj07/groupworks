@@ -75,14 +75,19 @@ public class VacationFormController {
 	
 	//승인자로 선택된 사람의 휴가신청서 리스트 조회 
 	@GetMapping("apply-list")
-	public Map<String, Object> applyList(@RequestParam String loginMemberNo){
-		List<VacationFormVo> applyVoList = service.applyList(loginMemberNo);
+	public Map<String, Object> applyList(@RequestParam String loginMemberNo, 
+							             @RequestParam(value = "page", defaultValue = "1") int currentPage, 
+							             @RequestParam(value = "limit", defaultValue = "10") int limit){
+		int listCount = service.getApplyListCount(loginMemberNo);
+	    PageVo pageVo = new PageVo(listCount, currentPage, 10, limit);
+	    pageVo.setLoginMemberNo(loginMemberNo);
+		
+		List<VacationFormVo> applyVoList = service.applyListPage(pageVo);
 		Map<String, Object> map = new HashMap<>();
 		map.put("msg", "good");
 		map.put("applyVoList", applyVoList);
-		if(applyVoList == null) {
-			map.put("msg", "bad");
-		}
+		map.put("pageInfo", pageVo);
+		
 		return map;
 	}
 	

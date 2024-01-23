@@ -57,5 +57,13 @@ public class VacationFormDao {
 		return sst.selectList("VacationFormMapper.applyList", loginMemberNo);
 	}
 
+	public List<VacationFormVo> applyListPage(SqlSessionTemplate sst, PageVo pageVo) {
+		return sst.selectList("VacationFormMapper.applyListPage", pageVo);
+	}
+
+	public int getApplyListCount(SqlSessionTemplate sst, String loginMemberNo) {
+		return sst.selectOne("VacationFormMapper.getApplyListCount",loginMemberNo);
+	}
+
 
 }
