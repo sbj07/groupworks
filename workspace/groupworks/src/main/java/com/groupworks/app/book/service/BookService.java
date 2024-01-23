@@ -1,5 +1,8 @@
 package com.groupworks.app.book.service;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.List;
 
 import org.mybatis.spring.SqlSessionTemplate;
@@ -23,11 +26,32 @@ public class BookService {
 		return dao.insert(sst, vo);
 	}
 
-	//목록 조회
+	//목록 조회(처음 /book/list 페이지 들어갈 때(날짜 선택 안 했을 때))
 	public List<BookVo> list() {
 
 		return dao.list(sst);
 	}
+	
+	// 목록 조회(gpt)
+//	public List<BookVo> listByDateRange(String startDate, String endDate) {
+//	    return dao.listByDateRange(sst, startDate, endDate);
+//	}
+    public List<BookVo> listByDateRange(String startDate, String endDate) {
+        if ((startDate == null || startDate.isEmpty()) && (endDate == null || endDate.isEmpty())) {
+            return dao.list(sst); // 모든 목록 조회
+        }
+        try {
+            // 날짜 형식 검증 및 변환
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+            LocalDate start = LocalDate.parse(startDate, formatter);
+            LocalDate end = LocalDate.parse(endDate, formatter);
+
+            return dao.listByDateRange(sst, startDate, endDate);
+        } catch (DateTimeParseException e) {
+            // 잘못된 날짜 형식 처리
+            return dao.list(sst);
+        }
+    }//listByDateRange
 
 	//상세 조회
 	public BookVo detail(BookVo vo) {
