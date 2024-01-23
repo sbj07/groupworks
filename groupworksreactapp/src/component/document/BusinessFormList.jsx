@@ -21,26 +21,48 @@ const StyledBusinessTripFormListDiv = styled.div`
 const BusinessTripFormList = ({}) => {
     const[formList, SetFormList] = useState([]);
     const navigate = useNavigate();
-    
+    const [currentPage, setCurrentPage] = useState(1);
+    const [totalPages, setTotalPages] = useState(0)
+    const limit = 10;
     const handleClick = () => {
         navigate('/document/businessWrite');
     };
 
     const loginMemberNo = sessionStorage.getItem("loginMemberNo");
     useEffect( () => {
-        fetch(`http://127.0.0.1:8888/app/api/business-trip-form/list?writerNo=${loginMemberNo}`)
+        fetch(`http://127.0.0.1:8888/app/api/business-trip-form/list?writerNo=${loginMemberNo}&page=${currentPage}&limit=${limit}`)
         .then( resp => resp.json() )
         .then( data => {
             if(data.msg === 'good'){
                 SetFormList(data.businessTripList);
+                setTotalPages(data.pageInfo.maxPage);
             } else {
                 console.log("목록 조회 실패");
             }
         } );
-    } , [loginMemberNo] );
+    } , [loginMemberNo, currentPage] );
+    const handlePreviousPage = () => {
+        setCurrentPage(currentPage - 1);
+    };
+
+    const handleNextPage = () => {
+        setCurrentPage(currentPage + 1);
+    };
+
+    const renderPagination = () => {
+    return (
+        <div>
+            <button onClick={handlePreviousPage} disabled={currentPage === 1}>이전</button>
+            <span>{currentPage}</span>
+            <button onClick={handleNextPage} disabled={currentPage === totalPages}>다음</button>
+        </div>
+        );
+    };
+
     return (
         <StyledBusinessTripFormListDiv>
             <h1>출장신청서 목록</h1>
+            <button onClick={handleClick}>출장신청서 등록</button>
             <table>
                 <thead>
                     <tr>
@@ -70,7 +92,7 @@ const BusinessTripFormList = ({}) => {
                     }
                 </tbody>
             </table>
-            <button onClick={handleClick}>출장신청서 등록</button>
+            {renderPagination()}
         </StyledBusinessTripFormListDiv>
     );
 };

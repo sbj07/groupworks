@@ -13,7 +13,6 @@ const DocumentWrite = () => {
     return (
         <StyledDocumentWriteDiv>
             <VacationFormWrite />
-            <BusinessFormWrite />
         </StyledDocumentWriteDiv>
             
     );

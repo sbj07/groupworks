@@ -20,6 +20,8 @@ import com.groupworks.app.businessform.service.BusinessTripFormService;
 import com.groupworks.app.businessform.vo.BusinessTripFormVo;
 import com.groupworks.app.member.service.MemberService;
 import com.groupworks.app.member.vo.MemberVo;
+import com.groupworks.app.page.vo.PageVo;
+import com.groupworks.app.vacationform.vo.VacationFormVo;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -61,17 +63,37 @@ public class BusniessTripFormController {
 		return map;
 	}
 		
-	//출장신청서 조회
+//	//출장신청서 조회
+//	@GetMapping("list")
+//	public Map<String, Object> list(@RequestParam String writerNo) {
+//		List<BusinessTripFormVo> businessTripList = service.list(writerNo); 
+//		Map<String, Object> map = new HashMap<>();
+//		map.put("msg", "good");
+//		map.put("businessTripList", businessTripList);
+//		if(businessTripList == null) {
+//			map.put("msg", "bad");
+//		}
+//		return map;
+//	}
+	
 	@GetMapping("list")
-	public Map<String, Object> list(@RequestParam String writerNo) {
-		List<BusinessTripFormVo> businessTripList = service.list(writerNo); 
-		Map<String, Object> map = new HashMap<>();
-		map.put("msg", "good");
-		map.put("businessTripList", businessTripList);
-		if(businessTripList == null) {
-			map.put("msg", "bad");
-		}
-		return map;
+	public Map<String, Object> list(@RequestParam String writerNo, 
+	                                @RequestParam(value  = "page", defaultValue = "1") int currentPage, 
+	                                @RequestParam(value = "limit", defaultValue = "10") int limit) {
+	    int listCount = service.getListCount(writerNo);
+	    PageVo pageVo = new PageVo(listCount, currentPage, 10, limit); // 페이지네이션 정보 계산
+	    pageVo.setWriterNo(writerNo);
+	    
+	    List<BusinessTripFormVo> businessTripList = service.listPaged(pageVo);
+	    Map<String, Object> map = new HashMap<>();
+	    map.put("msg", "good");
+	    map.put("businessTripList", businessTripList);
+	    map.put("pageInfo", pageVo); // 페이지 정보 추가
+
+//	    if(vacationVoList == null) { 
+//	        map.put("msg", "bad");
+//	    }
+	    return map;
 	}
 	
 	//결재대기 목록 조회
