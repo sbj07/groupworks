@@ -25,7 +25,7 @@
     </insert>
 
     <!-- 출장 수정 -->
-    <update id="putBusinessTrip">
+    <update id="editBusinessTrip">
         UPDATE BUSINESS_TRIP
         <set>
             <if test="startDate != null">
@@ -77,6 +77,32 @@
         )
     </insert>
 
+    <!-- 외근 수정 -->
+    <update id="editOutsideWork">
+        UPDATE OUTSIDE_WORK
+        <set>
+            <if test="startTime != null">
+                START_TIME = #{startTime},
+                END_TIME = #{endTime},
+            </if>
+            <if test=" onsiteStart != null and onsiteStart != '' ">
+                ONSITE_START = #{onsiteStart},
+            </if>
+            <if test=" onsiteEnd != null and onsiteEnd != '' ">
+                ONSITE_END = #{onsiteEnd}
+            </if>
+        </set>
+        WHERE NO = #{no}
+    </update>
+
+    <!-- 외근 삭제 -->
+    <update id="deleteOutsideWork">
+        UPDATE OUTSIDE_WORK
+        SET
+        DEL_YN = 'Y'
+        WHERE NO = #{no}
+    </update>
+
     <!-- 휴가 등록 -->
     <insert id="insertVacation">
         INSERT INTO VACATION
@@ -98,6 +124,28 @@
         , #{halfDayType}
         )
     </insert>
+
+    <!-- 휴가 수정 -->
+    <update id="editVacation">
+        UPDATE VACATION
+        <set>
+            START_DATE = #{startDate},
+            END_DATE = #{endDate},
+            USED_DAYS = #{usedDays}
+            <if test=" halfDayType != null and halfDayType != '' ">
+                HALF_DAY_TYPE = #{halfDayType}
+            </if>
+        </set>
+        WHERE NO = #{no}
+    </update>
+
+    <!-- 휴가 삭제 -->
+    <update id="deleteVacation">
+        UPDATE VACATION
+        SET
+            DEL_YN = 'Y'
+        WHERE NO = #{no}
+    </update>
 
     <!-- 출장 리스트 -->
     <select id="getBusinessTripList" resultType="BusinessTripVo">

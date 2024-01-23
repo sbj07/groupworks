@@ -17,8 +17,8 @@ public class AttendanceDao {
     }
 
     // 출장수정
-    public int putBusinessTrip(SqlSessionTemplate sessionTemplate, BusinessTripVo vo) {
-        return sessionTemplate.update("AttendanceMapper.putBusinessTrip", vo);
+    public int editBusinessTrip(SqlSessionTemplate sessionTemplate, BusinessTripVo vo) {
+        return sessionTemplate.update("AttendanceMapper.editBusinessTrip", vo);
     }
 
     // 출장삭제
@@ -31,9 +31,29 @@ public class AttendanceDao {
         return sessionTemplate.insert("AttendanceMapper.insertOutsideWork", vo);
     }
 
+    // 외근 수정
+    public int editOutsideWork(SqlSessionTemplate sessionTemplate, OutsideWorkVo vo) {
+        return sessionTemplate.update("AttendanceMapper.editOutsideWork", vo);
+    }
+
+    // 외근 삭제
+    public int deleteOutsideWork(SqlSessionTemplate sessionTemplate, String no) {
+        return sessionTemplate.update("AttendanceMapper.deleteOutsideWork", no);
+    }
+
     // 휴가등록
     public int insertVacation(SqlSessionTemplate sessionTemplate, VacationVo vo) {
         return sessionTemplate.insert("AttendanceMapper.insertVacation", vo);
+    }
+
+    // 휴가 수정
+    public int editVacation(SqlSessionTemplate sessionTemplate, VacationVo vo) {
+        return sessionTemplate.update("AttendanceMapper.editVacation", vo);
+    }
+
+    // 휴가 삭제
+    public int deleteVacation(SqlSessionTemplate sessionTemplate, String no) {
+        return sessionTemplate.update("AttendanceMapper.deleteVacation", no);
     }
 
     // 출장 리스트

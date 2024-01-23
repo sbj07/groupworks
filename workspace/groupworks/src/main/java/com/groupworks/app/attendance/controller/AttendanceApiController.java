@@ -35,11 +35,8 @@ public class AttendanceApiController {
 
     // 출장 수정
     @PutMapping("business-trip")
-    public Map<String, String> putBusinessTrip(@RequestBody BusinessTripVo businessTripVo) {
-        log.info("vo : {}", businessTripVo);
-        int result = service.putBusinessTrip(businessTripVo);
-        log.info("result : {}", result);
-
+    public Map<String, String> editBusinessTrip(@RequestBody BusinessTripVo businessTripVo) {
+        int result = service.editBusinessTrip(businessTripVo);
         Map<String, String> map = new HashMap<String, String>();
         map.put("msg", "okay");
         if(result != 1){
@@ -51,7 +48,6 @@ public class AttendanceApiController {
     // 출장 삭제
     @DeleteMapping("business-trip/{eventNo}")
     public Map<String, String> deleteBusinessTrip(@PathVariable String eventNo){
-        log.info("이벤트번호 : {}",eventNo);
         int result = service.deleteBusinessTrip(eventNo);
         Map<String, String> map = new HashMap<String, String>();
         map.put("msg", "okay");
@@ -65,9 +61,32 @@ public class AttendanceApiController {
     // 외근 등록
     @PostMapping("outside-work")
     public Map<String, String> insertOutsideWork(@RequestBody OutsideWorkVo outSideWorkVo) {
-        log.info("외근 등록 : {}", outSideWorkVo);
         int result = service.insertOutsideWork(outSideWorkVo);
         Map<String, String> map = new HashMap<String, String>();
+        map.put("msg", "okay");
+        if(result != 1){
+            map.put("msg", "nope");
+        }
+        return map;
+    }
+
+    // 외근 수정
+    @PutMapping("outside-work")
+    public Map<String, String> editOutsideWork(@RequestBody OutsideWorkVo outSideWorkVo) {
+        int result = service.editOutsideWork(outSideWorkVo);
+        Map<String, String> map = new HashMap<String, String>();
+        map.put("msg", "okay");
+        if(result != 1){
+            map.put("msg", "nope");
+        }
+        return map;
+    }
+
+    // 외근 삭제
+    @DeleteMapping("outside-work/{eventNo}")
+    public Map<String, String> deleteOutsideWork(@PathVariable String eventNo) {
+        int result = service.deleteOutsideWork(eventNo);
+        Map<String, String> map = new HashMap<String,String>();
         map.put("msg", "okay");
         if(result != 1){
             map.put("msg", "nope");
@@ -78,11 +97,34 @@ public class AttendanceApiController {
     // 휴가 등록
     @PostMapping("vacation")
     public Map<String, String> insertVacation(@RequestBody VacationVo vacationVo) {
-        log.info("휴가 등록 : {}", vacationVo);
         int result = service.insertVacation(vacationVo);
         Map<String, String> map = new HashMap<String, String>();
         map.put("msg", "okay");
         if(result != 1){
+            map.put("msg", "nope");
+        }
+        return map;
+    }
+
+    // 휴가 수정
+    @PutMapping("vacation")
+    public Map<String, String> editVacation(@RequestBody VacationVo vacationVo) {
+        int result = service.editVacation(vacationVo);
+        Map<String, String> map = new HashMap<>();
+        map.put("msg","okay");
+        if(result != 1) {
+            map.put("msg", "nope");
+        }
+        return map;
+    }
+
+    // 휴가 삭제
+    @DeleteMapping("vacation/{eventNo}")
+    public Map<String, String> deleteVacation(@PathVariable String eventNo) {
+        int result = service.deleteVacation(eventNo);
+        Map<String, String> map = new HashMap<>();
+        map.put("msg", "okay");
+        if(result != 1) {
             map.put("msg", "nope");
         }
         return map;

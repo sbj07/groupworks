@@ -26,8 +26,8 @@ public class AttendanceService {
     }
 
     // 출장 수정
-    public int putBusinessTrip(BusinessTripVo vo){
-        return dao.putBusinessTrip(sessionTemplate, vo);
+    public int editBusinessTrip(BusinessTripVo vo){
+        return dao.editBusinessTrip(sessionTemplate, vo);
     }
 
     //출장 삭제
@@ -38,6 +38,14 @@ public class AttendanceService {
     // 외근등록
     public int insertOutsideWork(OutsideWorkVo vo){
         return dao.insertOutsideWork(sessionTemplate, vo);
+    }
+
+    // 외근 수정
+    public int editOutsideWork(OutsideWorkVo vo) { return dao.editOutsideWork(sessionTemplate, vo); }
+
+    // 외근 삭제
+    public int deleteOutsideWork(String eventNo) {
+        return dao.deleteOutsideWork(sessionTemplate, eventNo);
     }
 
     // 휴가등록
@@ -67,6 +75,37 @@ public class AttendanceService {
         return dao.insertVacation(sessionTemplate, vo);
     }
 
+    // 휴가 수정
+    public int editVacation(VacationVo vo) {
+        LocalDate editStartDate = LocalDate.parse(vo.getStartDate());
+        LocalDate editEndDate = LocalDate.parse(vo.getEndDate());
+        long days = 0;
+
+        // 반차 체크
+        if (vo.getHalfDayType().equals("Y") && editStartDate.isEqual(editEndDate)){
+            vo.setUsedDays("0.5");
+            return dao.editVacation(sessionTemplate, vo);
+        }
+
+        // 주말 제거
+        while (!editStartDate.isAfter(editEndDate)){
+            DayOfWeek dayOfWeek = editStartDate.getDayOfWeek();
+            if(dayOfWeek != DayOfWeek.SATURDAY && dayOfWeek != DayOfWeek.SUNDAY) {
+                days ++;
+            }
+            editStartDate = editStartDate.plusDays(1);
+        }
+        float floatDays = (float) days;
+        String usedDays = Float.toString(floatDays);
+        vo.setUsedDays(String.valueOf(usedDays));
+        log.info("사용일수 체크 : {}", vo);
+        return dao.editVacation(sessionTemplate, vo);
+    }
+
+    // 휴가 삭제
+    public int deleteVacation(String eventNo) {
+        return dao.deleteVacation(sessionTemplate, eventNo);
+    }
     // 출장 리스트
     public List<BusinessTripVo> getBusinessTripList(String no) {
         return dao.getBusinessTripList(sessionTemplate, no);

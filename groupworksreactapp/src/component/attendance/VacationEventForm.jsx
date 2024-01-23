@@ -1,12 +1,14 @@
 import React, { useState } from 'react';
 import { Button, Form } from 'react-bootstrap';
 
-const VacationEventForm = () => {
+const VacationEventForm = ( props ) => {
+    let fetchType = props.type;
+    let putId = props.putId;
     const loginMemberNo = sessionStorage.getItem("loginMemberNo");
-
     const [halfChecked, setHalfChecked] = useState(false);
 
     const [ vacationVo , setVacationVo] = useState({
+        no: putId,
         memberNo: loginMemberNo,
         startDate: "",
         endDate: "",
@@ -32,22 +34,42 @@ const VacationEventForm = () => {
 
     const handleFormSubmit = (event) => {
         event.preventDefault();
-        fetch("http://127.0.0.1:8888/app/api/attendance/vacation",{
-            method: "POST" ,
-            headers: {
+        if (fetchType !== 'put') {
+
+            fetch("http://127.0.0.1:8888/app/api/attendance/vacation",{
+                method: "POST" ,
+                headers: {
                 "Content-Type": "application/json"
-            },
-            body: JSON.stringify(vacationVo)
-        })
-        .then( resp => resp.json())
-        .then( data => {
-            if(data.msg === 'okay'){
-                alert("일정등록 완료");
-                window.location.reload();
-            }else{
-                alert("일정등록 실패");
-            }
-        })
+                },
+                body: JSON.stringify(vacationVo)
+            })
+            .then( resp => resp.json())
+            .then( data => {
+                if(data.msg === 'okay'){
+                    alert("일정등록 완료");
+                    window.location.reload();
+                }else{
+                    alert("일정등록 실패");
+                }
+            })
+        } else {
+            fetch("http://127.0.0.1:8888/app/api/attendance/vacation",{
+                method: "PUT" ,
+                headers: {
+                "Content-Type": "application/json"
+                },
+                body: JSON.stringify(vacationVo)
+            })
+            .then( resp => resp.json())
+            .then( data => {
+                if(data.msg === 'okay'){
+                    alert("일정 수정 완료");
+                    window.location.reload();
+                }else{
+                    alert("일정 삭제 실패");
+                }
+            })
+        }
     };
 
     return (

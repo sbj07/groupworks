@@ -1,14 +1,16 @@
 import React, { useState } from 'react';
 import { Button, Form } from 'react-bootstrap';
 
-const OutworkEventForm = () => {
+const OutworkEventForm = ( props ) => {
+    let fetchType = props.type;
+    let putId = props.putId;
+
     const loginMemberNo = sessionStorage.getItem("loginMemberNo");
-
     const [startChecked, setStartChecked] = useState(false);
-
     const [endChecked, setEndChecked] = useState(false);
 
     const [ outSideWorkVo , setOutSideWorkVo] = useState({
+        no: putId,
         memberNo: loginMemberNo,
         startTime: "",
         endTime: "",
@@ -49,22 +51,44 @@ const OutworkEventForm = () => {
 
     const handleFormSubmit = (event) => {
         event.preventDefault();
-        fetch("http://127.0.0.1:8888/app/api/attendance/outside-work",{
-            method: "POST" ,
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify(outSideWorkVo)
-        })
-        .then( resp => resp.json())
-        .then( data => {
-            if(data.msg === 'okay'){
-                alert("일정등록 완료");
-                window.location.reload();
-            }else{
-                alert("일정등록 실패");
-            }
-        }) 
+
+        if(fetchType !== 'put') {
+
+            fetch("http://127.0.0.1:8888/app/api/attendance/outside-work",{
+                method: "POST" ,
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(outSideWorkVo)
+            })
+            .then( resp => resp.json())
+            .then( data => {
+                if(data.msg === 'okay'){
+                    alert("일정등록 완료");
+                    window.location.reload();
+                }else{
+                    alert("일정등록 실패");
+                }
+            }) 
+        } else {
+
+            fetch("http://127.0.0.1:8888/app/api/attendance/outside-work",{
+                method: "PUT" ,
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(outSideWorkVo)
+            })
+            .then( resp => resp.json())
+            .then( data => {
+                if(data.msg === 'okay'){
+                    alert("일정 수정 완료");
+                    window.location.reload();
+                }else{
+                    alert("일정 수정 실패");
+                }
+            }) 
+        }
     };
 
     return (
