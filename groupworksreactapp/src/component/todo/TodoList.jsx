@@ -137,7 +137,7 @@ const TodoList = () => {
                       color: 'lightsteelblue',
                       width: '40%', 
                       height: '40%', 
-                      margin: 'auto' 
+                      margin: 'auto'
                     }
                   }}
             >

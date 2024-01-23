@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import com.groupworks.app.member.service.MemberService;
 import com.groupworks.app.member.vo.MemberVo;
+import com.groupworks.app.page.vo.PageVo;
 import com.groupworks.app.vacationform.service.VacationFormService;
 import com.groupworks.app.vacationform.vo.VacationFormVo;
 
@@ -43,7 +44,6 @@ public class VacationFormController {
 		if(memberList == null) {
 			map.put("msg", "bad");
 		}
-		System.out.println(memberList);
 		return map;
 	}
 	
@@ -60,19 +60,53 @@ public class VacationFormController {
 		return map;
 	}
 	
-	//휴가신청서 조회
-	@GetMapping("list")
-	public Map<String, Object> list(@RequestParam String writerNo) {
-		List<VacationFormVo> vacationVoList = service.list(writerNo);
+//	//휴가신청서 조회
+//	@GetMapping("list")
+//	public Map<String, Object> list(@RequestParam String writerNo) {
+//		List<VacationFormVo> vacationVoList = service.list(writerNo);
+//		Map<String, Object> map = new HashMap<>();
+//		map.put("msg", "good");
+//		map.put("vacationVoList", vacationVoList);
+//		if(vacationVoList == null) {
+//			map.put("msg", "bad");
+//		}
+//		return map;
+//	}
+	
+	//승인자로 선택된 사람의 휴가신청서 리스트 조회 
+	@GetMapping("apply-list")
+	public Map<String, Object> applyList(@RequestParam String loginMemberNo){
+		List<VacationFormVo> applyVoList = service.applyList(loginMemberNo);
 		Map<String, Object> map = new HashMap<>();
 		map.put("msg", "good");
-		map.put("vacationVoList", vacationVoList);
-		if(vacationVoList == null) {
+		map.put("applyVoList", applyVoList);
+		if(applyVoList == null) {
 			map.put("msg", "bad");
 		}
 		return map;
 	}
 	
+	//조회
+	@GetMapping("list")
+	public Map<String, Object> list(@RequestParam String writerNo, 
+	                                @RequestParam(value  = "page", defaultValue = "1") int currentPage, 
+	                                @RequestParam(value = "limit", defaultValue = "10") int limit) {
+	    int listCount = service.getListCount(writerNo);
+	    PageVo pageVo = new PageVo(listCount, currentPage, 10, limit); // 페이지네이션 정보 계산
+	    pageVo.setWriterNo(writerNo);
+	    
+	    List<VacationFormVo> vacationVoList = service.listPaged(pageVo);
+	    Map<String, Object> map = new HashMap<>();
+	    map.put("msg", "good");
+	    map.put("vacationVoList", vacationVoList);
+	    map.put("pageInfo", pageVo); // 페이지 정보 추가
+
+//	    if(vacationVoList == null) { 
+//	        map.put("msg", "bad");
+//	    }
+	    return map;
+	}
+
 	//결재대기 목록 조회
 	@GetMapping("ing-approve")
 	public Map<String, Object> ingApprove() {

@@ -8,6 +8,8 @@ import org.springframework.stereotype.Service;
 import com.groupworks.app.businessform.dao.BusinessTripFormDao;
 import com.groupworks.app.businessform.vo.BusinessTripFormVo;
 import com.groupworks.app.member.vo.MemberVo;
+import com.groupworks.app.page.vo.PageVo;
+import com.groupworks.app.vacationform.vo.VacationFormVo;
 
 import lombok.RequiredArgsConstructor;
 
@@ -54,5 +56,13 @@ public class BusinessTripFormService {
 	}
 	public List<MemberVo> memberList(MemberVo vo) {
 		return dao.memberList(sst, vo);
+	}
+
+	public int getListCount(String writerNo) {
+		return dao.getListCount(sst, writerNo);
+	}
+
+	public List<BusinessTripFormVo> listPaged(PageVo pageVo) {
+		return dao.listPaged(sst, pageVo);
 	}
 }

@@ -6,6 +6,7 @@ import org.mybatis.spring.SqlSessionTemplate;
 import org.springframework.stereotype.Service;
 
 import com.groupworks.app.member.vo.MemberVo;
+import com.groupworks.app.page.vo.PageVo;
 import com.groupworks.app.vacationform.dao.VacationFormDao;
 import com.groupworks.app.vacationform.vo.VacationFormVo;
 
@@ -19,37 +20,30 @@ public class VacationFormService {
 	private final SqlSessionTemplate sst;
 	
 
-	//�ް���û�� ��ü��ȸ
 	public List<VacationFormVo> list(String writerNo) {
 		return dao.list(sst, writerNo);
 	}
 	
-	//������ ��� ��ȸ
 	public List<VacationFormVo> ingApprove() {
 		return dao.ingApprove(sst);
 	}
 	
-	//����Ϸ� ��� ��ȸ
 	public List<VacationFormVo> edApprove() {
 		return dao.edApprove(sst);
 	}
 	
-	//�ް���û�� �ۼ�
 	public int write(VacationFormVo vo) {
 		return dao.write(sst, vo);
 	}
 	
-	//�ް���û�� ����
 	public int apply(VacationFormVo vo) {
 		return dao.apply(sst, vo);
 	}
 	
-	//�ް���û�� �ݷ�
 	public int rejection(VacationFormVo vo) {
 		return dao.rejection(sst, vo);
 	}
 	
-	//�ް���û�� ����
 	public int delete(String no) {
 		return dao.delete(sst, no);
 	}
@@ -57,5 +51,18 @@ public class VacationFormService {
 	public List<MemberVo> memberList(MemberVo vo) {
 		return dao.memberList(sst, vo);
 	}
-	
+
+	public int getListCount(String writerNo) {
+		return dao.getListCount(sst, writerNo);
+	}
+
+	public List<VacationFormVo> listPaged(PageVo pageVo) {
+		return dao.listPaged(sst, pageVo);
+	}
+
+	public List<VacationFormVo> applyList(String loginMemberNo) {
+		return dao.applyList(sst, loginMemberNo);
+	}
+
+
 }

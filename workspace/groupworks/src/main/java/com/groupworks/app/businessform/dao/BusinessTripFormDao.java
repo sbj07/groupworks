@@ -5,6 +5,8 @@ import org.mybatis.spring.SqlSessionTemplate;
 import org.springframework.stereotype.Repository;
 import com.groupworks.app.businessform.vo.BusinessTripFormVo;
 import com.groupworks.app.member.vo.MemberVo;
+import com.groupworks.app.page.vo.PageVo;
+import com.groupworks.app.vacationform.vo.VacationFormVo;
 
 @Repository
 public class BusinessTripFormDao {
@@ -46,6 +48,14 @@ public class BusinessTripFormDao {
 	
 	public List<MemberVo> memberList(SqlSessionTemplate sst, MemberVo vo) {
 		return sst.selectList("BusinessTripFormMapper.member", vo);
+	}
+
+	public int getListCount(SqlSessionTemplate sst, String writerNo) {
+		return sst.selectOne("BusinessTripFormMapper.getListCount", writerNo);
+	}
+
+	public List<BusinessTripFormVo> listPaged(SqlSessionTemplate sst, PageVo pageVo) {
+		return sst.selectList("BusinessTripFormMapper.listPaged", pageVo);
 	}
 	
 }

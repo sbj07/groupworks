@@ -37,6 +37,7 @@
 	 	FROM BUSINESS_TRIP_FORM 
 	    WHERE WRITER_NO = #{writerNo}
 	    AND DEL_YN = 'N'
+	    ORDER BY NO DESC
  	</select>
  	
  	<!-- 출장신청서 결재대기 조회 -->
@@ -150,5 +151,18 @@
  	 	SET DEL_YN = 'Y' 
  	 WHERE NO = #{no}
  	</update>
+ 	
+ 	<select id="getListCount" resultType="int" parameterType="String">
+    	SELECT COUNT(*) FROM BUSINESS_TRIP_FORM WHERE WRITER_NO = #{writerNo}
+	</select>
+	
+ 	<select id="listPaged" resultType="BusinessTripFormVo" parameterType="com.groupworks.app.page.vo.PageVo">
+    SELECT *
+    FROM (
+        SELECT ROW_NUMBER() OVER (ORDER BY NO DESC) AS rnum, B.*
+        FROM BUSINESS_TRIP_FORM B
+        WHERE B.WRITER_NO = #{writerNo} 
+    ) WHERE rnum BETWEEN #{startRow} AND #{lastRow}
+	</select>
  	
 </mapper>
