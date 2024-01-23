@@ -16,6 +16,16 @@ public class AttendanceDao {
         return sessionTemplate.insert("AttendanceMapper.insertBusinessTrip", vo);
     }
 
+    // 출장수정
+    public int putBusinessTrip(SqlSessionTemplate sessionTemplate, BusinessTripVo vo) {
+        return sessionTemplate.update("AttendanceMapper.putBusinessTrip", vo);
+    }
+
+    // 출장삭제
+    public int deleteBusinessTrip(SqlSessionTemplate sessionTemplate, String no) {
+        return sessionTemplate.update("AttendanceMapper.deleteBusinessTrip", no);
+    }
+
     // 외근등록
     public int insertOutsideWork(SqlSessionTemplate sessionTemplate, OutsideWorkVo vo) {
         return sessionTemplate.insert("AttendanceMapper.insertOutsideWork", vo);
