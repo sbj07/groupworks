@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
+import OrganModal from './OrganModal';
 
 
 function groupByDepartNo(list) {
@@ -75,6 +76,33 @@ const OrganList = () => {
             setOrganVoList([]); // 에러 발생 시 빈 배열로 설정
         });
     };
+
+
+    const handleDelete = orgNo => {
+        fetch(`http://127.0.0.1:8888/app/organ/delete/${orgNo}`, {
+            method: 'DELETE',
+            headers: {
+                'Content-Type' : 'application/json',
+            },
+        })
+        .then(response => {
+            if(!response.ok){
+                throw new Error('서버 오류 발생')
+            }
+            return response.text();
+        })
+        .then(data => {
+            console.log('삭제 성공:' , data);
+            alert("조직도 삭제 성공");
+            loadOrganVoList();
+        })
+        .catch(error => {
+            console.error('삭제 실패 : ', error);
+            alert("조직도 삭제 실패")
+        });
+    };
+
+
     useEffect( () => {
         // console.log("useEffect 호출");
         loadOrganVoList();
@@ -83,6 +111,26 @@ const OrganList = () => {
     const handleOrganWrite = () => {
         navigate('/organ/insert');
     }
+
+
+    const [modalIsOpen, setIsOpen] = useState(false);
+    const [selectedVo, setSelectedVo] = useState(null);
+
+    const openModal = (vo) => {
+        setIsOpen(true);
+        setSelectedVo(vo);
+    }
+
+    const closeModal = () => {
+        setIsOpen(false);
+        setSelectedVo(null);
+    }
+
+    const navigateToEdit = () => {
+        navigate(`/organ/edit`, { state: { selectedVo } });
+        closeModal();
+    }
+
 
     return (
         // <StyledOrganListDiv>
@@ -142,7 +190,7 @@ const OrganList = () => {
                         </thead>
                         <tbody>
                             {list.map(vo => (
-                                <tr key={vo.orgNo}>
+                                <tr key={vo.orgNo} onClick={() => openModal(vo)}>
                                     <td>{vo.name}</td>
                                     <td>{vo.departNo}</td>
                                     <td>{vo.positionNo}</td>
@@ -155,8 +203,33 @@ const OrganList = () => {
                 )
                 )
             }
+            <OrganModal
+                modalIsOpen={modalIsOpen}
+                selectedVo={selectedVo}
+                closeModal={closeModal}
+                navigateToEdit={navigateToEdit}
+                onDelete={handleDelete}
+                organ={selectedVo}
+            />
     </StyledOrganListDiv>
     );
 };
 
 export default OrganList;
+            // <Modal
+            //     isOpen={modalIsOpen}
+            //     onRequestClose={closeModal}
+            //     contentLabel="부서원 정보"
+            // >
+            //     <h2>부서원 정보</h2>
+            //     {selectedVo && <div>
+            //         <p>이름: {selectedVo.name}</p>
+            //         <p>부서: {selectedVo.departNo}</p>
+            //         <p>직책: {selectedVo.positionNo}</p>
+            //         <p>전화번호: {selectedVo.tel}</p>
+            //         <p>이메일: {selectedVo.email}</p>
+            //         {/* ... 기타 정보 표시 ... */}
+            //         <button onClick={navigateToEdit}>수정</button>
+            //         <button onClick={closeModal}>닫기</button>
+            //     </div>}
+            // </Modal>

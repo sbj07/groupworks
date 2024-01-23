@@ -5,8 +5,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -15,6 +18,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.groupworks.app.member.service.MemberService;
 import com.groupworks.app.member.vo.MemberVo;
+import com.groupworks.app.notice.vo.NoticeVo;
 import com.groupworks.app.organ.service.OrganService;
 import com.groupworks.app.organ.vo.OrganVo;
 
@@ -127,27 +131,56 @@ public class OrganController {
 	}//detail
 	
 	
-	//수정
+	//수정(기존)
+//	@PostMapping("edit")
+//	public String edit(OrganVo vo) throws Exception{
+//		int result = service.edit(vo);
+//		if(result != 1) {
+//			System.out.println("조직도 수정 실패");
+//			throw new Exception();
+//		}
+//		return "redirect:/organ/list";
+//	}
+	//수정(gpt)
 	@PostMapping("edit")
-	public String edit(OrganVo vo) throws Exception{
-		int result = service.edit(vo);
-		if(result != 1) {
-			System.out.println("조직도 수정 실패");
-			throw new Exception();
-		}
-		return "redirect:/organ/list";
-	}
+	public ResponseEntity<?> edit(OrganVo vo) {
+	    try {
+	        int result = service.edit(vo);
+	        if(result != 1) {
+	            throw new Exception("조직도 수정 실패");
+	        }
+	        System.out.println("수정 요청된 OrganVo : " + vo);
+	        return ResponseEntity.ok().body(Map.of("message", "조직도 수정 성공"));
+	    } catch(Exception e) {
+	    	System.out.println("수정 중 오류 발생 : " + e.getMessage());
+	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of("message", "조직도 수정 실패"));
+	    }
+	}//edit
 	
 	
 	//삭제
-	@PostMapping("delete")
-	public String delete(OrganVo vo) throws Exception{
-		int result = service.delete(vo);
-		if(result != 1) {
-			System.out.println("조직도 삭제 실패");
-			throw new Exception();
-		}
-		return "redirect:/organ/list";
+//	@PostMapping("delete")
+//	public String delete(OrganVo vo) throws Exception{
+//		int result = service.delete(vo);
+//		if(result != 1) {
+//			System.out.println("조직도 삭제 실패");
+//			throw new Exception();
+//		}
+//		return "redirect:/organ/list";
+//	}
+	
+	//삭제(gpt)
+	@DeleteMapping("delete/{orgNo}")
+	public ResponseEntity<?> delete(OrganVo vo) {
+	    try {
+	        int result = service.delete(vo);
+	        if(result != 1) {
+	            throw new Exception("삭제 실패");
+	        }
+	        return ResponseEntity.ok().body(Map.of("message", "조직도 삭제 성공"));
+	    } catch(Exception e) {
+	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of("message", "조직도 삭제 실패"));
+	    }
 	}
 	
 	

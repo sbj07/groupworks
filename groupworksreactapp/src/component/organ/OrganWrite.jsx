@@ -71,11 +71,11 @@ const OrganWrite = () => {
         e.preventDefault();
         const formData = new FormData();
         // formData.append('orgNo', organData.orgNo);
-        // formData.append('memberNo', organData.memberNo);
+        formData.append('memberNo', organData.memberNo);
         formData.append('name', organData.name);
         formData.append('profile', organData.profile);
-        // formData.append('id', organData.id);
-        // formData.append('address', organData.address);
+        formData.append('id', organData.id);
+        formData.append('address', organData.address);
         formData.append('departNo', organData.departNo);
         // formData.append('companyNo', organData.companyNo);
         formData.append('positionNo', organData.positionNo);
@@ -110,6 +110,24 @@ const OrganWrite = () => {
                         type="text"
                         name='name'
                         value={organData.name}
+                        onChange={handleChange}
+                    />
+                </Label>
+                <Label>
+                    직원 번호
+                    <Input
+                        type="text"
+                        name='memberNo'
+                        value={organData.memberNo}
+                        onChange={handleChange}
+                    />
+                </Label>
+                <Label>
+                    아이디
+                    <Input
+                        type="text"
+                        name='id'
+                        value={organData.id}
                         onChange={handleChange}
                     />
                 </Label>

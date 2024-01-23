@@ -36,7 +36,7 @@ const Sidebar = () => {
                     <div><Link to="/notice/list">공지사항</Link></div>
                     <div><Link to="/document/list">전자결재</Link></div>
                     <div><Link to="/organ/list">조직도</Link></div>
-                    <div><Link to="/organ/list">예약</Link></div>
+                    <div><Link to="/book/list">예약</Link></div>
                     <div><Button variant='primary' size='lg' onClick={handleLogout}>Log Out</Button></div>
         </StyledSideDiv>
     );

@@ -1,6 +1,8 @@
 package com.groupworks.app.notice.dao;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.mybatis.spring.SqlSessionTemplate;
 import org.springframework.stereotype.Repository;
@@ -30,19 +32,24 @@ public class NoticeDao {
 //	}
 
 	//목록 조회
+//	public List<NoticeVo> list(SqlSessionTemplate sst) {
+//
+//		return sst.selectList("NoticeMapper.list");
+//	}
 	public List<NoticeVo> list(SqlSessionTemplate sst) {
 
 		return sst.selectList("NoticeMapper.list");
 	}
 	
-	//목록 조회 페이징 기능
+	//목록 조회 페이징 기능(기존)
 	public List<NoticeVo> listPaged(SqlSessionTemplate sst, PageVo pageVo) {
 	    return sst.selectList("NoticeMapper.listPaged", pageVo);
 	}
-	//전체 수 조회
+	//전체 수 조회(기존)
 	public int getListCount(SqlSessionTemplate sst) {
 	    return sst.selectOne("NoticeMapper.getListCount");
 	}
+
 
 	//상세 조회
 	public NoticeVo detail(SqlSessionTemplate sst, NoticeVo vo) {
