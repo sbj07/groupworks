@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 
-const StyledNoticeDetailDiv = styled.div`
+const StyledNoticeDeleteDiv = styled.div`
     width: 100%;
     height: 100%;
 `;
@@ -10,9 +10,9 @@ const NoticeDelete = () => {
     
     
     return (
-        <StyledNoticeDetailDiv>
+        <StyledNoticeDeleteDiv>
             <h1>공지사항 삭제</h1>
-        </StyledNoticeDetailDiv>
+        </StyledNoticeDeleteDiv>
     );
 };
 

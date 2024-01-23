@@ -69,7 +69,6 @@
 		    , POSITION_NO
 		FROM ORGAN
 		WHERE DELETE_YN = 'N'
-		AND DEPART_NO = #{departNo}
 		AND COMPANY_NO = #{companyNo}
 		ORDER BY ORG_NO DESC
 	</select>
@@ -93,23 +92,23 @@
 		UPDATE ORGAN
 		SET
 		<trim prefixOverrides=",">
-		<if test=" memberNo != null and memberNo != '' ">
-			MEMBER_NO = #{memberNo}
+		<if test=" name != null and name != '' ">
+			NAME = #{name}
 		</if>
-		<if test=" profile != null and profile != '' ">
-		    , PROFILE = #{profile}
+		<if test=" departNo != null and departNo != '' ">
+		    , DEPART_NO = #{departNo}
 		</if>
-		<if test=" department != null and department != '' ">
-		    , DEPARTMENT = #{department}
-	    </if>
-	    <if test=" position != null and position != '' ">
-		    , POSITION = #{position}
-	    </if>
-	    <if test=" name != null and name != '' ">
-		    , NAME = #{name}
+		<if test=" positionNo != null and positionNo != '' ">
+		    , POSITION_NO = #{positionNo}
 	    </if>
 	    <if test=" tel != null and tel != '' ">
 		    , TEL = #{tel}
+	    </if>
+	    <if test=" email != null and email != '' ">
+		    , EMAIL = #{email}
+	    </if>
+	    <if test=" profile != null and profile != '' ">
+		    , PROFILE = #{profile}
 	    </if>
 	    </trim>
 		WHERE ORG_NO = #{orgNo}

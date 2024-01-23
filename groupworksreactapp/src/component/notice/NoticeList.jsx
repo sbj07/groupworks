@@ -11,15 +11,41 @@ const StyledNoticeListDiv = styled.div`
     justify-content: center;
     align-items: center;
     flex-direction: column;
+    text-align: center;
+    background-color: #E0E8F7;
+    border: 2px solid #357ABD;
     & > table {
         width: 100%;
         height: 100%;
-        display: center;
-        border: 3px solid black;
+        border-collapse: collapse;
+        border: 1px solid #357ABD;
+        margin-top: 20px;
+    }
+    & > table th, td {
+        // 테이블 헤더와 셀 스타일 추가
+        border: 1px solid #357ABD;
+        padding: 8px;
+        text-align: center;
+    }
+    & > table th {
+        // 테이블 헤더 스타일 추가
+        background-color: #357ABD;
+        color: white;
     }
     & > button {
         width: 30%;
+        background-color: #357ABD;
+        color: white;
+        border: none;
+        padding: 10px;
+        cursor: pointer;
+        margin-top: 20px;
         /* font-size: 2rem; */
+    }
+    & > h1 {
+        // 헤더 스타일 추가
+        font-size: 24px;
+        margin-bottom: 10px;
     }
 `;
 
@@ -126,29 +152,29 @@ const NoticeList = ({ showTopFive, showWriteButton }) => {
     //         alert("공지사항 삭제 실패");
     //     });
     // };
-    const handleDelete = noticeNo => {
-        fetch(`http://127.0.0.1:8888/app/notice/delete/${noticeNo}`, {
-            method: 'DELETE',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-        })
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('서버 오류 발생');
-            }
-            return response.text(); // 이 경우, 서버 응답이 JSON이 아닐 수 있으므로 text() 사용
-        })
-        .then(data => {
-            console.log('삭제 성공:', data);
-            alert("공지사항 삭제 성공");
-            loadNoticeVoList(); // 공지사항 목록 다시 로드
-        })
-        .catch(error => {
-            console.error('삭제 실패:', error);
-            alert("공지사항 삭제 실패");
-        });
-    };
+    // const handleDelete = noticeNo => {
+    //     fetch(`http://127.0.0.1:8888/app/notice/delete/${noticeNo}`, {
+    //         method: 'DELETE',
+    //         headers: {
+    //             'Content-Type': 'application/json',
+    //         },
+    //     })
+    //     .then(response => {
+    //         if (!response.ok) {
+    //             throw new Error('서버 오류 발생');
+    //         }
+    //         return response.text(); // 이 경우, 서버 응답이 JSON이 아닐 수 있으므로 text() 사용
+    //     })
+    //     .then(data => {
+    //         console.log('삭제 성공:', data);
+    //         alert("공지사항 삭제 성공");
+    //         loadNoticeVoList(); // 공지사항 목록 다시 로드
+    //     })
+    //     .catch(error => {
+    //         console.error('삭제 실패:', error);
+    //         alert("공지사항 삭제 실패");
+    //     });
+    // };
     
 
 
@@ -183,41 +209,77 @@ const NoticeList = ({ showTopFive, showWriteButton }) => {
 
 
 
-    // const loadNoticeVoList = () => {
-    //     // fetch("http://127.0.0.1:8888/app/notice/list")
-    //     fetch(`http://127.0.0.1:8888/app/notice/list?page=${currentPage}&size=${itemsPerPage}`)
-    //     .then( resp => resp.json() )
-    //     .then(data => {
-    //         // console.log("가장 최근에 저장된 공지사항 데이터 : ", data);
-    //         if (data.voList && Array.isArray(data.voList)) {
-    //             const listToShow = showTopFive ? data.voList.slice(0, 5) : data.voList;
-    //             setNoticeVoList(listToShow);
-    //         } else {
-    //             console.error('Data is not an array:', data);
-    //             setNoticeVoList([]); // 데이터가 배열이 아닌 경우 빈 배열로 설정
-    //         }
-    //     })
-    //     .catch(error => {
-    //         console.error('Fetch error:', error);
-    //         setNoticeVoList([]); // 에러 발생 시 빈 배열로 설정
-    //     });
-    // };
-
     const loadNoticeVoList = () => {
-        fetch(`http://127.0.0.1:8888/app/notice/list?page=${currentPage}&size=${itemsPerPage}`)
-        .then(response => response.json())
+        // fetch("http://127.0.0.1:8888/app/notice/list")
+        const loginMemberNo = sessionStorage.getItem("loginMemberNo")
+
+        if(loginMemberNo){
+        fetch(`http://127.0.0.1:8888/app/notice/list?page=${currentPage}&size=${itemsPerPage}&memberNo=${loginMemberNo}`)
+        .then( resp => resp.json() )
         .then(data => {
+            // console.log("가장 최근에 저장된 공지사항 데이터 : ", data);
             if (data.voList && Array.isArray(data.voList)) {
-                setNoticeVoList(data.voList);
+                const listToShow = showTopFive ? data.voList.slice(0, 5) : data.voList;
+                setNoticeVoList(listToShow);
             } else {
-                setNoticeVoList([]);
+                console.error('Data is not an array:', data);
+                setNoticeVoList([]); // 데이터가 배열이 아닌 경우 빈 배열로 설정
             }
         })
         .catch(error => {
             console.error('Fetch error:', error);
-            setNoticeVoList([]);
+            setNoticeVoList([]); // 에러 발생 시 빈 배열로 설정
+        });
+        }else{
+              // 사용자 번호가 없는 경우
+              console.error('No user number found');
+              setNoticeVoList([]); // 사용자 번호가 없으면 빈 배열로 설정
+        }
+    };
+
+
+    const handleDelete = noticeNo => {
+        fetch(`http://127.0.0.1:8888/app/notice/delete/${noticeNo}`, {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('서버 오류 발생');
+            }
+            return response.text(); // 이 경우, 서버 응답이 JSON이 아닐 수 있으므로 text() 사용
+        })
+        .then(data => {
+            console.log('삭제 성공:', data);
+            alert("공지사항 삭제 성공");
+            loadNoticeVoList(); // 공지사항 목록 다시 로드
+        })
+        .catch(error => {
+            console.error('삭제 실패:', error);
+            alert("공지사항 삭제 실패");
         });
     };
+    // const loadNoticeVoList = () => {
+    //     // fetch(`http://127.0.0.1:8888/app/notice/list?page=${currentPage}&size=${itemsPerPage}`)
+    //     const url = showTopFive
+    //         ? `http://127.0.0.1:8888/app/notice/list?page=1&size=5`
+    //         : `http://127.0.0.1:8888/app/notice/list?page=${currentPage}&size=${itemsPerPage}`;
+    //     fetch(url)
+    //     .then(response => response.json())
+    //     .then(data => {
+    //         if (data.voList && Array.isArray(data.voList)) {
+    //             setNoticeVoList(data.voList);
+    //         } else {
+    //             setNoticeVoList([]);
+    //         }
+    //     })
+    //     .catch(error => {
+    //         console.error('Fetch error:', error);
+    //         setNoticeVoList([]);
+    //     });
+    // };
     
 
     useEffect( () => {
@@ -227,12 +289,16 @@ const NoticeList = ({ showTopFive, showWriteButton }) => {
 
 
     const renderPagination = () => {
-        // 간단한 페이징 컴포넌트. 실제 구현에는 더 복잡한 로직이 필요할 수 있음
+        
+        const totalItems = 100; // 예시로 총 아이템 수를 설정, 실제로는 데이터에서 가져와야 합니다.
+        const maxPage = Math.ceil(totalItems / itemsPerPage);
+
         return (
             <div>
                 <button onClick={handlePreviousPage} disabled={currentPage === 1}>이전</button>
                 <span>{currentPage}</span>
-                <button onClick={handleNextPage}>다음</button>
+                {/* <button onClick={handleNextPage}>다음</button> */}
+                <button onClick={handleNextPage} disabled={currentPage === maxPage}>다음</button>
             </div>
         );
     };
@@ -251,7 +317,7 @@ const NoticeList = ({ showTopFive, showWriteButton }) => {
                         <th>카테고리</th>
                         <th>긴급여부</th>
                         <th>공개부서</th>
-                        <th>작성일자</th>
+                        <th>작성(수정)일자</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -271,7 +337,7 @@ const NoticeList = ({ showTopFive, showWriteButton }) => {
                             <td>{notice.category}</td>
                             <td>{notice.emergencyYn}</td>
                             <td>{notice.openDepart}</td>
-                            <td>{notice.enrollDate}</td>
+                            <td>{notice.updateDate ? `(${notice.updateDate})` : notice.enrollDate}</td>
                         </tr>
                             ))
                             // )

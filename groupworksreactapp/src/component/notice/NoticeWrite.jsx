@@ -55,7 +55,7 @@ const SubmitButton = styled.button`
 
 
 
-const NoticeWrite = () => {
+const NoticeWrite = ({ loggedInUser }) => {
 
     const [noticeData, setNoticeData] = useState({
         title: '',
@@ -63,7 +63,8 @@ const NoticeWrite = () => {
         filePath: '',
         category: '',
         emergencyYn: '',
-        openDepart: ''
+        openDepart: '',
+        memberNo: loggedInUser ? loggedInUser.memberNo : ''
         
     });
     
@@ -131,12 +132,13 @@ const NoticeWrite = () => {
                 />
             </Label>
             <Label>
-                작성자:
-                <input
+                작성자:{noticeData.memberNo}
+                <Input
                     type="text"
                     name="memberNo"
                     value={noticeData.memberNo}
                     onChange={handleInputChange}
+                    readOnly
                 />
             </Label>
             <Label>
