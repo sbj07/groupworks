@@ -12,7 +12,7 @@ public class CompanyService {
     private final CompanyDao dao;
     private final SqlSessionTemplate sessionTemplate;
     // 회사 추가
-    public int insertCompany(CompanyVo vo){
+    public String insertCompany(CompanyVo vo){
         return dao.insertCompany(sessionTemplate, vo);
     }
 

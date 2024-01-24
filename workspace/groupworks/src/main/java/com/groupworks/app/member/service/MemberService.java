@@ -19,7 +19,7 @@ public class MemberService {
     private final SqlSessionTemplate sessionTemplate;
     private final PasswordEncoder passwordEncoder;
 
-    // 관리자 화원가입 || 구성원 추가
+    // 관리자 화원가입
     public int signup(MemberVo vo){
         if (vo != null && vo.getId() != null && vo.getId().length() < 4){
             throw new IllegalStateException("아이디가 너무 짧음");
@@ -34,8 +34,21 @@ public class MemberService {
              String encodedPwd = pwdEncoding(vo.getPwd());
              vo.setPwd(encodedPwd);
         }
-
         return dao.signup(sessionTemplate, vo);
+    }
+
+    // 구성원 추가
+    public int addMember(MemberVo vo) {
+        if (vo != null && vo.getId() != null && vo.getId().length() < 4){
+            throw new IllegalStateException("아이디가 너무 짧음");
+        }
+
+        // 비밀번호 암호화
+        if (vo != null && vo.getPwd() != null ) {
+            String encodedPwd = pwdEncoding(vo.getPwd());
+            vo.setPwd(encodedPwd);
+        }
+        return dao.addMember(sessionTemplate, vo);
     }
 
     // 비밀번호 암호화

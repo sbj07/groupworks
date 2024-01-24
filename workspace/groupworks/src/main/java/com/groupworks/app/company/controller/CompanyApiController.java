@@ -17,10 +17,11 @@ public class CompanyApiController {
     // 회사추가
     @PostMapping
     public Map<String, String> insertCompany(@RequestBody CompanyVo vo) {
-        int result = service.insertCompany(vo);
+        String result = service.insertCompany(vo);
         Map<String, String> map = new HashMap<String, String>();
         map.put("msg","okay");
-        if(result != 1) {
+        map.put("companyNo", result);
+        if(result == null) {
             map.put("msg", "nope");
         }
         return map;

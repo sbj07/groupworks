@@ -6,6 +6,8 @@ import NoticeMain from './notice/NoticeMain';
 import OrganMain from './organ/OrganMain';
 import DocumentMain from './document/DocumentMain';
 import BookMain from './book/BookMain';
+import AddMember from './member/AddMember';
+
 
 const StyledMainDiv = styled.div`
     width: 100%;
@@ -26,6 +28,7 @@ const Main = () => {
                 <Route path='/document/*' element={<DocumentMain />}></Route>
                 <Route path='/organ/*' element={<OrganMain />}></Route>
                 <Route path='/book/*' element={<BookMain />}></Route>
+                <Route path='/member/add/*' element={<AddMember />}></Route>
             </Routes>
         </StyledMainDiv>
     );

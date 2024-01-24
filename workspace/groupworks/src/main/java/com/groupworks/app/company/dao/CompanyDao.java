@@ -9,9 +9,9 @@ import org.springframework.stereotype.Repository;
 @Slf4j
 public class CompanyDao {
     // 회사 추가
-    public int insertCompany(SqlSessionTemplate sessionTemplate, CompanyVo vo){
-        log.info("vo : {}",vo);
-        return sessionTemplate.insert("CompanyMapper.insertCompany", vo);
+    public String insertCompany(SqlSessionTemplate sessionTemplate, CompanyVo vo){
+        sessionTemplate.insert("CompanyMapper.insertCompany", vo);
+        return vo.getNo();
     }
 
 }

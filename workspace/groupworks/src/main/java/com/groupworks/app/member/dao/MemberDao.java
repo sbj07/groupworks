@@ -10,9 +10,14 @@ import java.util.List;
 @Repository
 public class MemberDao {
 
-    // 관리자 화원가입 || 구성원 추가
+    // 관리자 화원가입
     public int signup(SqlSessionTemplate sessionTemplate, MemberVo vo){
         return sessionTemplate.insert("MemberMapper.signup",vo);
+    }
+
+    // 구성원 추가
+    public int addMember(SqlSessionTemplate sessionTemplate, MemberVo vo) {
+        return sessionTemplate.insert("MemberMapper.addMember", vo);
     }
 
     // 아이디 중복확인

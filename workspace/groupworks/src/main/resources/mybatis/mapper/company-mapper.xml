@@ -16,6 +16,9 @@
         SEQ_COMPANY_NO.NEXTVAL
         , #{name}
         )
+        <selectKey keyProperty="no" resultType="String" order="AFTER">
+            SELECT SEQ_COMPANY_NO.CURRVAL FROM DUAL
+        </selectKey>
     </insert>
 
 
