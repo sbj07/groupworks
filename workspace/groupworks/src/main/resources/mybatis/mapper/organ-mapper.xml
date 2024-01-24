@@ -92,24 +92,24 @@
 		UPDATE ORGAN
 		SET
 		<trim prefixOverrides=",">
-		<if test=" name != null and name != '' ">
-			NAME = #{name}
-		</if>
-		<if test=" departNo != null and departNo != '' ">
-		    , DEPART_NO = #{departNo}
-		</if>
-		<if test=" positionNo != null and positionNo != '' ">
-		    , POSITION_NO = #{positionNo}
-	    </if>
-	    <if test=" tel != null and tel != '' ">
-		    , TEL = #{tel}
-	    </if>
-	    <if test=" email != null and email != '' ">
-		    , EMAIL = #{email}
-	    </if>
-	    <if test=" profile != null and profile != '' ">
-		    , PROFILE = #{profile}
-	    </if>
+			<if test=" name != null and name != '' ">
+				NAME = #{name}
+			</if>
+			<if test=" departNo != null and departNo != '' ">
+			    , DEPART_NO = #{departNo}
+			</if>
+			<if test=" positionNo != null and positionNo != '' ">
+			    , POSITION_NO = #{positionNo}
+		    </if>
+		    <if test=" tel != null and tel != '' ">
+			    , TEL = #{tel}
+		    </if>
+		    <if test=" email != null and email != '' ">
+			    , EMAIL = #{email}
+		    </if>
+		    <if test=" profile != null and profile != '' ">
+			    , PROFILE = #{profile}
+		    </if>
 	    </trim>
 		WHERE ORG_NO = #{orgNo}
 		AND DELETE_YN = 'N'

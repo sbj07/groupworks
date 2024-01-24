@@ -1,6 +1,7 @@
 package com.groupworks.app.book.service;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.List;
@@ -22,7 +23,10 @@ public class BookService {
 	
 	//예약
 	public int insert(BookVo vo) {
-		
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        LocalDateTime useDateTime = LocalDateTime.parse(vo.getUseDate().replace('T', ' '), formatter);
+        vo.setUseDate(useDateTime.format(formatter));
+        
 		return dao.insert(sst, vo);
 	}
 

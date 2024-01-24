@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import BookModal from './BookModal';
+import { useNavigate } from 'react-router-dom';
 
 const StyledBookListDiv = styled.div`
     width: 100%;
@@ -20,13 +21,30 @@ const StyledBookListDiv = styled.div`
     }
 `;
 
+const StyledTable = styled.table`
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px; // 각 테이블 사이의 간격
+
+    & th, & td {
+        border: 1px solid black;
+        padding: 8px;
+        text-align: center;
+    }
+
+    & .depart-header {
+        background-color: lightgray; // 헤더 배경색
+        font-size: 1.2em; // 헤더 폰트 사이즈
+    }
+`;
+
 const BookList = () => {
 
     const [bookVoList, setBookVoList] = useState([]);
     const [startDate, setStartDate] = useState('');
     const [endDate, setEndDate] = useState('');
     const [showModal, setShowModal] = useState(false);
-    const loggedInUserName = "김광희";
+    const loggedInUserName = 31;
 
     const loadBookVoList = async (startDate, endDate) => {
         try {
@@ -51,6 +69,33 @@ const BookList = () => {
             loadBookVoList(null, null);
         }, []);
 
+
+
+///////
+// const handleDelete = bookNo => {
+//     fetch(`http://127.0.0.1:8888/app/book/delete/${bookNo}`, {
+//         method: 'DELETE',
+//         headers: {
+//             'Content-Type' : 'application/json',
+//         },
+//     })
+//     .then(response => {
+//         if(!response.ok){
+//             throw new Error('서버 오류 발생')
+//         }
+//         return response.text();
+//     })
+//     .then(data => {
+//         console.log('삭제 성공:' , data);
+//         alert("예약 삭제 성공");
+//         loadBookVoList();
+//     })
+//     .catch(error => {
+//         console.error('삭제 실패 : ', error);
+//         alert("예약 삭제 실패")
+//     });
+// };///
+
     const handleDateChange = (e) => {
         if (e.target.name === 'startDate') {
             setStartDate(e.target.value);
@@ -59,22 +104,49 @@ const BookList = () => {
         }
     };
 
-    const handleSubmit = () => {
+    const handleSearch = () => {
         if (startDate && endDate) {
             loadBookVoList(startDate, endDate);
         }
     };
 
-    const toggleModal = () => {
-        setShowModal(!showModal);
+    const navigate = useNavigate();
+    const handleBookWrite = () => {
+        // setShowModal(!showModal);
+        navigate('/book/insert');
     };
 
+
+//////////////////
+
+    const [modalIsOpen, setIsOpen] = useState(false);
+    const [selectedVo, setSelectedVo] = useState(null);
+
+    const openModal = (vo) => {
+        setIsOpen(true);
+        setSelectedVo(vo);
+    }
+
+    const closeModal = () => {
+        setIsOpen(false);
+        setSelectedVo(null);
+    }
+
+    const navigateToEdit = () => {
+        navigate(`/book/edit`, { state: { selectedVo } });
+        closeModal();
+    }
+
+    // 목록을 새로 고치는 함수
+    const refreshList = async () => {
+        await loadBookVoList(startDate, endDate);
+    };
 
     return (
         <StyledBookListDiv>
             <h1>예약 조회</h1>
-            <button onClick={toggleModal}>예약 신청</button>
-            {showModal && <BookModal closeModal={toggleModal} userName={loggedInUserName}/>}
+            <button onClick={handleBookWrite}>예약 신청</button>
+            {showModal && <BookModal closeModal={handleBookWrite} userName={loggedInUserName}/>}
             <div>
                 <label>
                     시작 날짜:
@@ -84,27 +156,27 @@ const BookList = () => {
                     종료 날짜:
                     <input type="date" name="endDate" value={endDate} onChange={handleDateChange} />
                 </label>
-                <button onClick={handleSubmit}>조회</button>
+                <button onClick={handleSearch}>조회</button>
             </div>
-            <table>
+            <StyledTable>
                 <thead>
                     <tr>
                         <th>예약 번호</th>
                         <th>예약자명</th>
                         <th>사용 일자</th>
                         <th>사용 목적</th>
-                        <th>신청 일자</th>
+                        <th>신청(수정) 일자</th>
                     </tr>
                 </thead>
                 <tbody>
                     { bookVoList.length > 0 ? (
                         bookVoList.map(book => (
-                            <tr key={book.bookNo}>
+                            <tr key={book.bookNo} onClick={() => openModal(book)}>
                                 <td>{book.bookNo}</td>
                                 <td>{book.memberNo}</td>
                                 <td>{book.useDate}</td>
                                 <td>{book.bookPurpose}</td>
-                                <td>{book.bookDate}</td>
+                                <td>{book.updateDate ? book.updateDate : book.bookDate}</td>
                             </tr>
                         ))
                     ) : (
@@ -113,7 +185,15 @@ const BookList = () => {
                         </tr>
                     )}
                 </tbody>
-            </table>
+            </StyledTable>
+            <BookModal
+                modalIsOpen={modalIsOpen}
+                selectedVo={selectedVo}
+                closeModal={closeModal}
+                navigateToEdit={navigateToEdit}
+                refreshList={refreshList}
+                book={selectedVo}
+            />
         </StyledBookListDiv>
     );
 };

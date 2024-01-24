@@ -15,7 +15,7 @@
 		VALUES(
 		    SEQ_BOOK_NO.NEXTVAL
 		    , #{memberNo}
-		    , #{useDate}
+		    , #{useDate, jdbcType=TIMESTAMP}
 		    , #{bookPurpose}
 			)
 	</insert>
@@ -31,7 +31,7 @@
 		    , UPDATE_DATE
 		    , CANCEL_DATE
 		FROM BOOK
-		WHERE CANCEL_DATE = NULL
+		WHERE CANCEL_DATE IS NULL
 		ORDER BY BOOK_NO DESC
 	</select>
 	
@@ -84,22 +84,21 @@
 
 <!-- 수정 -->
 	<update id="edit">
-		UPDATE BOOK
-		    SET
-    		<trim prefixOverrides=",">
-			<if test=" useDate != null and useDate != '' ">
-		    	USE_DATE = #{useDate}
-	    	</if>
- 			<if test=" bookPurpose != null and bookPurpose != '' ">
-		        , BOOK_PURPOSE = #{bookPurpose}
-	        </if>
-	        <if test=" updateDate != null and updateDate != '' ">
-		        , UPDATE_DATE = SYSDATE
-	        </if>
+	    UPDATE BOOK
+	        SET
+	        <trim prefixOverrides=",">
+	            <if test="useDate != null and useDate != ''">
+	                USE_DATE = #{useDate}
+	            </if>
+	            <if test="bookPurpose != null and bookPurpose != ''">
+	                , BOOK_PURPOSE = #{bookPurpose}
+	            </if>
 	        </trim>
-		WHERE BOOK_NO = #{bookNo}
-<!-- 		AND CANCEL_DATE = NULL -->
+        , UPDATE_DATE = SYSDATE
+	    WHERE BOOK_NO = #{bookNo}
 	</update>
+
+
 
 <!-- 삭제 -->
 	<update id="delete">
