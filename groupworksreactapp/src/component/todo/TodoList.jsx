@@ -110,7 +110,7 @@ const TodoList = () => {
                         todoVoList.length === 0
                         ?
                         <tr>
-                            <td colSpan="4">로딩중...</td>
+                            <td colSpan="4">Todo 리스트 항목이 없습니다.</td>
                         </tr>
                         :
                         todoVoList.map( vo => <tr key = {vo.no}>

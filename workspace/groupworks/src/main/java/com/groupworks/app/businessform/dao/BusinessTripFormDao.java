@@ -42,8 +42,8 @@ public class BusinessTripFormDao {
 	}
 	
 	//�����û�� ����
-	public int delete(SqlSessionTemplate sst, String no) {
-		return sst.update("BusinessTripFormMapper.delete", no);
+	public int delete(SqlSessionTemplate sst, BusinessTripFormVo vo) {
+		return sst.update("BusinessTripFormMapper.delete", vo);
 	}
 	
 	public List<MemberVo> memberList(SqlSessionTemplate sst, MemberVo vo) {
@@ -56,6 +56,18 @@ public class BusinessTripFormDao {
 
 	public List<BusinessTripFormVo> listPaged(SqlSessionTemplate sst, PageVo pageVo) {
 		return sst.selectList("BusinessTripFormMapper.listPaged", pageVo);
+	}
+
+	public List<BusinessTripFormVo> applyList(SqlSessionTemplate sst, String loginMemberNo) {
+		return sst.selectList("BusinessTripFormMapper.applyList", loginMemberNo);
+	}
+
+	public int getApplyListCount(SqlSessionTemplate sst, String loginMemberNo) {
+		return sst.selectOne("BusinessTripFormMapper.getApplyListCount", loginMemberNo);
+	}
+
+	public List<VacationFormVo> applyListPage(SqlSessionTemplate sst, PageVo pageVo) {
+		return sst.selectList("BusinessTripFormMapper.applyListPage", pageVo);
 	}
 	
 }

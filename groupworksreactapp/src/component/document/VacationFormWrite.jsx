@@ -305,7 +305,6 @@ const VacationFormWrite = () => {
 
     const vacationNo = leaveTypeMap[leaveType];
     if (!vacationNo) {
-      console.error('Invalid leaveType:', leaveType);
       return; // 유효하지 않은 leaveType인 경우, 함수를 빠져나옵니다.
     }
     

@@ -76,6 +76,25 @@ public class BusniessTripFormController {
 //		return map;
 //	}
 	
+	//승인자로 선택된 사람의 휴가신청서 리스트 조회 
+	@GetMapping("apply-list")
+	public Map<String, Object> applyList(@RequestParam String loginMemberNo, 
+							             @RequestParam(value = "page", defaultValue = "1") int currentPage, 
+							             @RequestParam(value = "limit", defaultValue = "10") int limit){
+		int listCount = service.getApplyListCount(loginMemberNo);
+	    PageVo pageVo = new PageVo(listCount, currentPage, 10, limit);
+	    pageVo.setLoginMemberNo(loginMemberNo);
+		
+		List<VacationFormVo> applyVoList = service.applyListPage(pageVo);
+		Map<String, Object> map = new HashMap<>();
+		map.put("msg", "good");
+		map.put("applyVoList", applyVoList);
+		map.put("pageInfo", pageVo);
+		
+		return map;
+	}
+	
+	//조회
 	@GetMapping("list")
 	public Map<String, Object> list(@RequestParam String writerNo, 
 	                                @RequestParam(value  = "page", defaultValue = "1") int currentPage, 
@@ -159,9 +178,9 @@ public class BusniessTripFormController {
 	}
 	
 	//출장신청서 삭제
-	@DeleteMapping("delete")
-	public Map<String, String> delete(String no) {
-		int result = service.delete(no);
+	@PostMapping("delete")
+	public Map<String, String> delete(@RequestBody BusinessTripFormVo vo) {
+		int result = service.delete(vo);
 		Map<String, String> map = new HashMap<String, String>();
 		map.put("msg", "good");
 		if(result != 1) {

@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
+import Modal from 'react-modal';
 
 const StyledVacationFormListDiv = styled.div`
     width: 100%;
@@ -18,16 +19,17 @@ const StyledVacationFormListDiv = styled.div`
   }
 `;
 
+
 const VacationFormList = ({}) => {
-    const [formList, SetFormList] = useState([]);
+    const [formList, setFormList] = useState([]);
     const [applyList, setApplyList] = useState([]);
     const [isShowingApplyList, setIsShowingApplyList] = useState(false);
     const [currentPage, setCurrentPage] = useState(1);
     const [applyCurrentPage, setApplyCurrentPage] = useState(1);
     const [totalPages, setTotalPages] = useState(0);
     const [applyTotalPages, setApplyTotalPages] = useState(0);
-    const [isModalOpen, setIsModalOpen] = useState(false);
-    const [selectedItem, setSelectedItem] = useState(null);
+    const [isRejectionModalOpen, setIsRejectionModalOpen] = useState(false);
+    const [rejectionReason, setRejectionReason] = useState('');
     const limit = 10;
     const navigate = useNavigate();
     const loginMemberNo = sessionStorage.getItem("loginMemberNo");
@@ -42,7 +44,7 @@ const VacationFormList = ({}) => {
         .then( resp => resp.json() )
         .then( data => {
             if(data.msg === 'good'){
-                SetFormList(data.vacationVoList);
+                setFormList(data.vacationVoList);
                 setTotalPages(data.pageInfo.maxPage);
             } else {
                 console.log("목록 조회 실패");
@@ -63,6 +65,26 @@ const VacationFormList = ({}) => {
                 console.log("목록 조회 실패");
             }
         })
+    };
+
+    const handleDelete =(vacationNo) => {
+        fetch(`http://127.0.0.1:8888/app/api/vacation-form/delete`, {
+            method:'POST',
+            headers: {
+                'Content-Type' : 'application/json',
+            },
+            body: JSON.stringify({no: vacationNo, writerNo: loginMemberNo}),
+        })
+        .then( (resp) => resp.json() )
+        .then( (data) => {
+            if(data.msg === 'good'){
+                alert('목록 삭제 완료');
+                setFormList(formList.filter(item => item.no !== vacationNo));
+                setApplyList(applyList.filter(item => item.no !== vacationNo));
+            }else{
+                alert("목록 삭제 실패");
+            }
+        } );
     };
 
     const showMyVacationList = () => {
@@ -89,6 +111,50 @@ const VacationFormList = ({}) => {
         setApplyCurrentPage(applyCurrentPage + 1);
     };
 
+    const handleRejectClick = (vacationNo) => {
+        // 선택된 휴가 신청서 번호 설정 로직 (필요하다면)
+        setIsRejectionModalOpen(true);
+    };
+    const closeRejectionModal = () => {
+    setIsRejectionModalOpen(false);
+    };
+
+    const submitRejection = () => {
+    // 여기에 서버로 반려 사유 전송 로직 추가
+    closeRejectionModal();
+    };
+
+    const renderRejectionModal = () => {
+        return (
+          <Modal 
+            isOpen={isRejectionModalOpen}
+            onRequestClose={closeRejectionModal}
+            contentLabel="반려 사유 입력"
+            style={{
+              overlay: {
+                backgroundColor: 'rgba(0, 0, 0, 0.75)' // 모달의 배경색을 어둡게 설정
+                },
+              content: {
+                top: '50%',
+                left: '50%',
+                right: 'auto',
+                bottom: 'auto',
+                marginRight: '-50%',
+                transform: 'translate(-50%, -50%)'
+              }
+            }}
+          >
+            <h2>반려 사유 입력</h2>
+            <textarea 
+              value={rejectionReason}
+              onChange={(e) => setRejectionReason(e.target.value)}
+            />
+            <button onClick={submitRejection}>반려</button>
+            <button onClick={closeRejectionModal}>닫기</button>
+          </Modal>
+        );
+      };
+
     const renderPagination = (currentPage, setCurrentPage, totalPages) => {
     return (
         <div>
@@ -111,21 +177,25 @@ const VacationFormList = ({}) => {
                         <th>등록일시</th>
                         <th>결재일시</th>
                         <th>반려사유</th>
+                        <th>삭제</th>
                     </tr>
                 </thead>
                 <tbody>
                     {
                         formList.length === 0
                         ?
-                        <h1>로딩중...</h1>
+                        <h1>등록한 결재 목록이 없습니다.</h1>
                         :
                         formList.map( vo => <tr key = {vo.no}>
                             <td>{vo.no}</td>    
                             <td>{vo.content}</td>    
-                            <td>{vo.categoryNo}</td>    
+                            <td>{vo.category}</td>    
                             <td>{vo.writeDate}</td>
                             <td>{vo.documentDate}</td>
-                            <td>{vo.rejection}</td>   
+                            <td>{vo.rejection}</td>  
+                            <td>
+                                <button onClick={() => handleDelete(vo.no)}>삭제</button>
+                            </td> 
                         </tr> 
                         )
                     }
@@ -142,18 +212,23 @@ const VacationFormList = ({}) => {
                         <th>번호</th>
                         <th>내용</th>
                         <th>등록일시</th>
+                        <th>결재처리</th>
                     </tr>
                 </thead>
                 <tbody>
                     {
                         applyList.length === 0
                         ?
-                        <h1>로딩중...</h1>
+                        <h1>등록한 결재 목록이 없습니다.</h1>
                         :
                         applyList.map( vo => <tr key = {vo.no}>
                             <td>{vo.no}</td>    
                             <td>{vo.content}</td>    
                             <td>{vo.writeDate}</td>
+                            <td>
+                                <button>승인</button>
+                                <button onClick={() => handleRejectClick(vo.no)}>반려</button>
+                            </td>
                         </tr> 
                         )
                     }
@@ -161,46 +236,7 @@ const VacationFormList = ({}) => {
             </table>
         );
     };
-    ///
-
-    // return (
-    //     <StyledVacationFormListDiv>
-    //         <h1>휴가신청서 목록</h1>
-    //         <button onClick={handleClick}>휴가신청서 등록</button>
-    //         <button onClick={handleApplyListClick}>승인대기목록</button>
-    //         <table>
-    //             <thead>
-    //                 <tr>
-    //                     <th>번호</th>
-    //                     <th>내용</th>
-    //                     <th>결재상태</th>
-    //                     <th>등록일시</th>
-    //                     <th>결재일시</th>
-    //                     <th>반려사유</th>
-    //                 </tr>
-    //             </thead>
-    //             <tbody>
-    //                 {
-    //                     formList.length === 0
-    //                     ?
-    //                     <h1>로딩중...</h1>
-    //                     :
-    //                     formList.map( vo => <tr key = {vo.no}>
-    //                         <td>{vo.no}</td>    
-    //                         <td>{vo.content}</td>    
-    //                         <td>{vo.categoryNo}</td>    
-    //                         <td>{vo.writeDate}</td>
-    //                         <td>{vo.documentDate}</td>
-    //                         <td>{vo.rejection}</td>   
-    //                     </tr> 
-    //                     )
-    //                 }  
-    //             </tbody>
-    //         </table>
-    //         {renderPagination()}
-    //     </StyledVacationFormListDiv>
-    // );
-
+    
     return (
         <StyledVacationFormListDiv>
             <div>
@@ -221,6 +257,8 @@ const VacationFormList = ({}) => {
                     {renderPagination(currentPage, setCurrentPage, totalPages)}
                 </>
             )}
+           
+           {renderRejectionModal()}
         </StyledVacationFormListDiv>
     );
 };

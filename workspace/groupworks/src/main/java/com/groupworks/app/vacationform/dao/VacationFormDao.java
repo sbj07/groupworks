@@ -10,19 +10,14 @@ import com.groupworks.app.member.vo.MemberVo;
 import com.groupworks.app.page.vo.PageVo;
 import com.groupworks.app.vacationform.vo.VacationFormVo;
 
+import lombok.extern.slf4j.Slf4j;
+
 @Repository
+@Slf4j
 public class VacationFormDao {
 
 	public List<VacationFormVo> list(SqlSessionTemplate sst, String writerNo) {
 		return sst.selectList("VacationFormMapper.list", writerNo);
-	}
-	
-	public List<VacationFormVo> ingApprove(SqlSessionTemplate sst) {
-		return sst.selectList("VacationFormMapper.selectIng");
-	}
-	
-	public List<VacationFormVo> edApprove(SqlSessionTemplate sst) {
-		return sst.selectList("VacationFormMapper.selectEd");
 	}
 	
 	public int write(SqlSessionTemplate sst, VacationFormVo vo) {
@@ -37,8 +32,8 @@ public class VacationFormDao {
 		return sst.update("VacationFormMapper.rejection", vo);
 	}
 	
-	public int delete(SqlSessionTemplate sst, String no) {
-		return sst.update("VacationFormMapper.delete", no);
+	public int delete(SqlSessionTemplate sst, VacationFormVo vo) {
+		return sst.update("VacationFormMapper.delete", vo);
 	}
 
 	public List<MemberVo> memberList(SqlSessionTemplate sst, MemberVo vo) {
@@ -63,6 +58,19 @@ public class VacationFormDao {
 
 	public int getApplyListCount(SqlSessionTemplate sst, String loginMemberNo) {
 		return sst.selectOne("VacationFormMapper.getApplyListCount",loginMemberNo);
+	}
+
+	public VacationFormVo selectList(SqlSessionTemplate sst, String no) {
+		log.info("das:{}",no);
+		return sst.selectOne("VacationFormMapper.selectList", no);
+	}
+
+	public int updateStatus(SqlSessionTemplate sst, VacationFormVo formVo) {
+		return sst.update("VacationFormMapper.updateFirstStatus", formVo);
+	}
+
+	public int endApply(SqlSessionTemplate sst, String no, int status) {
+		return sst.update("VacationFormMapper.endApply", no);
 	}
 
 

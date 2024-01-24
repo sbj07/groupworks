@@ -105,39 +105,10 @@ public class VacationFormController {
 	    map.put("msg", "good");
 	    map.put("vacationVoList", vacationVoList);
 	    map.put("pageInfo", pageVo); // 페이지 정보 추가
-
-//	    if(vacationVoList == null) { 
-//	        map.put("msg", "bad");
-//	    }
+	    
 	    return map;
 	}
 
-	//결재대기 목록 조회
-	@GetMapping("ing-approve")
-	public Map<String, Object> ingApprove() {
-		List<VacationFormVo> ingList = service.ingApprove();
-		Map<String, Object> map = new HashMap<>();
-		map.put("msg", "good");
-		map.put("ingList", ingList);
-		if(ingList == null) {
-			map.put("msg", "bad");
-		}
-		return map;	
-	}
-	
-	//결재완료 목록 조회
-	@GetMapping("end-approve")
-	public Map<String, Object> edApprove() {
-		List<VacationFormVo> edList = service.edApprove();
-		Map<String, Object> map = new HashMap<>();
-		map.put("msg", "good");
-		map.put("edList", edList);
-		if(edList == null) {
-			map.put("msg", "bad");
-		}
-		return map;
-	}
-	
 	//휴가신청서 작성
 	@PostMapping("write")
 	public Map<String, Object> write(@RequestBody VacationFormVo vo) {
@@ -152,20 +123,35 @@ public class VacationFormController {
 	}
 	    
 	//휴가신청서 승인
-	@PutMapping("apply")
-	public Map<String, String> apply(VacationFormVo vo) {
-		int result = service.apply(vo);
+	@PostMapping("apply")
+	public Map<String, String> apply(@RequestBody VacationFormVo vo) {
+		
+		//휴가신청서 데이터 가져오기
+		VacationFormVo formVo = service.selectList(vo.getNo());
+		formVo.setLoginMemberNo(vo.getLoginMemberNo());
+		
+		//승인자 확인 및 업데이트
+		boolean updateSuccess = service.updateStatus(formVo);
 		Map<String, String> map = new HashMap<>();
-		map.put("msg", "good");
-		if(result != 1) {
+		if(updateSuccess) {
+			//모든 승인자가 승인한 경우, 휴가신청서 최종 업데이트
+			int result = service.endApply(vo);
+			if(result == 1) {
+				map.put("msg", "good");
+			} else {
+				map.put("msg", "bad");
+			}
+		} else {
 			map.put("msg", "bad");
 		}
+		
 		return map;
 	}
 	
 	//휴가신청서 반려
-	@PutMapping("rejection")
-	public Map<String, String> rejection(VacationFormVo vo) {
+	@PostMapping("rejection")
+	public Map<String, String> rejection(@RequestBody VacationFormVo vo) {
+		
 		int result = service.rejection(vo);
 		Map<String, String> map = new HashMap<String, String>();
 		map.put("msg", "good");
@@ -175,10 +161,10 @@ public class VacationFormController {
 		return map;
 	}
 	
-	//휴가신청서 삭제
-	@DeleteMapping("delete")
-	public Map<String, String> delete(String no) {
-		int result = service.delete(no);
+	//휴가신청서 삭
+	@PostMapping("delete")
+	public Map<String, String> delete(@RequestBody VacationFormVo vo) {
+		int result = service.delete(vo);
 		Map<String, String> map = new HashMap<String, String>();
 		map.put("msg", "good");
 		if(result != 1) {
