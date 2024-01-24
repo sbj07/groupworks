@@ -17,10 +17,6 @@
 		AND M.AUTH_NO != 3
 	</select>
 	
-<!-- 	<select id="getListCount" resultType="int">
-    	SELECT COUNT(*) FROM VACATION_FORM
-	</select> -->
- 	
 	<!-- 승인자로 선택된 휴가신청서 리스트 조회 --> 
 	<select id="applyList" resultType="VacationFormVo">
 		SELECT 
@@ -39,81 +35,29 @@
 	    ORDER BY NO DESC
 	</select>	
 	
-
-
     <!-- 휴가신청서 조회 -->
  	<select id="list" resultType="VacationFormVo">
 	 	SELECT 
-	 		NO
-	 		, VACATION_NO
-	 		, WRITER_NO
-	 		, FIRST_APPLY_NO
-	 		, MID_APPLY_NO
-	 		, LAST_APPLY_NO
-	 		, CATEGORY_NO
-	 		, START_TIME
-	 		, FINISH_TIME
-	 		, CONTENT
-	 		, TO_CHAR(WRITE_DATE, 'YYYY-MM-DD') AS WRITE_DATE
-    		, TO_CHAR(DOCUMENT_DATE, 'YYYY-MM-DD') AS DOCUMENT_DATE
-	 		, REJECTION
-	 	FROM VACATION_FORM 
+	 		V.NO
+	 		, V.VACATION_NO
+	 		, V.WRITER_NO
+	 		, V.FIRST_APPLY_NO
+	 		, V.MID_APPLY_NO
+	 		, V.LAST_APPLY_NO
+	 		, V.CATEGORY_NO
+	 		, D.CATEGORY
+	 		, V.START_TIME
+	 		, V.FINISH_TIME
+	 		, V.CONTENT
+	 		, V.TO_CHAR(WRITE_DATE, 'YYYY-MM-DD') AS WRITE_DATE
+    		, V.TO_CHAR(DOCUMENT_DATE, 'YYYY-MM-DD') AS DOCUMENT_DATE
+	 		, V.REJECTION
+	 	FROM VACATION_FORM V
+	 	JOIN DOCUMENT_CATEGORY D ON V.CATEGORY_NO = D.NO
 		WHERE WRITER_NO = #{writerNo}
 		AND DEL_YN = 'N'
 		ORDER BY NO DESC
  	</select> 
- 	
- 	<!-- 휴가신청서 결재대기 조회 -->
- 	<select id="selectIng" resultType="VacationFormVo">
-	 	 SELECT
-	 	 	NO
-	 		, VACATION_NO
-	 		, WRITER_NO
-	 		, FIRST_APPLY_NO
-	 		, MID_APPLY_NO
-	 		, LAST_APPLY_NO
-	 		, CATEGORY_NO
-	 		, START_TIME
-	 		, FINISH_TIME
-	 		, CONTENT
-	 		, WRITE_DATE
-	 		, DOCUMENT_DATE
-	 		, REJECTION
-	 	 FROM VACATION_FORM 
-	 	 WHERE CATEGORY_NO = 
-	 	 					(
-	 	 					SELECT NO 
-	 	 					FROM DOCUMENT_CATEGORY 
-	 	 					WHERE NO = 1
-	 	 					)
-	  	 AND DEL_YN = 'N'
-	</select>
-
-		<!-- 휴가신청서 결재완료 조회 -->
- 	<select id="selectEd" resultType="VacationFormVo">
-	 	 SELECT 
-	 	 	NO
-	 		, VACATION_NO
-	 		, WRITER_NO
-	 		, FIRST_APPLY_NO
-	 		, MID_APPLY_NO
-	 		, LAST_APPLY_NO
-	 		, CATEGORY_NO
-	 		, START_TIME
-	 		, FINISH_TIME
-	 		, CONTENT
-	 		, WRITE_DATE
-	 		, DOCUMENT_DATE
-	 		, REJECTION 
-	 	 FROM VACATION_FORM 
-	 	 WHERE CATEGORY_NO IN
-	 	 					(
-	 	 					SELECT NO 
-	 	 					FROM DOCUMENT_CATEGORY 
-	 	 					WHERE NO IN (2, 3)
-	 	 					)
-	  	 AND DEL_YN = 'N'
-	</select>
 	
     <!-- 휴가신청서 등록 -->
  	<insert id="insert">
@@ -145,31 +89,26 @@
 		)
  	</insert>
  	
- 	<!-- 휴가신청서 승인 -->
- 	<update id="apply">
-	 	UPDATE VACATION_FORM 
-	    SET CATEGORY_NO = 
-	                      (
-	                      SELECT NO 
-	                      FROM DOCUMENT_CATEGORY 
-	                      WHERE NO = 2
-	                      ) 
-	    , DOCUMENT_DATE = SYSDATE
-	    WHERE NO = #{no}
- 	</update>
- 	
  	<!-- 휴가신청서 반려 -->
- 	<update id="rejection">
-	 	UPDATE VACATION_FORM 
-	    SET CATEGORY_NO = 
-	                      (
-	                      SELECT NO 
-	                      FROM DOCUMENT_CATEGORY 
-	                      WHERE NO = 3
-	                      ) 
-	    , DOCUMENT_DATE = SYSDATE
-	    , REJECTION = #{rejection} 
-	    WHERE NO = #{no}
+ 	<update id="rejection" parameterType="VacationFormVo">
+	 UPDATE VACATION_FORM
+    		SET CATEGORY_NO =
+                      (
+                      SELECT NO
+                      FROM DOCUMENT_CATEGORY
+                      WHERE NO = #{no}
+                      ),
+	        DOCUMENT_DATE = SYSDATE,
+	        REJECTION = #{rejection},
+	        FIRST_STATUS = CASE WHEN FIRST_APPLY_NO = #{loginMemberNo} THEN 3 ELSE FIRST_STATUS END,
+	        MID_STATUS = CASE WHEN MID_APPLY_NO = #{loginMemberNo} THEN 3 ELSE MID_STATUS END,
+	        LAST_STATUS = CASE WHEN LAST_APPLY_NO = #{loginMemberNo} THEN 3 ELSE LAST_STATUS END
+    	WHERE NO = #{no}
+    	AND (
+            FIRST_APPLY_NO = #{loginMemberNo}
+            OR MID_APPLY_NO = #{loginMemberNo}
+            OR LAST_APPLY_NO = #{loginMemberNo}
+        )	
  	</update>
 
  	 <!-- 휴가신청서 삭제 -->
@@ -177,6 +116,7 @@
 	 	UPDATE VACATION_FORM 
 	 		SET DEL_YN = 'Y' 
 	 	WHERE NO = #{no}
+	 	AND WRITER_NO = #{writerNo}
  	</update>
  	
  	<!-- 전체 휴가신청서 개수 조회  -->
@@ -184,15 +124,18 @@
     	SELECT COUNT(*) 
     	FROM VACATION_FORM 
     	WHERE WRITER_NO = #{writerNo}
+    	AND DEL_YN = 'N'
 	</select>
 	
 	<!-- 휴가신청서 페이징  -->
  	<select id="listPaged" resultType="VacationFormVo" parameterType="com.groupworks.app.page.vo.PageVo">
     SELECT *
     FROM (
-        SELECT ROW_NUMBER() OVER (ORDER BY NO DESC) AS rnum, V.*
+        SELECT ROW_NUMBER() OVER (ORDER BY V.NO DESC) AS rnum, V.*, D.CATEGORY
         FROM VACATION_FORM V
+        JOIN DOCUMENT_CATEGORY D ON V.CATEGORY_NO = D.NO
         WHERE V.WRITER_NO = #{writerNo} 
+	    AND DEL_YN = 'N'
     ) WHERE rnum BETWEEN #{startRow} AND #{lastRow}
 	</select>
  	
@@ -200,20 +143,65 @@
  	<select id="getApplyListCount" resultType="int" parameterType="String">
     	SELECT COUNT(*) 
     	FROM VACATION_FORM 
-    	WHERE FIRST_APPLY_NO = #{loginMemberNo}
+    	WHERE (FIRST_APPLY_NO = #{loginMemberNo}
         OR MID_APPLY_NO = #{loginMemberNo}
-        OR LAST_APPLY_NO = #{loginMemberNo}
+        OR LAST_APPLY_NO = #{loginMemberNo})
+        AND DEL_YN = 'N'
 	</select>
 	
 	<!-- 승인대기목록 페이징  -->
  	<select id="applyListPage" resultType="VacationFormVo" parameterType="com.groupworks.app.page.vo.PageVo">
-	    SELECT *
-	    FROM (
-	        SELECT ROW_NUMBER() OVER (ORDER BY NO DESC) AS rnum, V.*
-	        FROM VACATION_FORM V
-	        WHERE V.FIRST_APPLY_NO = #{loginMemberNo}
-	           OR V.MID_APPLY_NO = #{loginMemberNo}
-	           OR V.LAST_APPLY_NO = #{loginMemberNo} 
-	    ) WHERE rnum BETWEEN #{startRow} AND #{lastRow}
+    SELECT *
+    FROM (
+        SELECT ROW_NUMBER() OVER (ORDER BY NO DESC) AS rnum, V.*
+        FROM VACATION_FORM V
+        WHERE V.FIRST_APPLY_NO = #{loginMemberNo}
+           OR V.MID_APPLY_NO = #{loginMemberNo}
+           OR V.LAST_APPLY_NO = #{loginMemberNo} 
+    ) WHERE rnum BETWEEN #{startRow} AND #{lastRow}
+    AND DEL_YN = 'N'
 	</select>
+	
+	<select id="selectList" resultType="VacationFormVo">
+		SELECT
+			NO
+	 		,VACATION_NO
+	 		,WRITER_NO
+	 		,FIRST_APPLY_NO
+	 		,MID_APPLY_NO
+	 		,LAST_APPLY_NO
+	 		,START_TIME
+	 		,FINISH_TIME
+	 		,CONTENT
+	 		,WRITE_DATE
+	 		,FIRST_STATUS
+	 		,MID_STATUS
+	 		,LAST_STATUS
+		FROM VACATION_FORM 
+		WHERE NO = #{no} 
+		AND CATEGORY_NO = 1
+	</select>
+	
+	<update id="updateStatus" parameterType="VacationFormVo">
+		UPDATE VACATION_FORM 
+		<set>
+			<if test="firstApplyNo == loginMemberNo">
+				FIRST_STATUS = 2
+			</if>
+			<if test="midApplyNo == loginMemberNo">
+				MID_STATUS = 2
+			</if>
+			<if test="lastApplyNo == loginMemberNo">
+				LAST_STATUS = 2
+			</if>
+		</set>
+			WHERE NO = #{no}
+ 	</update>
+	
+	<update id="endApply" parameterType="map">
+		UPDATE VACATION_FORM 
+			SET CATEGORY_NO = 2, DOCUMENT_DATE = SYSDATE 
+			WHERE NO = #{no}
+	</update>
+	
 </mapper>

@@ -20,40 +20,34 @@ public class BusinessTripFormService {
 	private final BusinessTripFormDao dao;
 	private final SqlSessionTemplate sst;
 	
-	//�����û�� ��ü��ȸ
 	public List<BusinessTripFormVo> list(String writerNo) {
 		return dao.list(sst, writerNo);
 	}
 	
-	//������ ��� ��ȸ
 	public List<BusinessTripFormVo> ingApprove() {
 		return dao.ingApprove(sst);
 	}
 	
-	//����Ϸ� ��� ��ȸ
 	public List<BusinessTripFormVo> edApprove() {
 		return dao.edApprove(sst);
 	}
 	
-	//�����û�� �ۼ�
 	public int write(BusinessTripFormVo vo) {
 		return dao.write(sst, vo);
 	}
 	
-	//�����û�� ����
 	public int apply(BusinessTripFormVo vo) {
 		return dao.apply(sst, vo);
 	}
 	
-	//�����û�� �ݷ�
 	public int rejection(BusinessTripFormVo vo) {
 		return dao.rejection(sst, vo);
 	}
 	
-	//�����û�� ����
-	public int delete(String no) {
-		return dao.delete(sst, no);
+	public int delete(BusinessTripFormVo vo) {
+		return dao.delete(sst, vo);
 	}
+	
 	public List<MemberVo> memberList(MemberVo vo) {
 		return dao.memberList(sst, vo);
 	}
@@ -64,5 +58,17 @@ public class BusinessTripFormService {
 
 	public List<BusinessTripFormVo> listPaged(PageVo pageVo) {
 		return dao.listPaged(sst, pageVo);
+	}
+
+	public List<BusinessTripFormVo> applyList(String loginMemberNo){
+		return dao.applyList(sst, loginMemberNo);
+	}
+	
+	public int getApplyListCount(String loginMemberNo) {
+		return dao.getApplyListCount(sst, loginMemberNo);
+	}
+
+	public List<VacationFormVo> applyListPage(PageVo pageVo) {
+		return dao.applyListPage(sst, pageVo);
 	}
 }
