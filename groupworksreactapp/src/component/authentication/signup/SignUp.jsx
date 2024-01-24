@@ -39,7 +39,7 @@ const SignUp = () => {
     });
 
     const [companyVo, setCompanyVo] = useState({
-        name:"ji",
+        name:"",
     });
 
     const handleInputCompany = (event) => {
@@ -73,6 +73,11 @@ const SignUp = () => {
         .then( resp => resp.json() )
         .then( data => {
             if(data.msg === 'okay') {
+                const cNo = data.companyNo;
+                setMemberVo({
+                    ...memberVo ,
+                    companyNo : cNo
+                })
               alert("회사명 추가 완료 !");
             } else{
             alert("회사명 추가 실패");
@@ -166,7 +171,7 @@ const SignUp = () => {
                     </Form.Group>
         
                     <Button variant="primary" type="submit">
-                        Submit
+                        가입하기
                     </Button>
                 </Form>
             </StyledSignUpForm>

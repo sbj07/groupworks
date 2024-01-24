@@ -16,10 +16,22 @@ import java.util.Map;
 public class MemberApiController {
     private final MemberService service;
 
-    // 관리자 화원가입 || 구성원 추가
+    // 관리자 화원가입
     @PostMapping("sign-up")
     public Map<String, String> signup(@RequestBody MemberVo vo){
         int result = service.signup(vo);
+        Map<String, String> map = new HashMap<String,String>();
+        map.put("msg","okay");
+        if(result != 1) {
+            map.put("msg", "nope");
+        }
+        return map;
+    }
+
+    // 구성원 추가
+    @PostMapping("add")
+    public Map<String, String> addMember(@RequestBody MemberVo vo) {
+        int result = service.addMember(vo);
         Map<String, String> map = new HashMap<String,String>();
         map.put("msg","okay");
         if(result != 1) {

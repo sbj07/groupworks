@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { Form } from 'react-bootstrap';
+import { Button, Form } from 'react-bootstrap';
+import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 
 const StyledInfoDiv = styled.div`
@@ -14,18 +15,16 @@ const StyledInfoDiv = styled.div`
 `;
 const UserInfoMain = () => {
     const loginMemberNo = sessionStorage.getItem("loginMemberNo");
-    
+    const navigate = useNavigate();
     const [loginMemberVo, setLoginMemberVo] = useState([]);
     const func = ( ) => {
         fetch(`http://127.0.0.1:8888/app/api/member/${loginMemberNo}`)
         .then( resp => resp.json() )
         .then( data => {
-            console.log(data.loginMemberVo);
             setLoginMemberVo(data.loginMemberVo);
-            
         });
     }
-
+    
     useEffect( () => {
         func();
     },[]);
@@ -42,6 +41,10 @@ const UserInfoMain = () => {
                     <br />
                     <Form.Label>직책 (현재 직책번호): {loginMemberVo.positionNo}</Form.Label>
             </Form.Group>
+            {
+                loginMemberVo.authNo === '1' &&
+                    <Button onClick={ () => {navigate(`/member/add`,{ state: { cNo : loginMemberVo.companyNo }})} }>구성원추가</Button>
+            }
             
         </StyledInfoDiv>
     );

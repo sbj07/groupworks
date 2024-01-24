@@ -3,7 +3,7 @@
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="MemberMapper">
-    <!-- 관리자 회원가입 || 구성원 추가 -->
+    <!-- 관리자 회원가입 -->
     <insert id="signup">
         INSERT INTO MEMBER
         (
@@ -36,6 +36,30 @@
             , #{departNo}
             , #{positionNo}
         </if>
+        )
+    </insert>
+
+    <!-- 구성원 추가 -->
+    <insert id="addMember">
+        INSERT INTO MEMBER
+        (
+        NO
+        , NAME
+        , ID
+        , PWD
+        , POSITION_NO
+        , DEPART_NO
+        , COMPANY_NO
+        )
+        VALUES
+        (
+        SEQ_MEMBER_NO.NEXTVAL
+        , #{name}
+        , #{id}
+        , #{pwd}
+        , #{positionNo}
+        , #{departNo}
+        , #{companyNo}
         )
     </insert>
 
