@@ -45,15 +45,15 @@ const AddMember = () => {
     
     // 옵션 리스트 생성
     const ListSelectBox = ( {prop, list} ) => {
-    return (
-        <Form.Select name={`${prop}No`} value={memberVo[`${prop}No`]} onChange={handleInputChange} >
-        {
-            list.map( (data) => {
-                return <option key={data.name} value={data.no}  >{data.name}</option>;
-            } )
-        }
-        </Form.Select>
-    );
+        return (
+            <Form.Select name={`${prop}No`} value={memberVo[`${prop}No`]} onChange={handleInputChange} >
+            {
+                list.map( (data) => {
+                    return <option key={data.name} value={data.no}>{data.name}</option>;
+                } )
+            }
+            </Form.Select>
+        );
     };
 
     const [memberVo, setMemberVo] = useState({

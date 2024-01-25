@@ -4,6 +4,7 @@ import com.groupworks.app.company.vo.CompanyVo;
 import com.groupworks.app.member.service.MemberService;
 import com.groupworks.app.member.vo.*;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
@@ -13,6 +14,8 @@ import java.util.Map;
 @RestController
 @RequestMapping("api/member")
 @RequiredArgsConstructor
+@Slf4j
+@CrossOrigin("*")
 public class MemberApiController {
     private final MemberService service;
 
@@ -57,11 +60,13 @@ public class MemberApiController {
     public Map<String, Object> login(@RequestBody MemberVo vo) {
         MemberVo loginMember = service.login(vo);
         Map<String, Object> map = new HashMap<>();
-        map.put("msg", "okay");
-        map.put("loginMemberNo", loginMember.getNo());
         if(loginMember == null) {
             map.put("msg", "nope");
+            map.put("errorMsg", "NoData");
+            return map;
         }
+        map.put("msg", "okay");
+        map.put("loginMemberNo", loginMember.getNo());
         return map;
     }
 
@@ -80,6 +85,7 @@ public class MemberApiController {
     // 회원정보수정
     @PutMapping
     public Map<String, Object> edit(@RequestBody MemberVo editVo) {
+        log.info("{}",editVo);
         int result = service.edit(editVo);
         Map<String, Object> map = new HashMap<>();
         map.put("msg", "okay");
@@ -90,9 +96,9 @@ public class MemberApiController {
     }
 
     // 회원탈퇴
-    @DeleteMapping
-    public Map<String, String> deleteMember(@RequestBody String no){
-        int result = service.deleteMember(no);
+    @DeleteMapping("{loginMemberNo}")
+    public Map<String, String> deleteMember(@PathVariable String loginMemberNo){
+        int result = service.deleteMember(loginMemberNo);
         Map<String, String> map = new HashMap<String, String>();
         map.put("msg","okay");
         if(result != 1){
@@ -103,13 +109,26 @@ public class MemberApiController {
 
     // ---------------- 목록조회 ------------------
 
+    // 회사별 사용자
+    @GetMapping("list/{loginMemberNo}")
+    public Map<String, Object> getMemberList(@PathVariable String loginMemberNo) {
+        MemberVo loginMember = service.getLoginMember(loginMemberNo);
+        List<MemberVo> voList = service.getMemberList(loginMember.getCompanyNo());
+        Map<String, Object> map = new HashMap<>();
+        map.put("msg", "okay");
+        map.put("list", voList);
+        if(voList == null){
+            map.put("msg", "nope");
+        }
+        return map;
+    }
     // 권한
-    @GetMapping("auth")
+    @GetMapping("list/auth")
     public Map<String, Object> getAuthList(){
         List<AuthVo> authList = service.getAuthList();
         Map<String, Object> map = new HashMap<>();
         map.put("msg", "okay");
-        map.put("list", authList);
+        map.put("authList", authList);
         if(authList == null) {
             map.put("msg", "nope");
         }
@@ -185,5 +204,6 @@ public class MemberApiController {
     // 권한
 
     // 연차
+
 
 }

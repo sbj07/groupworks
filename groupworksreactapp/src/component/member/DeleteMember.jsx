@@ -1,14 +1,155 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
+import { Button, Form, Table } from 'react-bootstrap';
+import styled from 'styled-components';
 
-
+const StyledDeleteDiv = styled.div`
+    margin-top: 10vh;
+    & > table {
+        width: 70vw;
+    }
+`;
 const DeleteMember = () => {
+    const [memberList, setMemberList] = useState([]);
+    const [authList, setAuthList] = useState([]);
+    const [userAuth, setUserAuth] = useState([]);
+    const [memberVo, setMemberVo] = useState({
+        no : "",
+        authNo : ""
+    })
+
+    const loginMemberNo = sessionStorage.getItem("loginMemberNo");
+
+    useEffect( () => {
+        fetch("http://127.0.0.1:8888/app/api/member/list/auth")
+        .then( resp => resp.json() )
+        .then( data => {
+            if(data.msg === 'okay') {
+                setAuthList(data.authList);
+            }
+            else {
+                alert("사원 목록 로드 실패");
+            }
+        });
+
+        fetch(`http://127.0.0.1:8888/app/api/member/list/${loginMemberNo}`)
+        .then( resp => resp.json() )
+        .then( data => {
+            if(data.msg === 'okay') {
+                setMemberList(data.list);
+            }
+            else {
+                alert("사원 목록 로드 실패");
+            }
+        })
+    }, []);
+
+    const handleDeleteBtn = ( prop ) => {
+        console.log(prop);
+        fetch(`http://127.0.0.1:8888/app/api/member/${prop}`,{
+            method: "DELETE"
+        })
+        .then(resp => resp.json())
+        .then(data => {
+            if(data.msg === 'okay'){
+                alert("구성원 삭제 완료!");
+                window.location.reload();
+            }else {
+                alert("구성원 삭제 실패 재시도 바랍니다.");
+                window.location.reload();
+            }
+        })
+    };
+
+    const handleAuthInputChange = ( event, memberNo ) => {
+        const selectedAuthValue = event.target.value;
+        setUserAuth({
+            ...userAuth ,
+            [memberNo] : selectedAuthValue
+        });
+        setMemberVo({
+            ...memberVo ,
+            "no" : memberNo,
+            "authNo" : selectedAuthValue
+        });
+    };
+
+    const handleAuthChange = () => {
+        fetch("http://127.0.0.1:8888/app/api/member", {
+            method : "PUT",
+            headers : {
+                "Content-Type" : "application/json"
+            },
+            body : JSON.stringify(memberVo)
+        })
+        .then(resp => resp.json())
+        .then(data => {
+            if(data.msg === "okay"){
+                alert("권한 수정 완료!");
+                window.location.reload();
+            }else {
+                alert("권한 수정 실패 재시도 바람");
+            }
+        })
+    };
+
+    const ListAuthBox = ( props) =>{
+        return (
+            <>
+            <td>
+                <Form.Select 
+                    value={userAuth[props.no] ? userAuth[props.no] : ''}
+                    onChange={(event) => handleAuthInputChange(event, props.no)}
+                >
+                    <option value=''>권한</option>
+                    {
+                        authList.map ( (auth) => {
+                            return <option key={auth.name} value={auth.no}>{auth.name}</option>;
+                        } )
+                    }
+                </Form.Select>
+            </td>
+            <td>
+                <Button variant='warning' onClick={() => handleAuthChange(props.no)}>변경</Button>
+            </td>
+            </>
+        );
+    };    
+
+    const ListMemberTd = () => {
+        return (
+          <tbody>
+            {memberList.map((member) => {
+              return (
+                <tr key={member.no}>
+                  <td>{member.name}</td>
+                  <td>{member.departName}</td>
+                  <td>{member.positionName}</td>
+                  <td>{member.tel}</td>
+                  <ListAuthBox no={member.no}/>
+                  <td><Button variant='danger' onClick={() => handleDeleteBtn(member.no)}>삭제</Button></td>
+                </tr>
+              );
+            })}
+          </tbody>
+        );
+    };
+      
     return (
-        <div>
-            <table>
-                th
-            </table>
-            
-        </div>
+        <StyledDeleteDiv>
+            <Table bordered hover>
+                <thead>
+                    <tr>
+                        <th>이름</th>
+                        <th>부서</th>
+                        <th>직책</th>
+                        <th>연락처</th>
+                        <th colSpan={2}>권한 변경</th>
+                        <th>삭제</th>
+                    </tr>
+                </thead>
+                <ListMemberTd />
+            </Table>
+        </StyledDeleteDiv>
     );
 };
 

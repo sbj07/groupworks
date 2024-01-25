@@ -62,8 +62,8 @@ const Login = () => {
       if(data.msg === 'okay') {
         sessionStorage.setItem("loginMemberNo", data.loginMemberNo);
         navigate("/");
-      }else {
-        alert("로그인 실패, 다시 시도해 주세요.");
+      }else if(data.errorMsg === 'NoData'){
+        alert("로그인 실패, 조회결과가 없습니다.");
       }
     } )
   };

@@ -102,6 +102,7 @@
             <if test="email != null">EMAIL = #{email},</if>
             <if test="tel != null">TEL = #{tel},</if>
             <if test="annual != null">ANNUAL = #{annual},</if>
+            <if test="authNo != null">AUTH_NO = #{authNo},</if>
             <if test="address != null">ADDRESS = #{address},</if>
             <if test="departNo != null">DEPART_NO = #{departNo},</if>
             <if test="positionNo != null">POSITION_NO = #{positionNo}</if>
@@ -116,6 +117,23 @@
             DEL_YN = 'Y'
             WHERE NO = #{no}
     </update>
+
+    <!-- 회사별 회원 조회 -->
+    <select id="getMemberList" resultType="MemberVo">
+        SELECT
+            M.NO
+            , M.NAME
+            , M.TEL
+            , D.NAME AS DEPART_NAME
+            , P.NAME AS POSITION_NAME
+        FROM MEMBER M
+        JOIN DEPARTMENT D ON M.DEPART_NO = D.NO
+        JOIN POSITION P ON M.POSITION_NO = P.NO
+        WHERE M.COMPANY_NO = #{companyNo}
+        AND M.DEL_YN = 'N'
+        ORDER BY M.NO
+
+    </select>
 
     <!-- 권한목록 조회 -->
     <select id="getAuthList" resultType="AuthVo">
@@ -181,39 +199,31 @@
         WHERE NO = #{no}
     </update>
 
-    <!--    회사추가    -->
-    <insert id="insertCompany">
-        INSERT INTO COMPANY
-        (
-        NO
-        , NAME
-        )
-        VALUES
-        (
-        SEQ_COMPANY_NO.NEXTVAL
-        , #{companyName}
-        )
-    </insert>
-
     <!-- 로그인 유저 정보 -->
     <select id="getLoginMember" resultType="MemberVo">
         SELECT
-        NO
-        , NAME
-        , ID
-        , PWD
-        , EMAIL
-        , TEL
-        , ADDRESS
-        , ANNUAL
-        , AUTH_NO
-        , DEPART_NO
-        , COMPANY_NO
-        , POSITION_NO
-        , WORK_STATUS_NO
-        , DEL_YN
-        FROM MEMBER
-        WHERE NO = #{no}
+        M.NO
+        , M.NAME
+        , M.ID
+        , M.PWD
+        , M.EMAIL
+        , M.TEL
+        , M.ADDRESS
+        , M.ANNUAL
+        , M.AUTH_NO
+        , M.DEPART_NO
+        , D.NAME AS DEPART_NAME
+        , M.COMPANY_NO
+        , C.NAME AS COMPANY_NAME
+        , M.POSITION_NO
+        , P.NAME AS POSITION_NAME
+        , M.WORK_STATUS_NO
+        , M.DEL_YN
+        FROM MEMBER M
+        LEFT JOIN DEPARTMENT D ON M.DEPART_NO = D.NO
+        LEFT JOIN POSITION P ON M.POSITION_NO = P.NO
+        LEFT JOIN COMPANY C ON M.COMPANY_NO = C.NO
+        WHERE M.NO = #{no}
         AND DEL_YN = 'N'
     </select>
 

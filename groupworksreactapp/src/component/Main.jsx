@@ -7,6 +7,7 @@ import OrganMain from './organ/OrganMain';
 import DocumentMain from './document/DocumentMain';
 import BookMain from './book/BookMain';
 import AddMember from './member/AddMember';
+import DeleteMember from './member/DeleteMember';
 
 
 const StyledMainDiv = styled.div`
@@ -29,6 +30,7 @@ const Main = () => {
                 <Route path='/organ/*' element={<OrganMain />}></Route>
                 <Route path='/book/*' element={<BookMain />}></Route>
                 <Route path='/member/add/*' element={<AddMember />}></Route>
+                <Route path='/member/delete/*' element={<DeleteMember />}></Route>
             </Routes>
         </StyledMainDiv>
     );

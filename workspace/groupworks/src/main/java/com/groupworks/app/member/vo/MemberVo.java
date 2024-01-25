@@ -14,8 +14,11 @@ public class MemberVo {
     private String annual;
     private String authNo;
     private String departNo;
-    private String companyNo;
+    private String departName;
     private String positionNo;
+    private String positionName;
+    private String companyNo;
+    private String companyName;
     private String workStatusNo;
     private String delYn;
 }
