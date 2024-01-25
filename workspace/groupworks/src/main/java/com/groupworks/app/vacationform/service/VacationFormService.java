@@ -92,4 +92,23 @@ public class VacationFormService {
 	public int endApply(VacationFormVo vo) {
         return dao.endApply(sst, vo.getNo(), 2); // CATEGORY_NO를 '승인' 상태로 변경
 	}
+
+	public boolean updateRejection(VacationFormVo formVo) {
+		int result = dao.updateRejection(sst, formVo);
+		
+		VacationFormVo resultVo = selectList(formVo.getNo());
+		
+		if(resultVo.getFirstStatus().equals("3") ||
+				resultVo.getMidStatus().equals("3") ||
+				resultVo.getLastStatus().equals("3") ) {
+			return true;
+		}
+		else {
+			return false;
+		}
+	}
+
+	public int endRejection(VacationFormVo vo) {
+		return dao.endRejection(sst, vo.getNo(), 3);
+	}
 }

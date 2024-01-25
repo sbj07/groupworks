@@ -144,7 +144,6 @@ public class VacationFormController {
 		} else {
 			map.put("msg", "bad");
 		}
-		
 		return map;
 	}
 	
@@ -152,16 +151,25 @@ public class VacationFormController {
 	@PostMapping("rejection")
 	public Map<String, String> rejection(@RequestBody VacationFormVo vo) {
 		
-		int result = service.rejection(vo);
+		VacationFormVo formVo = service.selectList(vo.getNo());
+		formVo.setLoginMemberNo(vo.getLoginMemberNo());
+		
+		boolean updateSuccess = service.updateRejection(formVo);
 		Map<String, String> map = new HashMap<String, String>();
-		map.put("msg", "good");
-		if(result != 1) {
+		if(updateSuccess) {
+			int result = service.endRejection(vo);
+			if(result == 1) {
+				map.put("msg","good");
+			}else {
+				map.put("msg","good");
+			}
+		} else {
 			map.put("msg", "bad");
 		}
 		return map;
 	}
 	
-	//휴가신청서 삭
+	//휴가신청서 삭제
 	@PostMapping("delete")
 	public Map<String, String> delete(@RequestBody VacationFormVo vo) {
 		int result = service.delete(vo);

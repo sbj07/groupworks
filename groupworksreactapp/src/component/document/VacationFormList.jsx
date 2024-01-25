@@ -165,6 +165,30 @@ const VacationFormList = ({}) => {
         );
     };
 
+    const handleApplyClick = (vacationNo) => {
+        const isConfirmed = window.confirm("정말 승인 하시겠습니까?");
+        if(isConfirmed) {
+            fetch(`http://127.0.0.1:8888/app/api/vacation-form/apply`,{
+                method:'POST',
+                headers: {
+                    'Content-Type' : 'application/json',
+                },
+                body: JSON.stringify({no: vacationNo, loginMemberNo: loginMemberNo}),
+            })
+            .then( (resp) => resp.json() )
+            .then( data => {
+                if(data.msg === 'good'){
+                    alert("승인처리 완료")
+                }else{
+                    alert("승인처리 실패")
+                }
+            } ) 
+            .catch( (error) => {
+                console.error('승인처리중 에러 발생' , error);
+            } )
+        }
+    };
+
     //여기서부터 추가
     const renderFormList = () => {
         return(
@@ -226,7 +250,7 @@ const VacationFormList = ({}) => {
                             <td>{vo.content}</td>    
                             <td>{vo.writeDate}</td>
                             <td>
-                                <button>승인</button>
+                                <button onClick={() => handleApplyClick(vo.no)}>승인</button>
                                 <button onClick={() => handleRejectClick(vo.no)}>반려</button>
                             </td>
                         </tr> 
