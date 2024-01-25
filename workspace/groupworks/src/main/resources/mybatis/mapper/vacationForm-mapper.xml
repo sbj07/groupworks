@@ -204,4 +204,26 @@
 			WHERE NO = #{no}
 	</update>
 	
+	<update id="updateRejection" parameterType="VacationFormVo">
+		UPDATE VACATION_FORM
+		<set>
+			<if test="firstApplyNo == loginMemberNo">
+				FIRST_STATUS = 3
+			</if>
+			<if test="midApplyNo == loginMemberNo">
+				MID_STATUS = 3
+			</if>
+			<if test="lastApplyNo == loginMemberNo">
+				LAST_STATUS = 3
+			</if>
+		</set>
+			WHERE NO = #{no}
+	</update>
+	
+	<update id="endRejection" parameterType="map">
+		UPDATE VACATION_FORM
+			SET CATEGORY_NO = 3, DOCUMENT_DATE = SYSDATE
+			WHERE NO = #{no}
+	</update>
+	
 </mapper>

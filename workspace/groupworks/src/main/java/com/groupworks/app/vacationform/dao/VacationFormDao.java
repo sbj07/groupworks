@@ -61,17 +61,25 @@ public class VacationFormDao {
 	}
 
 	public VacationFormVo selectList(SqlSessionTemplate sst, String no) {
-		log.info("das:{}",no);
 		return sst.selectOne("VacationFormMapper.selectList", no);
 	}
 
 	public int updateStatus(SqlSessionTemplate sst, VacationFormVo formVo) {
-		return sst.update("VacationFormMapper.updateFirstStatus", formVo);
+		return sst.update("VacationFormMapper.updateStatus", formVo);
 	}
 
 	public int endApply(SqlSessionTemplate sst, String no, int status) {
 		return sst.update("VacationFormMapper.endApply", no);
 	}
+
+	public int updateRejection(SqlSessionTemplate sst, VacationFormVo formVo) {
+		return sst.update("VacationFormMapper.updateRejection", formVo);
+	}
+
+	public int endRejection(SqlSessionTemplate sst, String no, int status) {
+		return sst.update("VacationFormMapper.endRejection", no);
+	}
+
 
 
 }
