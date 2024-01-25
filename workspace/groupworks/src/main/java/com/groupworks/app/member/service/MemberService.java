@@ -85,6 +85,10 @@ public class MemberService {
         return dao.deleteMember(sessionTemplate, no);
     }
 
+    // 회사별 유저 조화
+    public List<MemberVo> getMemberList(String companyNo) {
+        return dao.getMemberList(sessionTemplate, companyNo);
+    }
     // 권한 목록 조회
     public List<AuthVo> getAuthList(){
         return dao.getAuthList(sessionTemplate);

@@ -35,15 +35,20 @@ const UserInfoMain = () => {
                     <Form.Label>이름 : {loginMemberVo.name}</Form.Label>
                     <Form.Control size='sm' type="text" placeholder="수정시 입력후 하단에 수정버튼을 눌러주세요." name='name' />
                     <br />
-                    <Form.Label>회사명(현재 회사번호) : {loginMemberVo.companyNo}</Form.Label>
+                    <Form.Label>회사명(현재 회사번호) : {loginMemberVo.companyName}</Form.Label>
                     <br />
-                    <Form.Label>부서명 (현재 부서번호): {loginMemberVo.departNo}</Form.Label>
-                    <br />
-                    <Form.Label>직책 (현재 직책번호): {loginMemberVo.positionNo}</Form.Label>
+                    <Form.Label>부서명 : {loginMemberVo.departName}</Form.Label>
+                    <br /> 
+                    <Form.Label>직책 : {loginMemberVo.positionName}</Form.Label>
             </Form.Group>
             {
                 loginMemberVo.authNo === '1' &&
-                    <Button onClick={ () => {navigate(`/member/add`,{ state: { cNo : loginMemberVo.companyNo }})} }>구성원추가</Button>
+                    <>
+                        <div>
+                            <Button onClick={ () => {navigate(`/member/add`,{ state: { cNo : loginMemberVo.companyNo }})} }>구성원 추가</Button>
+                            <Button variant='danger' onClick={ () => {navigate("/member/delete")} }>구성원 삭제</Button>
+                        </div>
+                    </>
             }
             
         </StyledInfoDiv>

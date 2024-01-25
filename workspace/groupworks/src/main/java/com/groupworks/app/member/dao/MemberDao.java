@@ -40,6 +40,11 @@ public class MemberDao {
         return sessionTemplate.update("MemberMapper.deleteMember", no);
     }
 
+    // 회사별 사용자 리스트
+    public List<MemberVo> getMemberList(SqlSessionTemplate sessionTemplate, String companyNo) {
+        return sessionTemplate.selectList("MemberMapper.getMemberList", companyNo);
+    }
+
     // 권한 목록 조회
     public List<AuthVo> getAuthList(SqlSessionTemplate sessionTemplate){
         return sessionTemplate.selectList("MemberMapper.getAuthList");

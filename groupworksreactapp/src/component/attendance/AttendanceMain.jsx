@@ -5,8 +5,7 @@ import AttendanceAdd from './AttendanceAdd';
 import UserInfoMain from './UserInfoMain';
 
 const StyeldAttendDiv = styled.div`
-    border: 2px solid black;
-    width: 100%;
+    width: 90%;
     height: 100%;
     display: grid;
     grid-template-columns: 1fr 1fr; // 두 개의 열로 구성
@@ -16,7 +15,7 @@ const StyledUserInfoDiv = styled.div`
     display: grid;
     grid-template-rows: 3fr 1fr; // 첫 번째 열을 3:1 비율로 2개의 행으로 구성
     gap: 10px; // 내부 그리드 간격
-    background-color: aqua;
+    /* background-color: aqua; */
 
     & > :first-child {
     }
@@ -26,6 +25,13 @@ const StyledUserInfoDiv = styled.div`
 const StyledAttendInputDiv = styled.div`
     display: grid;
     grid-template-rows: 1fr 1fr 6fr;
+    border: 2px solid black;
+    border-radius: 5%;
+    & > div {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
 `;
 
 const StyledSelectType = styled.div`
