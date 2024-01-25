@@ -5,11 +5,21 @@ import OrganModal from './OrganModal';
 
 
 function groupByDepartNo(list) {
-    return list.reduce((acc, vo) => {
-        if (!acc[vo.departNo]) {
-            acc[vo.departNo] = [];
+    // return list.reduce((acc, vo) => {
+    //     if (!acc[vo.departNo]) {
+    //         acc[vo.departNo] = [];
+    //     }
+    //     acc[vo.departNo].push(vo);
+    //     return acc;
+    // }, {});
+    return list.reduce((acc, member) => {
+        // 여기서 member.departName은 부서 이름을 나타냅니다. 실제 필드명에 맞게 조정해야 합니다.
+        const departNo = member.departNo;
+
+        if (!acc[departNo]) {
+            acc[departNo] = [];
         }
-        acc[vo.departNo].push(vo);
+        acc[departNo].push(member);
         return acc;
     }, {});
 }
@@ -55,28 +65,49 @@ const OrganList = () => {
 
     const navigate = useNavigate();
     const loginMemberNo = sessionStorage.getItem("loginMemberNo");
+    // const [loginMemberVo, setLoginMemberVo] = useState([]);
 
     const [organVoList, setOrganVoList] = useState([]);
     const loadOrganVoList = () => {
+        // const companyNo = 1;
+        // fetch(`http://127.0.0.1:8888/app/organ/list?loginMemberNo=${loginMemberNo}`)
+        // fetch(`http://127.0.0.1:8888/app/member/companyNo?loginMemberNo=${loginMemberNo}`)
+        // .then(resp => resp.json())
+        // .then(data => {
+        //     setLoginMemberVo(data.loginMemberVo);
+        //     console.log("데이터 갖고옴");
+        //     console.log(data.voList);
+
+        //     if (data.voList && Array.isArray(data.voList)) {
+        //         setOrganVoList(data.voList);
+        //     } else {
+        //         console.error('Data is not an array:', data);
+        //         setOrganVoList([]); // 데이터가 배열이 아닌 경우 빈 배열로 설정
+        //     }
+        // })
+        // .catch(error => {
+        //     console.error('Fetch error:', error);
+        //     setOrganVoList([]); // 에러 발생 시 빈 배열로 설정
+        // });
         fetch(`http://127.0.0.1:8888/app/organ/list?loginMemberNo=${loginMemberNo}`)
         .then(resp => resp.json())
         .then(data => {
-            console.log("데이터 갖고옴");
-            console.log(data.voList);
-
             if (data.voList && Array.isArray(data.voList)) {
                 setOrganVoList(data.voList);
             } else {
                 console.error('Data is not an array:', data);
-                setOrganVoList([]); // 데이터가 배열이 아닌 경우 빈 배열로 설정
+                setOrganVoList([]); 
             }
         })
         .catch(error => {
             console.error('Fetch error:', error);
-            setOrganVoList([]); // 에러 발생 시 빈 배열로 설정
+            setOrganVoList([]); 
         });
     };
 
+    useEffect(() => {
+        loadOrganVoList();
+    }, []);
 
     const handleDelete = orgNo => {
         fetch(`http://127.0.0.1:8888/app/organ/delete/${orgNo}`, {
@@ -169,7 +200,7 @@ const OrganList = () => {
         <StyledOrganListDiv>
         <h1>조직도 목록 조회</h1>
         <button onClick={handleOrganWrite}>조직도 작성</button>
-        {
+        {/* {
                 Array.isArray(organVoList) && organVoList.length === 0
                 ?
                 <div>로딩 중...</div>
@@ -202,7 +233,46 @@ const OrganList = () => {
                     </StyledTable>
                 )
                 )
-            }
+            } */}
+             {
+            Array.isArray(organVoList) && organVoList.length === 0
+            ?
+            <div>로딩 중...</div>
+            :
+            Object.entries(groupByDepartNo(organVoList)).map(([departNo, members]) => (
+                <StyledTable key={departNo}>
+                    <thead>
+                        <tr className="depart-header">
+                            <th colSpan="4">부서 번호: {departNo}</th>
+                        </tr>
+                        <tr>
+                            <th>이름</th>
+                            <th>직책</th>
+                            <th>전화번호</th>
+                            <th>이메일</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    {members.map(member => (
+                            <tr key={member.no}>
+                                <td>{member.name}</td>
+                                <td>{member.positionName}</td>
+                                <td>{member.tel}</td>
+                                <td>{member.email}</td>
+                            </tr>
+                        ))}
+                        {/* {members.map(member => (
+                            <tr key={member.no}>
+                                <td>{member.name}</td>
+                                <td>{member.positionNo}</td>
+                                <td>{member.tel}</td>
+                                <td>{member.email}</td>
+                            </tr>
+                        ))} */}
+                    </tbody>
+                </StyledTable>
+            ))
+        }
             <OrganModal
                 modalIsOpen={modalIsOpen}
                 selectedVo={selectedVo}

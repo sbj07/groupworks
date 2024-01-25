@@ -55,16 +55,21 @@ const SubmitButton = styled.button`
 
 
 
-const NoticeWrite = ({ loggedInUser }) => {
+const NoticeWrite = () => {
+    //
+    const loginMemberNo = sessionStorage.getItem("loginMemberNo");
 
+    const navigate = useNavigate();
+    const [loginMemberVo, setLoginMemberVo] = useState([]);
+    //
     const [noticeData, setNoticeData] = useState({
+        memberNo: loginMemberNo,
         title: '',
         content: '',
         filePath: '',
         category: '',
         emergencyYn: '',
         openDepart: '',
-        memberNo: loggedInUser ? loggedInUser.memberNo : ''
         
     });
     
@@ -72,31 +77,44 @@ const NoticeWrite = ({ loggedInUser }) => {
         setNoticeData({ ...noticeData, [e.target.name]: e.target.value });
     };
 
-    const navigate = useNavigate();
     const handleFileChange = (e) => {
         // 파일이 선택되었을 때 상태 업데이트
         if (e.target.files.length > 0) {
             setNoticeData({ ...noticeData, file: e.target.files[0] });
         }
     };
-
+    const func = ( ) => {
+        fetch(`http://127.0.0.1:8888/app/api/member/${loginMemberNo}`)
+        .then( resp => resp.json() )
+        .then( data => {
+            setLoginMemberVo(data.loginMemberVo);
+        });
+    }
+    useEffect( () => {
+        func();
+    },[]);
     const handleSubmit = async (e) => {
         e.preventDefault();
-        // 데이터 전송 로직
-        const formData = new FormData();
-        formData.append('title', noticeData.title);
-        formData.append('content', noticeData.content);
-        formData.append('memberNo', noticeData.memberNo);
-        formData.append('category', noticeData.category);
-        formData.append('openDepart', noticeData.openDepart);
-        if (noticeData.file) {
-            formData.append('file', noticeData.file);
-        }
+
+        // // 데이터 전송 로직
+        // const formData = new FormData();
+        // formData.append('title', noticeData.title);
+        // formData.append('content', noticeData.content);
+        // formData.append('memberNo', noticeData.memberNo);
+        // formData.append('category', noticeData.category);
+        // formData.append('openDepart', noticeData.openDepart);
+        // formData.append('memberNo', memberNo);
+        // if (noticeData.file) {
+        //     formData.append('file', noticeData.file);
+        // }
 
         try {
             const response = await fetch('http://127.0.0.1:8888/app/notice/insert', {
                 method: 'POST',
-                body: formData,
+                headers: {
+                    "Content-type" : "application/json"
+                },
+                body: JSON.stringify(noticeData)
 
             });
 
@@ -131,7 +149,7 @@ const NoticeWrite = ({ loggedInUser }) => {
                     onChange={handleInputChange}
                 />
             </Label>
-            <Label>
+            {/* <Label>
                 작성자:{noticeData.memberNo}
                 <Input
                     type="text"
@@ -140,7 +158,8 @@ const NoticeWrite = ({ loggedInUser }) => {
                     onChange={handleInputChange}
                     readOnly
                 />
-            </Label>
+            </Label> */}
+            <Label>이름 : {loginMemberVo.name}</Label>
             <Label>
                 카테고리:
                 <Input

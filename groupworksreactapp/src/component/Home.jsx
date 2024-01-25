@@ -11,7 +11,7 @@ const Home = () => {
             {/* <Calendar /> */}
             <TestCalendar />
             <AttendanceMain />
-            <NoticeList showTopFive={true} showWriteButton={false} />
+            <NoticeList showTopFive={true} showWriteButton={false} showPagination={false} showEditAndDelete={false} />
             <TodoList />
         </>
     );

@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -40,7 +41,7 @@ public class NoticeController {
 	
 	//작성
 	@PostMapping("insert")
-	public Map<String, String> insert(NoticeVo vo, MultipartFile f) throws Exception{
+	public Map<String, String> insert(@RequestBody NoticeVo vo, MultipartFile f) throws Exception{
 		
 //		System.out.println("vo : " + vo);
 //	    if (f != null && !f.isEmpty()) {
@@ -62,6 +63,7 @@ public class NoticeController {
 //			map.put("msg", "bad");
 //		}
 //		return map;
+		
 	    System.out.println("vo : " + vo);
 	    if (f != null && !f.isEmpty()) {
 	        String filePath = saveFile(f);
@@ -69,6 +71,7 @@ public class NoticeController {
 	            vo.setFilePath(filePath);
 	        }
 	    }
+        
 	    int result = service.insert(vo);
 	    
 	    Map<String, String> map = new HashMap<>();
@@ -140,6 +143,7 @@ public class NoticeController {
 	    map.put("msg", "good");
 	    map.put("voList", voList);
 	    map.put("pageInfo", pageVo); // 페이지 정보도 같이 반환
+	    map.put("totalCount", listCount);
 	    return map;
 	}
 	
@@ -229,8 +233,6 @@ public class NoticeController {
 	    }
 	}
 
-	
-	
 }//class
 
 

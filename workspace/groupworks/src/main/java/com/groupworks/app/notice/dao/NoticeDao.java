@@ -20,6 +20,7 @@ public class NoticeDao {
 		return sst.insert("NoticeMapper.insert", vo);
 	}
 
+	
 	//목록 조회
 //	public List<NoticeVo> list(SqlSessionTemplate sst, String memberNo) {
 //
@@ -30,7 +31,7 @@ public class NoticeDao {
 //
 //		return sst.selectList("NoticeMapper.list", loginMember);
 //	}
-
+	
 	//목록 조회
 //	public List<NoticeVo> list(SqlSessionTemplate sst) {
 //

@@ -69,16 +69,16 @@ const StyledNoticeListDiv = styled.div`
 //     }
 // };
 
-const NoticeList = ({ showTopFive, showWriteButton }) => {
+const NoticeList = ({ showTopFive, showWriteButton, showPagination, showEditAndDelete }) => {
     const navigate = useNavigate();
     const [selectedNotice, setSelectedNotice] = useState(null);
     const [noticeVoList, setNoticeVoList] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
     const itemsPerPage = 10; // 페이지당 항목 수
+    const [totalItems, setTotalItems] = useState(0);
 
-    // useEffect(() => {
-    //     // 공지사항 데이터 로드 로직
-    // }, [currentPage]);
+
+    
 
     const handleNoticeClick = (notice) => {
         setSelectedNotice(notice);
@@ -238,6 +238,8 @@ const NoticeList = ({ showTopFive, showWriteButton }) => {
     };
 
 
+    
+
     const handleDelete = noticeNo => {
         fetch(`http://127.0.0.1:8888/app/notice/delete/${noticeNo}`, {
             method: 'DELETE',
@@ -254,7 +256,8 @@ const NoticeList = ({ showTopFive, showWriteButton }) => {
         .then(data => {
             console.log('삭제 성공:', data);
             alert("공지사항 삭제 성공");
-            loadNoticeVoList(); // 공지사항 목록 다시 로드
+            handleCloseModal();
+            setNoticeVoList(noticeVoList.filter(notice => notice.noticeNo !== noticeNo));
         })
         .catch(error => {
             console.error('삭제 실패:', error);
@@ -289,19 +292,31 @@ const NoticeList = ({ showTopFive, showWriteButton }) => {
 
 
     const renderPagination = () => {
+        if (!showPagination) {
+            return null; // 페이징을 표시하지 않음
+        }
         
-        const totalItems = 100; // 예시로 총 아이템 수를 설정, 실제로는 데이터에서 가져와야 합니다.
+        const totalItems = 60; // 예시로 총 아이템 수를 설정, 실제로는 데이터에서 가져와야 합니다.
         const maxPage = Math.ceil(totalItems / itemsPerPage);
 
         return (
             <div>
                 <button onClick={handlePreviousPage} disabled={currentPage === 1}>이전</button>
-                <span>{currentPage}</span>
+                <span>{currentPage} / {maxPage}</span>
                 {/* <button onClick={handleNextPage}>다음</button> */}
                 <button onClick={handleNextPage} disabled={currentPage === maxPage}>다음</button>
             </div>
         );
     };
+    //    const renderPagination = (currentPage, setCurrentPage, totalPages) => {
+    // return (
+    //     <div>
+    //         <button onClick={() => setCurrentPage(currentPage - 1)} disabled={currentPage === 1}>이전</button>
+    //         <span>{currentPage}</span>
+    //         <button onClick={() => setCurrentPage(currentPage + 1)} disabled={currentPage === totalPages}>다음</button>
+    //     </div>
+    //     );
+    // };
 
     return (
         <StyledNoticeListDiv>
@@ -350,6 +365,7 @@ const NoticeList = ({ showTopFive, showWriteButton }) => {
                 onClose={handleCloseModal} 
                 onSave={handleSave}
                 onDelete={handleDelete}
+                showEditAndDelete={showEditAndDelete}
                 />
                 )}
             
