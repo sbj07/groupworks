@@ -27,13 +27,14 @@ const Overlay = styled.div`
 
 const StyledModalContent = styled.div`
     margin-bottom: 20px;
+    text-align: left;
 `;
 
 const StyledModalHeader = styled.h2`
     margin-top: 0;
 `;
 
-const NoticeModal = ({ notice, onClose, onSave, onDelete }) => {
+const NoticeModal = ({ notice, onClose, onSave, onDelete, showEditAndDelete }) => {
     const [isEditing, setIsEditing] = useState(false);
     const [editedNotice, setEditedNotice] = useState(notice);
 
@@ -104,8 +105,12 @@ const NoticeModal = ({ notice, onClose, onSave, onDelete }) => {
                     <p><strong>작성일자:</strong> {notice.enrollDate}</p>
                 </StyledModalContent>
                 <button onClick={onClose}>닫기</button>
-                <button onClick={handleEdit}>수정</button>
-                <button onClick={handleDelete}>삭제</button>
+                {showEditAndDelete && (
+                        <>
+                            <button onClick={handleEdit}>수정</button>
+                            <button onClick={handleDelete}>삭제</button>
+                        </>
+                    )}
                 </>
                 )}
             </StyledModal>
