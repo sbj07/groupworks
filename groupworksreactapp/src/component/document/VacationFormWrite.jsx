@@ -204,9 +204,9 @@ const VacationFormWrite = () => {
     finishTime: ''
   });
   const [selectApply, setSelectApply] = useState({
-    firstApply: {name:'no', no:''},
-    midApply: {name:'no', no:''},
-    lastApply: {name:'no', no:''},
+    firstApply: {name:'', no:''},
+    midApply: {name:'', no:''},
+    lastApply: {name:'', no:''},
   });
 
   const fetchCompanyMember = () => {
@@ -357,7 +357,7 @@ const VacationFormWrite = () => {
                                     <td rowSpan="2" style={{ width: '15px', paddingTop: '20px', fontSize: '20px' }}>
                                         결 재
                                     </td>
-                                    <td style={{ height: '30px', width: '100px' }}>
+                                    <td style={{ height: '30px', width: '100px'}}>
                                         최초승인자
                                     </td>
                                     <td style={{ width: '100px' }}>
@@ -389,7 +389,7 @@ const VacationFormWrite = () => {
                                     <td style={{ width: '80px' }}>
                                         부 서
                                     </td>
-                                    <td><input type="text"value={loginMember.departmentName || ''} readOnly /></td>
+                                    <td><input type="text"value={loginMember.departName || ''} readOnly /></td>
                                     <td style={{ width: '80px' }}>
                                         직 급
                                     </td>
