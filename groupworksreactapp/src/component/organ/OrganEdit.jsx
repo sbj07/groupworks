@@ -87,13 +87,13 @@ const OrganEdit = () => {
         <StyledOrganEditDiv>
             <h2>조직도 수정</h2>
             <form onSubmit={handleSubmit}>
-                <label>이름:
-                    <input
+                <label>이름: {editedOrgan.name}
+                    {/* <input
                         type="text"
                         name="name"
                         value={editedOrgan.name}
                         onChange={handleChange}
-                    />
+                    /> */}
                 </label>
                 <br />
                 <label>부서:

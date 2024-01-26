@@ -23,12 +23,23 @@ public class BookService {
 	
 	//예약
 	public int insert(BookVo vo) {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-        LocalDateTime useDateTime = LocalDateTime.parse(vo.getUseDate().replace('T', ' '), formatter);
-        vo.setUseDate(useDateTime.format(formatter));
-        
-		return dao.insert(sst, vo);
+	       DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+
+	        // startDate와 endDate 파싱
+	    // 'T' 문자를 공백으로 대체하고 파싱
+	        String formattedStartDate = vo.getStartDate().replace('T', ' ');
+	        String formattedEndDate = vo.getEndDate().replace('T', ' ');
+	        LocalDateTime startDate = LocalDateTime.parse(formattedStartDate, formatter);
+	        LocalDateTime endDate = LocalDateTime.parse(formattedEndDate, formatter);
+	        
+	        // LocalDateTime을 String으로 변환하여 설정
+	        vo.setStartDate(startDate.format(formatter));
+	        vo.setEndDate(endDate.format(formatter));
+
+	        return dao.insert(sst, vo);
 	}
+
+
 
 	//목록 조회(처음 /book/list 페이지 들어갈 때(날짜 선택 안 했을 때))
 	public List<BookVo> list() {

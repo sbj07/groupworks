@@ -14,6 +14,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -30,11 +31,13 @@ import com.groupworks.app.notice.vo.NoticeVo;
 import com.groupworks.app.page.vo.PageVo;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @RestController
 @RequestMapping("notice")
 @RequiredArgsConstructor
 @CrossOrigin
+@Slf4j
 public class NoticeController {
 
 	private final NoticeService service;
@@ -169,7 +172,30 @@ public class NoticeController {
 		return "notice/detail";
 	}//detail
 	
-	
+	//조회수 증가
+	@PostMapping("/increase-click/{noticeNo}")
+	public ResponseEntity<?> increaseClickCount(@PathVariable("noticeNo") String noticeNo) {
+	    try {
+	        // noticeNo를 사용하여 NoticeVo 객체 생성
+	        NoticeVo vo = new NoticeVo();
+	        vo.setNoticeNo(noticeNo);
+
+	        // 서비스 레이어를 호출하여 조회수 증가 로직 수행
+	        NoticeVo updatedVo = service.clickNo(vo);
+	        log.info("{}" + updatedVo);
+	        if (updatedVo == null) {
+	            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                        .body(Map.of("message", "조회수 증가 처리 실패, 확인 필요"));
+	        }
+        	return ResponseEntity.ok().body(Map.of("message", "조회수 증가 성공", "updatedVo", updatedVo));
+ 
+	    } catch (Exception e) {
+//	    	e.printStackTrace();
+	        // 오류 발생 시
+	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(Map.of("error", "서버 오류 발생: " + e.getMessage()));
+	    }
+	}
 	//수정(기존)
 //	@PostMapping("edit")
 //	public String edit(NoticeVo vo) throws Exception{

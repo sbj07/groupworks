@@ -29,4 +29,6 @@ public class OrganVo {
 	private String companyNo;
 	private String positionNo;
 	private String deleteYn;
+	private String departmentName;
+	private String positionName;
 }//class

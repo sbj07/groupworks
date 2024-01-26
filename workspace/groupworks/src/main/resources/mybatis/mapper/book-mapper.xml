@@ -9,13 +9,17 @@
 		INSERT INTO BOOK(
 		    BOOK_NO
 		    , MEMBER_NO
-		    , USE_DATE
+		    , BOOK_PLACE
+		    , START_DATE
+		    , END_DATE
 		    , BOOK_PURPOSE
 		    )
 		VALUES(
 		    SEQ_BOOK_NO.NEXTVAL
 		    , #{memberNo}
-		    , #{useDate, jdbcType=TIMESTAMP}
+		    , #{bookPlace}
+		    , #{startDate}
+		    , #{endDate}
 		    , #{bookPurpose}
 			)
 	</insert>
@@ -23,14 +27,18 @@
 <!-- 	전체 조회 	//처음 페이지 렌더링 시 모든 데이터 조회	 -->
 	<select id="list" resultType="com.groupworks.app.book.vo.BookVo">
 		SELECT
-		    BOOK_NO
-		    , MEMBER_NO
-		    , USE_DATE
-		    , BOOK_PURPOSE
-		    , BOOK_DATE
-		    , UPDATE_DATE
-		    , CANCEL_DATE
-		FROM BOOK
+		    B.BOOK_NO
+		    , B.MEMBER_NO
+            , M.NAME as memberName
+		    , B.BOOK_PLACE
+		    , B.START_DATE
+		    , B.END_DATE
+		    , B.BOOK_PURPOSE
+		    , B.BOOK_DATE
+		    , B.UPDATE_DATE
+		    , B.CANCEL_DATE
+		FROM BOOK B
+        JOIN MEMBER M ON B.MEMBER_NO = M.NO
 		WHERE CANCEL_DATE IS NULL
 		ORDER BY BOOK_NO DESC
 	</select>
@@ -40,26 +48,30 @@
     <choose>
         <when test="startDate != null and endDate != null">
             SELECT
-                BOOK_NO,
-                MEMBER_NO,
-                USE_DATE,
-                BOOK_PURPOSE,
-                BOOK_DATE,
-                UPDATE_DATE,
-                CANCEL_DATE
+			    BOOK_NO
+			    , MEMBER_NO
+			    , BOOK_PLACE
+			    , START_DATE
+			    , END_DATE
+			    , BOOK_PURPOSE
+			    , BOOK_DATE
+			    , UPDATE_DATE
+			    , CANCEL_DATE
             FROM BOOK
-            WHERE USE_DATE BETWEEN #{startDate} AND #{endDate}
+            WHERE START_DATE &gt;= #{startDate} AND END_DATE &lt;= #{endDate}
             ORDER BY BOOK_NO DESC
         </when>
         <otherwise>
             SELECT
-                BOOK_NO,
-                MEMBER_NO,
-                USE_DATE,
-                BOOK_PURPOSE,
-                BOOK_DATE,
-                UPDATE_DATE,
-                CANCEL_DATE
+			    BOOK_NO
+			    , MEMBER_NO
+			    , BOOK_PLACE
+			    , START_DATE
+			    , END_DATE
+			    , BOOK_PURPOSE
+			    , BOOK_DATE
+			    , UPDATE_DATE
+			    , CANCEL_DATE
             FROM BOOK
             ORDER BY BOOK_NO DESC
         </otherwise>
@@ -72,7 +84,9 @@
 		SELECT
 		    BOOK_NO
 		    , MEMBER_NO
-		    , USE_DATE
+		    , BOOK_PLACE
+		    , START_DATE
+		    , END_DATE
 		    , BOOK_PURPOSE
 		    , BOOK_DATE
 		    , UPDATE_DATE
@@ -87,12 +101,18 @@
 	    UPDATE BOOK
 	        SET
 	        <trim prefixOverrides=",">
-	            <if test="useDate != null and useDate != ''">
-	                USE_DATE = #{useDate}
-	            </if>
-	            <if test="bookPurpose != null and bookPurpose != ''">
-	                , BOOK_PURPOSE = #{bookPurpose}
-	            </if>
+            <if test="bookPlace != null and bookPlace != ''">
+                BOOK_PLACE = #{bookPlace},
+            </if>
+            <if test="startDate != null">
+                START_DATE = #{startDate, jdbcType=TIMESTAMP},
+            </if>
+            <if test="endDate != null">
+                END_DATE = #{endDate, jdbcType=TIMESTAMP},
+            </if>
+            <if test="bookPurpose != null and bookPurpose != ''">
+                BOOK_PURPOSE = #{bookPurpose}
+            </if>
 	        </trim>
         , UPDATE_DATE = SYSDATE
 	    WHERE BOOK_NO = #{bookNo}

@@ -12,9 +12,11 @@ import com.groupworks.app.notice.vo.NoticeVo;
 import com.groupworks.app.page.vo.PageVo;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class NoticeService {
 
 	private final NoticeDao dao;
@@ -81,7 +83,18 @@ public class NoticeService {
 	//상세조회 + 조회수 증가
 	public NoticeVo detail(NoticeVo vo) {
 
+//		int result = dao.increaseHit(sst, vo);
+//		if(result != 1) {
+//			throw new IllegalStateException();
+//		}
+		return dao.detail(sst, vo);
+	}
+	
+	//조회수 증가
+	public NoticeVo clickNo(NoticeVo vo) {
+
 		int result = dao.increaseHit(sst, vo);
+		log.info("{}" + result);
 		if(result != 1) {
 			throw new IllegalStateException();
 		}
