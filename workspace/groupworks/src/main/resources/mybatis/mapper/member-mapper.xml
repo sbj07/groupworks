@@ -97,15 +97,15 @@
     <update id="editMember">
         UPDATE MEMBER
         <set>
-            <if test="name != null">NAME = #{name},</if>
-            <if test="id != null">ID = #{id},</if>
-            <if test="email != null">EMAIL = #{email},</if>
-            <if test="tel != null">TEL = #{tel},</if>
-            <if test="annual != null">ANNUAL = #{annual},</if>
-            <if test="authNo != null">AUTH_NO = #{authNo},</if>
-            <if test="address != null">ADDRESS = #{address},</if>
-            <if test="departNo != null">DEPART_NO = #{departNo},</if>
-            <if test="positionNo != null">POSITION_NO = #{positionNo}</if>
+            <if test="name != null and name != '' ">NAME = #{name},</if>
+            <if test="id != null and id != '' ">ID = #{id},</if>
+            <if test="email != null and email != '' ">EMAIL = #{email},</if>
+            <if test="tel != null and tel != '' ">TEL = #{tel},</if>
+            <if test="annual != null and annual != '' ">ANNUAL = #{annual},</if>
+            <if test="authNo != null and authNo != '' ">AUTH_NO = #{authNo},</if>
+            <if test="address != null and address != '' ">ADDRESS = #{address},</if>
+            <if test="departNo != null and departNo != '' ">DEPART_NO = #{departNo},</if>
+            <if test="positionNo != null and positionNo != '' ">POSITION_NO = #{positionNo}</if>
         </set>
         WHERE NO = #{no}
     </update>

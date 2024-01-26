@@ -2,12 +2,14 @@ package com.groupworks.app.member.dao;
 
 import com.groupworks.app.company.vo.CompanyVo;
 import com.groupworks.app.member.vo.*;
+import lombok.extern.slf4j.Slf4j;
 import org.mybatis.spring.SqlSessionTemplate;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
 @Repository
+@Slf4j
 public class MemberDao {
 
     // 관리자 화원가입

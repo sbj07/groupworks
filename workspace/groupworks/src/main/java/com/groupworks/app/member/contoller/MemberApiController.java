@@ -75,6 +75,7 @@ public class MemberApiController {
         MemberVo loginMemberVo = service.getLoginMember(loginMemberNo);
         Map<String, Object> map = new HashMap<>();
         map.put("msg", "okay");
+
         map.put("loginMemberVo", loginMemberVo);
         if(loginMemberVo == null) {
             map.put("msg", "nope");
@@ -85,7 +86,6 @@ public class MemberApiController {
     // 회원정보수정
     @PutMapping
     public Map<String, Object> edit(@RequestBody MemberVo editVo) {
-        log.info("{}",editVo);
         int result = service.edit(editVo);
         Map<String, Object> map = new HashMap<>();
         map.put("msg", "okay");
@@ -136,12 +136,12 @@ public class MemberApiController {
     }
 
     // 부서
-    @GetMapping("depart")
+    @GetMapping("list/depart")
     public Map<String, Object> getDepartList(){
         List<DepartVo> departList = service.getDepartList();
         Map<String, Object> map = new HashMap<>();
         map.put("msg", "okay");
-        map.put("list", departList);
+        map.put("departList", departList);
         if(departList == null) {
             map.put("msg", "nope");
         }
@@ -162,12 +162,12 @@ public class MemberApiController {
     }
 
     // 직책
-    @GetMapping("position")
+    @GetMapping("list/position")
     public Map<String, Object> getPositionList(){
         List<PositionVo> positionList = service.getPositionList();
         Map<String, Object> map = new HashMap<>();
         map.put("msg", "okay");
-        map.put("list", positionList);
+        map.put("positionList", positionList);
         if(positionList == null) {
             map.put("msg", "nope");
         }

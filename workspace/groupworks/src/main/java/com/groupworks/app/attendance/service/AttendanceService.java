@@ -71,7 +71,7 @@ public class AttendanceService {
         float floatDays = (float) days;
         String usedDays = Float.toString(floatDays);
         vo.setUsedDays(String.valueOf(usedDays));
-        log.info("사용일수 체크 : {}", vo);
+
         return dao.insertVacation(sessionTemplate, vo);
     }
 

@@ -4,7 +4,7 @@ import dayGridPlugin from "@fullcalendar/daygrid";
 import koLocale from "@fullcalendar/core/locales/ko";
 import styled from "styled-components";
 import Modal from "react-modal";
-import { Button, Form } from "react-bootstrap";
+import { Button } from "react-bootstrap";
 import BusinessTripEventFrom from "../attendance/BusinessTripEventFrom";
 import OutworkEventForm from "../attendance/OutworkEventForm";
 import VacationEventForm from "../attendance/VacationEventForm";
@@ -132,7 +132,6 @@ const TestCalendar = ({ refresh }) => {
                     top: "0",
                     left: "0",
                   },
-                  // 여기가 모달창 안쪽영역 
                   content: {
                     display: "flex",
                     flexDirection: "column",
