@@ -4,7 +4,7 @@ import styled from 'styled-components';
 import OrganModal from './OrganModal';
 
 
-function groupByDepartNo(list) {
+function groupByDepartmentName(list) {
     // return list.reduce((acc, vo) => {
     //     if (!acc[vo.departNo]) {
     //         acc[vo.departNo] = [];
@@ -14,12 +14,12 @@ function groupByDepartNo(list) {
     // }, {});
     return list.reduce((acc, member) => {
         // 여기서 member.departName은 부서 이름을 나타냅니다. 실제 필드명에 맞게 조정해야 합니다.
-        const departNo = member.departNo;
+        const departmentName = member.departmentName;
 
-        if (!acc[departNo]) {
-            acc[departNo] = [];
+        if (!acc[departmentName]) {
+            acc[departmentName] = [];
         }
-        acc[departNo].push(member);
+        acc[departmentName].push(member);
         return acc;
     }, {});
 }
@@ -239,11 +239,11 @@ const OrganList = () => {
             ?
             <div>로딩 중...</div>
             :
-            Object.entries(groupByDepartNo(organVoList)).map(([departNo, members]) => (
-                <StyledTable key={departNo}>
+            Object.entries(groupByDepartmentName(organVoList)).map(([departmentName, members]) => (
+                <StyledTable key={departmentName}>
                     <thead>
                         <tr className="depart-header">
-                            <th colSpan="4">부서 번호: {departNo}</th>
+                            <th colSpan="4">부서 : {departmentName}</th>
                         </tr>
                         <tr>
                             <th>이름</th>
@@ -254,7 +254,7 @@ const OrganList = () => {
                     </thead>
                     <tbody>
                     {members.map(member => (
-                            <tr key={member.no}>
+                            <tr key={member.name} onClick={() => openModal(member)}>
                                 <td>{member.name}</td>
                                 <td>{member.positionName}</td>
                                 <td>{member.tel}</td>

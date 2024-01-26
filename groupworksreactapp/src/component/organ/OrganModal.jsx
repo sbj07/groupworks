@@ -29,14 +29,18 @@ export const Overlay = styled.div`
 const OrganModal = ({ modalIsOpen, selectedVo, closeModal, navigateToEdit, onDelete, organ }) => {
 
     const navigateToDelete = () => {
-        if (!organ) {
-            console.error('organ 객체가 정의되지 않음');
-            return;
-        }
+        // if (!organ) {
+        //     console.error('organ 객체가 정의되지 않음');
+        //     return;
+        // }
     
-        if (window.confirm("정말로 삭제하시겠습니까?")) {
-            onDelete(organ.orgNo);
-        }
+        // if (window.confirm("정말로 삭제하시겠습니까?")) {
+        //     onDelete(organ.orgNo);
+        // }
+            if (selectedVo && selectedVo.orgNo) {
+                onDelete(selectedVo.orgNo);
+            }
+            closeModal();
     };
 
     return (

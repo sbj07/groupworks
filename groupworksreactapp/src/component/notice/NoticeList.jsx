@@ -49,28 +49,33 @@ const StyledNoticeListDiv = styled.div`
     }
 `;
 
-//조회수 증가
-// const incrementClickCount = async (noticeNo) => {
-//     try {
-//         const response = await fetch(`http://127.0.0.1:8888/app/notice/list/${noticeNo}`, {
-//             method: 'POST', // 가정한 요청 메소드
-//             // 필요한 경우 헤더와 바디를 추가합니다.
-//         });
+// 조회수 증가 함수
+const incrementClickCount = async (noticeNo) => {
+    try {
+        const response = await fetch(`http://127.0.0.1:8888/app/notice/increase-click/${noticeNo}`, {
+            method: 'POST',
+        });
 
-//         if (!response.ok) {
-//             throw new Error('서버 오류 발생');
-//         }
+        if (!response.ok) {
+            throw new Error('서버 오류 발생');
+        }
 
-//         // 요청이 성공했을 때 추가 로직 구현
-//         return true;
-//     } catch (error) {
-//         console.error('조회수 증가 요청 실패:', error);
-//         return false;
-//     }
-// };
+        return true;
+    } catch (error) {
+        console.error('조회수 증가 요청 실패:', error);
+        return false;
+    }
+};
 
-const NoticeList = ({ showTopFive, showWriteButton, showPagination, showEditAndDelete }) => {
+
+
+
+
+const NoticeList = ({ showTopFive, showWriteButton, showPagination, showEditAndDeleteProps }) => {
     const navigate = useNavigate();
+    //
+    const [showEditAndDelete, setShowEditAndDelete] = useState(showEditAndDeleteProps);
+    //
     const [selectedNotice, setSelectedNotice] = useState(null);
     const [noticeVoList, setNoticeVoList] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
@@ -80,9 +85,9 @@ const NoticeList = ({ showTopFive, showWriteButton, showPagination, showEditAndD
 
     
 
-    const handleNoticeClick = (notice) => {
-        setSelectedNotice(notice);
-    };
+    // const handleNoticeClick = (notice) => {
+    //     setSelectedNotice(notice);
+    // };
 
     //조회수 증가 코드 수정해야 함↑
     // const handleNoticeClick = async (notice) => {
@@ -209,36 +214,72 @@ const NoticeList = ({ showTopFive, showWriteButton, showPagination, showEditAndD
 
 
 
-    const loadNoticeVoList = () => {
-        // fetch("http://127.0.0.1:8888/app/notice/list")
-        const loginMemberNo = sessionStorage.getItem("loginMemberNo")
+    // const loadNoticeVoList = () => {
+    //     // fetch("http://127.0.0.1:8888/app/notice/list")
+    //     const loginMemberNo = sessionStorage.getItem("loginMemberNo")
 
-        if(loginMemberNo){
-        fetch(`http://127.0.0.1:8888/app/notice/list?page=${currentPage}&size=${itemsPerPage}&memberNo=${loginMemberNo}`)
-        .then( resp => resp.json() )
-        .then(data => {
-            // console.log("가장 최근에 저장된 공지사항 데이터 : ", data);
+    //     if(loginMemberNo){
+    //     fetch(`http://127.0.0.1:8888/app/notice/list?page=${currentPage}&size=${itemsPerPage}&memberNo=${loginMemberNo}`)
+    //     .then( resp => resp.json() )
+    //     .then(data => {
+    //         // console.log("가장 최근에 저장된 공지사항 데이터 : ", data);
+    //         if (data.voList && Array.isArray(data.voList)) {
+    //             const listToShow = showTopFive ? data.voList.slice(0, 5) : data.voList;
+    //             setNoticeVoList(listToShow);
+    //         } else {
+    //             console.error('Data is not an array:', data);
+    //             setNoticeVoList([]); // 데이터가 배열이 아닌 경우 빈 배열로 설정
+    //         }
+    //     })
+    //     .catch(error => {
+    //         console.error('Fetch error:', error);
+    //         setNoticeVoList([]); // 에러 발생 시 빈 배열로 설정
+    //     });
+    //     }else{
+    //           // 사용자 번호가 없는 경우
+    //           console.error('No user number found');
+    //           setNoticeVoList([]); // 사용자 번호가 없으면 빈 배열로 설정
+    //     }
+    // };
+    const loadNoticeVoList = async () => {
+        const loginMemberNo = sessionStorage.getItem("loginMemberNo");
+    
+        if (loginMemberNo) {
+            const response = await fetch(`http://127.0.0.1:8888/app/notice/list?page=${currentPage}&size=${itemsPerPage}&memberNo=${loginMemberNo}`);
+            const data = await response.json();
             if (data.voList && Array.isArray(data.voList)) {
                 const listToShow = showTopFive ? data.voList.slice(0, 5) : data.voList;
                 setNoticeVoList(listToShow);
             } else {
                 console.error('Data is not an array:', data);
-                setNoticeVoList([]); // 데이터가 배열이 아닌 경우 빈 배열로 설정
+                setNoticeVoList([]);
             }
-        })
-        .catch(error => {
-            console.error('Fetch error:', error);
-            setNoticeVoList([]); // 에러 발생 시 빈 배열로 설정
-        });
-        }else{
-              // 사용자 번호가 없는 경우
-              console.error('No user number found');
-              setNoticeVoList([]); // 사용자 번호가 없으면 빈 배열로 설정
+        } else {
+            console.error('No user number found');
+            setNoticeVoList([]);
         }
     };
 
-
+    const handleNoticeClick = async (notice) => {
+        const success = await incrementClickCount(notice.noticeNo);
     
+        if (success) {
+            await loadNoticeVoList();
+            const updatedNotice = noticeVoList.find(n => n.noticeNo === notice.noticeNo);
+
+            //
+            const loginMemberNo = sessionStorage.getItem("loginMemberNo");
+            const canEditDelete = notice.memberNo === loginMemberNo;
+            //
+
+            setSelectedNotice(updatedNotice);
+            //
+            setShowEditAndDelete(canEditDelete);
+            //
+        } else {
+            setSelectedNotice(notice);
+        }
+    };
 
     const handleDelete = noticeNo => {
         fetch(`http://127.0.0.1:8888/app/notice/delete/${noticeNo}`, {

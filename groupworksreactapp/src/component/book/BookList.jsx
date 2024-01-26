@@ -163,9 +163,11 @@ const BookList = () => {
                     <tr>
                         <th>예약 번호</th>
                         <th>예약자명</th>
-                        <th>사용 일자</th>
+                        <th>장소</th>
+                        <th>언제부터</th>
+                        <th>언제까지</th>
                         <th>사용 목적</th>
-                        <th>신청(수정) 일자</th>
+                        <th>예약시간</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -173,15 +175,17 @@ const BookList = () => {
                         bookVoList.map(book => (
                             <tr key={book.bookNo} onClick={() => openModal(book)}>
                                 <td>{book.bookNo}</td>
-                                <td>{book.memberNo}</td>
-                                <td>{book.useDate}</td>
+                                <td>{book.memberName}</td>
+                                <td>{book.bookPlace}</td>
+                                <td>{book.startDate}</td>
+                                <td>{book.endDate}</td>
                                 <td>{book.bookPurpose}</td>
                                 <td>{book.updateDate ? book.updateDate : book.bookDate}</td>
                             </tr>
                         ))
                     ) : (
                         <tr>
-                            <td colSpan="5">해당 기간 등록된 예약 정보가 없습니다.</td>
+                            <td colSpan="7">해당 기간 등록된 예약 정보가 없습니다.</td>
                         </tr>
                     )}
                 </tbody>

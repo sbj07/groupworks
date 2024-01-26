@@ -19,13 +19,19 @@ const StyledBookEditDiv = styled.div`
 `;
 
 const BookEdit = () => {
+    const loginMemberNo = sessionStorage.getItem("loginMemberNo");
+    const [loginMemberVo, setLoginMemberVo] = useState([]);
+
     const [startDate, setStartDate] = useState('');
     const [endDate, setEndDate] = useState('');
     const navigate = useNavigate();
     const location = useLocation();
     const [editedBook, setEditedBook] = useState(location.state?.selectedVo || {
-        // memberNo: '',
-        useDate: '',
+        bookNo: '',
+        memberNo: loginMemberNo,
+        bookPlace: '',
+        startDate: '',
+        endDate: '',
         bookPurpose: '',
         updateDate: ''
     })
@@ -34,10 +40,13 @@ const BookEdit = () => {
         if (location.state?.selectedVo) {
             const selectedBook = location.state.selectedVo;
             setEditedBook(selectedBook);
-    
-            if (selectedBook.useDate) {
-                const formattedDate = selectedBook.useDate.split(' ')[0]; // 날짜 부분만 추출
-                setStartDate(formattedDate);
+        
+            // startDate와 endDate를 ISO 형식으로 변환하여 설정
+            if (selectedBook.startDate) {
+                setStartDate(selectedBook.startDate.replace(' ', 'T'));
+            }
+            if (selectedBook.endDate) {
+                setEndDate(selectedBook.endDate.replace(' ', 'T'));
             }
         }
     }, [location.state]);
@@ -54,23 +63,28 @@ const BookEdit = () => {
         }
     };
 
+        //로긔인멤버 정보 불러오기
+        const func = ( ) => {
+            fetch(`http://127.0.0.1:8888/app/api/member/${loginMemberNo}`)
+            .then( resp => resp.json() )
+            .then( data => {
+                setLoginMemberVo(data.loginMemberVo);
+            });
+        }
+        useEffect( () => {
+            func();
+        },[]);
+
     const handleSubmit = (e) => {
         e.preventDefault();
         const bookData = {
             bookNo: editedBook.bookNo,
             memberNo: editedBook.memberNo,
-            useDate: startDate,
-            bookPurpose: editedBook.bookPurpose,
-            bookDate: editedBook.bookDate,
-            updateDate: editedBook.updateDate
+            bookPlace: editedBook.bookPlace,
+            startDate: startDate.replace('T', ' '), // ISO 형식을 백엔드 형식으로 변환
+            endDate: endDate.replace('T', ' '), // ISO 형식을 백엔드 형식으로 변환
+            bookPurpose: editedBook.bookPurpose
         };
-    // const formData = new FormData();
-    // formData.append('bookNo', editedBook.bookNo);
-    // formData.append('memberNo', editedBook.memberNo);
-    // formData.append('useDate', editedBook.useDate);
-    // formData.append('bookPurpose', editedBook.bookPurpose);
-    // formData.append('bookDate', editedBook.bookDate);
-    // formData.append('updateDate', editedBook.updateDate);
 
         // 수정된 조직도 데이터를 서버로 전송합니다.
         fetch('http://127.0.0.1:8888/app/book/edit', {
@@ -110,18 +124,36 @@ const BookEdit = () => {
                          onChange={handleChange}
                     />
                 </label> */}
-                <label>사용 희망일
-                    <input type="date" name="startDate" value={startDate} onChange={handleDateChange} />
-                </label>
-                <label>사용 목적
-                    <input
-                         type="text"
-                         name='bookPurpose'
-                         value={editedBook.bookPurpose}
-                         onChange={handleChange} />
-                </label>
-                <br />
-                <button type='submit'>저장</button>
+            <label>예약자 : {loginMemberVo.name}</label>
+            <br />
+            <label>
+                장소
+                <input
+                    type="text"
+                    name='bookPlace'
+                    value={editedBook.bookPlace}
+                    onChange={handleChange} />
+            </label>
+            <br />
+            <label>
+                시작 일자
+                <input type="datetime-local" name="startDate" value={startDate} onChange={handleDateChange} />
+            </label>
+            <br />
+            <label>
+                종료 일자
+                <input type="datetime-local" name="endDate" value={endDate} onChange={handleDateChange} />
+            </label>
+            <br />
+            <label>사용 목적
+                <input
+                        type="text"
+                        name='bookPurpose'
+                        value={editedBook.bookPurpose}
+                        onChange={handleChange} />
+            </label>
+            <br />
+            <button type='submit'>저장</button>
             </form>
         </StyledBookEditDiv>
     );

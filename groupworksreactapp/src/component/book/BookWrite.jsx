@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import BookModal from './BookModal';
 import styled from 'styled-components';
 
 const Form = styled.form`
@@ -46,10 +45,14 @@ const SubmitButton = styled.button`
 `;
 
 const BookWrite = () => {
-    const [useDate, setUseDate] = useState('');
+    const loginMemberNo = sessionStorage.getItem("loginMemberNo");
+    const [loginMemberVo, setLoginMemberVo] = useState([]);
+
     const [bookData, setBookData] = useState({
-        memberNo: '',
-        // useDate: '',
+        memberNo: loginMemberNo,
+        bookPlace: '',
+        startDate: '',
+        endDate: '',
         bookPurpose: ''
     });
 
@@ -59,18 +62,24 @@ const BookWrite = () => {
 
     const navigate = useNavigate();
     
-    const handleDateChange = (e) => {
-        // 'YYYY-MM-DDTHH:MM' 형식을 'YYYY-MM-DD HH:MM:SS' 형식으로 변환
-        const formattedDate = e.target.value.replace('T', ' ') + ':00';
-        setUseDate(formattedDate);
-        // setUseDate(e.target.value);
-        // if (e.target.name === 'startDate') {
-        //     setStartDate(e.target.value);
-        // } else if (e.target.name === 'endDate') {
-        //     setEndDate(e.target.value);
-        // }
-    };
+const handleDateChange = (e) => {
+    // 'YYYY-MM-DDTHH:MM' 형식을 'YYYY-MM-DD HH:MM:SS' 형식으로 변환하지 않고 그대로 사용
+    setBookData({ ...bookData, [e.target.name]: e.target.value });
+};
 
+    //로긔인멤버 정보 불러오기
+    const func = ( ) => {
+        fetch(`http://127.0.0.1:8888/app/api/member/${loginMemberNo}`)
+        .then( resp => resp.json() )
+        .then( data => {
+            setLoginMemberVo(data.loginMemberVo);
+        });
+    }
+    useEffect( () => {
+        func();
+    },[]);
+
+    //작성 fetch
     const handleSubmit = async (e) => {
         e.preventDefault();
         // useDate 값을 startDate로 설정
@@ -78,10 +87,10 @@ const BookWrite = () => {
         //     ...bookData,
         //     useDate: startDate
         // useDate 값을 useDate 상태로 설정
-        const updatedBookData = {
-            ...bookData,
-            useDate
-        };
+        // const updatedBookData = {
+        //     ...bookData,
+        //     useDate
+        // };
     
         try {
             // // JSON 데이터로 변환
@@ -99,7 +108,7 @@ const BookWrite = () => {
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify(updatedBookData)
+                body: JSON.stringify(bookData)
             });
     
             if (!response.ok) {
@@ -118,18 +127,23 @@ const BookWrite = () => {
 
     return (
         <Form onSubmit={handleSubmit}>
+            <Label>이름 : {loginMemberVo.name}</Label>
             <Label>
-                예약자명
+                예약장소
                 <Input
                     type="text"
-                    name="memberNo"
-                    value={bookData.memberNo}
+                    name="bookPlace"
+                    value={bookData.bookPlace}
                     onChange={handleChange}
                 />
             </Label>
             <Label>
-                사용 희망일시
-                <Input type="datetime-local" name="useDate" value={useDate} onChange={handleDateChange} />
+                시작 일자
+                <Input type="datetime-local" name="startDate" value={bookData.startDate} onChange={handleChange} />
+            </Label>
+            <Label>
+                종료 일자
+                <Input type="datetime-local" name="endDate" value={bookData.endDate} onChange={handleChange} />
             </Label>
             <Label>
                 사용 목적

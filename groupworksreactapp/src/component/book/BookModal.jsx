@@ -27,7 +27,7 @@ export const Overlay = styled.div`
 `;
 
 const BookModal = ({ modalIsOpen, selectedVo, closeModal, refreshList }) => {
-
+    const loginMemberNo = sessionStorage.getItem("loginMemberNo")
     const navigate = useNavigate();
     
     const navigateToEdit = () => {
@@ -79,14 +79,19 @@ const BookModal = ({ modalIsOpen, selectedVo, closeModal, refreshList }) => {
                 {selectedVo && (
                     <div>
                         <p>예약 번호: {selectedVo.bookNo}</p>
-                        <p>예약자명: {selectedVo.memberNo}</p>
-                        <p>사용 일자: {selectedVo.useDate}</p>
+                        <p>예약자명: {selectedVo.memberName}</p>
+                        <p>언제부터: {selectedVo.startDate}</p>
+                        <p>언제까지: {selectedVo.endDate}</p>
                         <p>사용 목적: {selectedVo.bookPurpose}</p>
-                        <button onClick={navigateToEdit}>수정</button>
-                        <button onClick={navigateToDelete}>삭제</button>
+                        {selectedVo.memberNo === loginMemberNo && (
+                            <>
+                                <button onClick={navigateToEdit}>수정</button>
+                                <button onClick={navigateToDelete}>삭제</button>
+                            </>
+                        )}
+                        <button onClick={closeModal}>닫기</button>
                     </div>
                 )}
-                <button onClick={closeModal}>닫기</button>
             </StyledModal>
         </Modal>
     );

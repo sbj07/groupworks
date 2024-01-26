@@ -7,7 +7,10 @@ public class BookVo {
 
 	private String bookNo;
 	private String memberNo;
-	private String useDate;
+	private String memberName;
+	private String bookPlace;
+	private String startDate;
+	private String endDate;
 	private String bookPurpose;
 	private String bookDate;
 	private String updateDate;
