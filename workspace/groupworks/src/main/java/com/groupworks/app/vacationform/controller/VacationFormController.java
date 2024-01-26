@@ -112,7 +112,6 @@ public class VacationFormController {
 	//휴가신청서 작성
 	@PostMapping("write")
 	public Map<String, Object> write(@RequestBody VacationFormVo vo) {
-		log.info("vo : {}", vo);
 		int result = service.write(vo);
 		Map<String, Object> map = new HashMap<String, Object>();
 		map.put("msg", "good");
@@ -159,6 +158,7 @@ public class VacationFormController {
 		if(updateSuccess) {
 			int result = service.endRejection(vo);
 			if(result == 1) {
+				log.info(vo.getRejection());
 				map.put("msg","good");
 			}else {
 				map.put("msg","good");

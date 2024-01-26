@@ -29,10 +29,15 @@ const VacationFormList = ({}) => {
     const [totalPages, setTotalPages] = useState(0);
     const [applyTotalPages, setApplyTotalPages] = useState(0);
     const [isRejectionModalOpen, setIsRejectionModalOpen] = useState(false);
-    const [rejectionReason, setRejectionReason] = useState('');
+    const [rejection, setRejection] = useState('');
+    const [selectedVacationNo, setSelectedVacationNo] = useState(null);
+    const [triggerUpdate, setTriggerUpdate] = useState(false);
     const limit = 10;
     const navigate = useNavigate();
     const loginMemberNo = sessionStorage.getItem("loginMemberNo");
+    const [selectedItem, setSelectedItem] = useState(null);
+    const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
+    const [loginMember, setLoginMember] = useState([]);
     
     const handleClick = () => {
         navigate('/document/write');
@@ -113,16 +118,18 @@ const VacationFormList = ({}) => {
 
     const handleRejectClick = (vacationNo) => {
         // 선택된 휴가 신청서 번호 설정 로직 (필요하다면)
+        setSelectedVacationNo(vacationNo);
         setIsRejectionModalOpen(true);
     };
     const closeRejectionModal = () => {
     setIsRejectionModalOpen(false);
     };
 
-    const submitRejection = () => {
-    // 여기에 서버로 반려 사유 전송 로직 추가
-    closeRejectionModal();
+    const handleItemClick = (item) => {
+        setSelectedItem(item);
+        setIsDetailModalOpen(true);
     };
+    
 
     const renderRejectionModal = () => {
         return (
@@ -146,10 +153,10 @@ const VacationFormList = ({}) => {
           >
             <h2>반려 사유 입력</h2>
             <textarea 
-              value={rejectionReason}
-              onChange={(e) => setRejectionReason(e.target.value)}
+              value={rejection}
+              onChange={(e) => setRejection(e.target.value)}
             />
-            <button onClick={submitRejection}>반려</button>
+            <button onClick={handleRejectionClick}>반려</button>
             <button onClick={closeRejectionModal}>닫기</button>
           </Modal>
         );
@@ -165,6 +172,60 @@ const VacationFormList = ({}) => {
         );
     };
 
+    const renderDetailModal = () => {
+        return (
+            <Modal
+                isOpen={isDetailModalOpen}
+                onRequestClose={() => setIsDetailModalOpen(false)}
+                contentLabel="결재 정보"
+                style={{
+                    overlay: {
+                      backgroundColor: 'rgba(0, 0, 0, 0.75)' // 모달의 배경색을 어둡게 설정
+                      },
+                    content: {
+                      top: '50%',
+                      left: '50%',
+                      right: 'auto',
+                      bottom: 'auto',
+                      marginRight: '-50%',
+                      transform: 'translate(-50%, -50%)'
+                    }
+                  }}
+            >
+                <h2>결재 정보</h2>
+                <p>작성자: {loginMember?.name}</p>
+                <p>부서: {loginMember?.departName}</p>
+                <p>직급: {loginMember?.positionName}</p>
+                <p>내용: {selectedItem?.content}</p>
+                <p>시작일: {selectedItem?.startTime}</p>
+                <p>종료일: {selectedItem?.finishTime}</p>
+                <button onClick={() => setIsDetailModalOpen(false)}>닫기</button>
+                
+            </Modal>
+        );
+    };
+
+    useEffect(() => {
+        loadApplyList();
+    }, [applyCurrentPage, triggerUpdate]); 
+
+
+    const queryParam = encodeURIComponent(loginMemberNo);
+    const url = `http://127.0.0.1:8888/app/api/vacation-form/login-member?no=${queryParam}`;
+    const fetchLoginMember = () => {
+    fetch(url)
+    .then( (resp) => resp.json() )
+    .then( data => {
+        if(data.msg === 'good' && data.loginMember){
+            setLoginMember(data.loginMember);
+        }
+    } );
+    };
+
+    useEffect(() => {
+    fetchLoginMember();
+    }, [loginMemberNo]);
+    
     const handleApplyClick = (vacationNo) => {
         const isConfirmed = window.confirm("정말 승인 하시겠습니까?");
         if(isConfirmed) {
@@ -176,9 +237,13 @@ const VacationFormList = ({}) => {
                 body: JSON.stringify({no: vacationNo, loginMemberNo: loginMemberNo}),
             })
             .then( (resp) => resp.json() )
-            .then( data => {
+            .then( (data) => {
                 if(data.msg === 'good'){
                     alert("승인처리 완료")
+                    setTriggerUpdate(prev => !prev);
+                    loadApplyList();
+                    refreshFormList();
+                    setApplyList(applyList.filter(item => item.no !== vacationNo));
                 }else{
                     alert("승인처리 실패")
                 }
@@ -189,14 +254,57 @@ const VacationFormList = ({}) => {
         }
     };
 
-    //여기서부터 추가
+    const handleRejectionClick = () => {
+        const isConfirmed = window.confirm("정말 반려 하시겠습니까?");
+        if(isConfirmed) {
+            fetch(`http://127.0.0.1:8888/app/api/vacation-form/rejection`,{
+                method:'POST',
+                headers: {
+                    'Content-Type' : 'application/json',
+                },
+                body: JSON.stringify({
+                    no: selectedVacationNo, 
+                    loginMemberNo: loginMemberNo,
+                    rejection: rejection
+                }),
+            })
+            .then( (resp) => resp.json() )
+            .then( (data) => {
+                if(data.msg === 'good'){
+                    alert("반려처리 완료")
+                    closeRejectionModal();
+                    setTriggerUpdate(prev => !prev);
+                    loadApplyList();
+                    refreshFormList();
+                }else{
+                    alert("반려처리 실패")
+                }
+            } ) 
+            .catch( (error) => {
+                console.error('반려처리중 에러 발생' , error);
+            } )
+        }
+    };
+
+    const refreshFormList = () => {
+        fetch(`http://127.0.0.1:8888/app/api/vacation-form/list?writerNo=${loginMemberNo}&page=${currentPage}&limit=${limit}`)
+        .then(resp => resp.json())
+        .then(data => {
+            if(data.msg === 'good') {
+                setFormList(data.vacationVoList);
+            } else {
+                console.log("목록 조회 실패");
+            }
+        })
+        .catch(error => console.error('목록 조회 중 에러 발생', error));
+    };
+
     const renderFormList = () => {
         return(
             <table>
                 <thead>
                     <tr>
                         <th>번호</th>
-                        <th>내용</th>
                         <th>결재상태</th>
                         <th>등록일시</th>
                         <th>결재일시</th>
@@ -211,8 +319,7 @@ const VacationFormList = ({}) => {
                         <h1>등록한 결재 목록이 없습니다.</h1>
                         :
                         formList.map( vo => <tr key = {vo.no}>
-                            <td>{vo.no}</td>    
-                            <td>{vo.content}</td>    
+                            <td >{vo.no}</td>    
                             <td>{vo.category}</td>    
                             <td>{vo.writeDate}</td>
                             <td>{vo.documentDate}</td>
@@ -234,7 +341,7 @@ const VacationFormList = ({}) => {
                 <thead>
                     <tr>
                         <th>번호</th>
-                        <th>내용</th>
+                        <th>작성자</th>
                         <th>등록일시</th>
                         <th>결재처리</th>
                     </tr>
@@ -245,9 +352,9 @@ const VacationFormList = ({}) => {
                         ?
                         <h1>등록한 결재 목록이 없습니다.</h1>
                         :
-                        applyList.map( vo => <tr key = {vo.no}>
+                        applyList.map( vo => <tr key = {vo.no}  onClick={() => handleItemClick(vo)}>
                             <td>{vo.no}</td>    
-                            <td>{vo.content}</td>    
+                            <td>{loginMember.name}</td>    
                             <td>{vo.writeDate}</td>
                             <td>
                                 <button onClick={() => handleApplyClick(vo.no)}>승인</button>
@@ -283,6 +390,7 @@ const VacationFormList = ({}) => {
             )}
            
            {renderRejectionModal()}
+           {renderDetailModal()}
         </StyledVacationFormListDiv>
     );
 };

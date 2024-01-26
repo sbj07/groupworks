@@ -76,8 +76,8 @@ public class VacationFormDao {
 		return sst.update("VacationFormMapper.updateRejection", formVo);
 	}
 
-	public int endRejection(SqlSessionTemplate sst, String no, int status) {
-		return sst.update("VacationFormMapper.endRejection", no);
+	public int endRejection(SqlSessionTemplate sst, VacationFormVo vo) {
+		return sst.update("VacationFormMapper.endRejection", vo);
 	}
 
 

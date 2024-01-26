@@ -109,6 +109,6 @@ public class VacationFormService {
 	}
 
 	public int endRejection(VacationFormVo vo) {
-		return dao.endRejection(sst, vo.getNo(), 3);
+		return dao.endRejection(sst, vo);
 	}
 }
