@@ -77,6 +77,10 @@ public class MemberService {
 
     // 정보 수정
     public int edit(MemberVo editVo) {
+        if (editVo.getPwd() != null) {
+            String encodedPwd = pwdEncoding(editVo.getPwd());
+            editVo.setPwd(encodedPwd);
+        }
         return dao.editMember(sessionTemplate, editVo);
     }
 
