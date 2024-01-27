@@ -52,6 +52,12 @@ const TodoList = () => {
 
     const openModal = () => {
         setModalIsOpen(true);
+        if (todoVoList.length >= 5) {
+            alert('최대 5개의 Todo만 등록 가능합니다. 필요시 기존 항목을 삭제하세요.');
+            setModalIsOpen(false);
+        } else {
+            setModalIsOpen(true);
+        }
     };
 
     const closeModal = () => {
