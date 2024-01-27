@@ -20,10 +20,8 @@ const DocumentList = () => {
 
     return (
        <StyledDocumentListDiv>
-            <button onClick={() => handleClick('payForm')}>지출결의서 조회/등록</button>
             <button onClick={ () => handleClick('vacationForm')}>휴가신청서 조회/등록</button>
             <button onClick={() => handleClick('businessForm')}>출장신청서 조회/등록</button>
-            {formType === 'payForm' && <PayFormList />}
             {formType === 'vacationForm' && <VacationFormList />}
             {formType === 'businessForm' && <BusinessFormList />}
        </StyledDocumentListDiv>

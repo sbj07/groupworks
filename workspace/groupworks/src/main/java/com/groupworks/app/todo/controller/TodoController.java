@@ -43,7 +43,6 @@ public class TodoController {
 	//할일 작성
 	@PostMapping("write")
 	public Map<String, String> write(@RequestBody TodoVo vo){
-		System.out.println(vo);
 		int result = service.write(vo);
 		Map<String, String> map = new HashMap<String, String>();
 		map.put("msg", "good");

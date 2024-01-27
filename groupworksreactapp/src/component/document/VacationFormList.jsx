@@ -238,15 +238,16 @@ const VacationFormList = ({}) => {
             })
             .then( (resp) => resp.json() )
             .then( (data) => {
-                if(data.msg === 'good'){
-                    alert("승인처리 완료")
-                    setTriggerUpdate(prev => !prev);
-                    loadApplyList();
-                    refreshFormList();
-                    setApplyList(applyList.filter(item => item.no !== vacationNo));
-                }else{
-                    alert("승인처리 실패")
+                if(data.msg === 'complete') {
+                    alert("승인 처리 완료");
+                } else if(data.msg === 'pending') {
+                    alert("승인 성공! 최종 승인 대기중입니다.");
+                } else {
+                    alert("승인 처리 실패");
                 }
+                setTriggerUpdate(prev => !prev);
+                loadApplyList();
+                refreshFormList();
             } ) 
             .catch( (error) => {
                 console.error('승인처리중 에러 발생' , error);
@@ -255,6 +256,7 @@ const VacationFormList = ({}) => {
     };
 
     const handleRejectionClick = () => {
+        setIsRejectionModalOpen(true);
         const isConfirmed = window.confirm("정말 반려 하시겠습니까?");
         if(isConfirmed) {
             fetch(`http://127.0.0.1:8888/app/api/vacation-form/rejection`,{
@@ -343,6 +345,7 @@ const VacationFormList = ({}) => {
                         <th>번호</th>
                         <th>작성자</th>
                         <th>등록일시</th>
+                        <th>상세조회</th>
                         <th>결재처리</th>
                     </tr>
                 </thead>
@@ -352,10 +355,13 @@ const VacationFormList = ({}) => {
                         ?
                         <h1>등록한 결재 목록이 없습니다.</h1>
                         :
-                        applyList.map( vo => <tr key = {vo.no}  onClick={() => handleItemClick(vo)}>
+                        applyList.map( vo => <tr key = {vo.no}>
                             <td>{vo.no}</td>    
                             <td>{loginMember.name}</td>    
                             <td>{vo.writeDate}</td>
+                            <td>
+                                <button onClick={() => handleItemClick(vo)}>상세조회</button>
+                            </td>
                             <td>
                                 <button onClick={() => handleApplyClick(vo.no)}>승인</button>
                                 <button onClick={() => handleRejectClick(vo.no)}>반려</button>
