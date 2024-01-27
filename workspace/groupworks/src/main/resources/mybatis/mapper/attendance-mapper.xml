@@ -125,6 +125,14 @@
         )
     </insert>
 
+     <!-- 연차일수 삭감 -->
+    <update id="cutAnnual" >
+        UPDATE MEMBER
+        SET
+        ANNUAL = ANNUAL - #{usedDays}
+        WHERE NO = #{memberNo}
+    </update>
+
     <!-- 휴가 수정 -->
     <update id="editVacation">
         UPDATE VACATION
@@ -186,5 +194,12 @@
         FROM VACATION
         WHERE MEMBER_NO = #{no}
         AND DEL_YN = 'N'
+    </select>
+
+    <select id="getUsedAnnualDays" resultType="VacationVo">
+        SELECT
+            SUM(USED_DAYS) AS USED_DAYS
+        FROM VACATION
+        WHERE MEMBER_NO = #{no}
     </select>
 </mapper>

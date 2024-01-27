@@ -170,4 +170,16 @@ public class AttendanceApiController {
         return map;
     }
 
+    // 사용자별 사용연차일
+    @GetMapping("vacation/total/{no}")
+    public Map<String, String> getUsedAnnualDays(@PathVariable String no) {
+        VacationVo vo = service.getUsedAnnualDays(no);
+        Map<String, String> map = new HashMap<>();
+        map.put("msg", "okay");
+        map.put("totalDays",vo.getUsedDays());
+        if(vo.getUsedDays() == null){
+            map.put("totalDays", "0");
+        }
+        return map;
+    }
 }

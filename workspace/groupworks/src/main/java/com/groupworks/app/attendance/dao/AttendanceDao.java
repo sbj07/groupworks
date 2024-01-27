@@ -46,6 +46,11 @@ public class AttendanceDao {
         return sessionTemplate.insert("AttendanceMapper.insertVacation", vo);
     }
 
+    // 연차 사용
+    public int cutAnnual(SqlSessionTemplate sessionTemplate, VacationVo vo) {
+        return sessionTemplate.update("AttendanceMapper.cutAnnual", vo);
+    }
+
     // 휴가 수정
     public int editVacation(SqlSessionTemplate sessionTemplate, VacationVo vo) {
         return sessionTemplate.update("AttendanceMapper.editVacation", vo);
@@ -70,4 +75,10 @@ public class AttendanceDao {
     public List<VacationVo> getVacationList(SqlSessionTemplate sessionTemplate, String no) {
         return sessionTemplate.selectList("AttendanceMapper.getVacationList", no);
     }
+
+    // 사용자별 사용 연차일 총합
+    public VacationVo getUsedAnnualDays(SqlSessionTemplate sessionTemplate, String no){
+        return sessionTemplate.selectOne("AttendanceMapper.getUsedAnnualDays", no);
+    }
+
 }
