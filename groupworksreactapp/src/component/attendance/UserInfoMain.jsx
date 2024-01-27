@@ -50,9 +50,7 @@ const UserInfoMain = () => {
         fetch(`http://127.0.0.1:8888/app/api/attendance/vacation/total/${loginMemberNo}`)
         .then( resp => resp.json() )
         .then( data => {
-            if(data.msg === "okay"){
-                setTotalDays(data.totalDays);
-            }
+            setTotalDays(data.totalDays);
         })
     },[]);
 

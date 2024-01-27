@@ -67,8 +67,6 @@ public class MemberApiController {
         }
         map.put("msg", "okay");
         map.put("loginMemberNo", loginMember.getNo());
-        log.info("vo : {}",vo);
-        log.info("map : {}",map);
         return map;
     }
 
