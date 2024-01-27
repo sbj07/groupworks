@@ -44,7 +44,8 @@ const BookList = () => {
     const [startDate, setStartDate] = useState('');
     const [endDate, setEndDate] = useState('');
     const [showModal, setShowModal] = useState(false);
-    const loggedInUserName = 31;
+    const loginMemberName = sessionStorage.getItem("loginMemberName");
+
 
     const loadBookVoList = async (startDate, endDate) => {
         try {
@@ -146,7 +147,7 @@ const BookList = () => {
         <StyledBookListDiv>
             <h1>예약 조회</h1>
             <button onClick={handleBookWrite}>예약 신청</button>
-            {showModal && <BookModal closeModal={handleBookWrite} userName={loggedInUserName}/>}
+            {showModal && <BookModal closeModal={handleBookWrite} userName={loginMemberName}/>}
             <div>
                 <label>
                     시작 날짜:

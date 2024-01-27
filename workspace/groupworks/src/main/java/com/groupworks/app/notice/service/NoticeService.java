@@ -37,7 +37,8 @@ public class NoticeService {
 		
 		
 	    if (vo.getFilePath() != null) {
-	        String str = vo.getFilePath().replace("C:\\dev\\finalPrj\\workspace\\groupworks\\src\\main\\webapp", "http://127.0.0.1:8888/app");
+//	        String str = vo.getFilePath().replace("C:\\dev\\finalPrj\\workspace\\groupworks\\src\\main\\webapp", "http://127.0.0.1:8888/app");
+	    	String str = vo.getFilePath().replace("C:\\dev\\finalPrj\\workspace\\groupworks\\src\\main\\webapp", "");
 	        vo.setFilePath(str);
 	    }
 	    

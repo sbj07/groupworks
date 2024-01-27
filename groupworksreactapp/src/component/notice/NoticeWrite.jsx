@@ -66,10 +66,10 @@ const NoticeWrite = () => {
         memberNo: loginMemberNo,
         title: '',
         content: '',
-        filePath: '',
         category: '',
         emergencyYn: '',
         openDepart: '',
+        file: null
         
     });
     
@@ -77,12 +77,29 @@ const NoticeWrite = () => {
         setNoticeData({ ...noticeData, [e.target.name]: e.target.value });
     };
 
+    //기존 파일 수정 코드
     const handleFileChange = (e) => {
         // 파일이 선택되었을 때 상태 업데이트
         if (e.target.files.length > 0) {
             setNoticeData({ ...noticeData, file: e.target.files[0] });
         }
     };
+
+    //파일 수정 코드(지피티 / 비추천 방법)
+    // const handleFileChange = (e) => {
+    //     if (e.target.files.length > 0) {
+    //         const file = e.target.files[0];
+    //         const reader = new FileReader();
+    //         reader.readAsDataURL(file);
+    //         reader.onload = () => {
+    //             setNoticeData({ ...noticeData, file: reader.result });
+    //         };
+    //         reader.onerror = (error) => {
+    //             console.error('Error: ', error);
+    //         };
+    //     }
+    // };
+
     const func = ( ) => {
         fetch(`http://127.0.0.1:8888/app/api/member/${loginMemberNo}`)
         .then( resp => resp.json() )
@@ -96,26 +113,26 @@ const NoticeWrite = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        // // 데이터 전송 로직
-        // const formData = new FormData();
-        // formData.append('title', noticeData.title);
-        // formData.append('content', noticeData.content);
-        // formData.append('memberNo', noticeData.memberNo);
-        // formData.append('category', noticeData.category);
-        // formData.append('openDepart', noticeData.openDepart);
+        // 데이터 전송 로직
+        const formData = new FormData();
+        formData.append('title', noticeData.title);
+        formData.append('content', noticeData.content);
+        formData.append('memberNo', noticeData.memberNo);
+        formData.append('category', noticeData.category);
+        formData.append('openDepart', noticeData.openDepart);
         // formData.append('memberNo', memberNo);
-        // if (noticeData.file) {
-        //     formData.append('file', noticeData.file);
-        // }
+        if (noticeData.file) {
+            formData.append('file', noticeData.file);
+        }
 
         try {
             const response = await fetch('http://127.0.0.1:8888/app/notice/insert', {
                 method: 'POST',
-                headers: {
-                    "Content-type" : "application/json"
-                },
-                body: JSON.stringify(noticeData)
-
+                // headers: {
+                //     "Content-type" : "application/json"
+                // },
+                // body: JSON.stringify(noticeData)
+                body: formData
             });
 
             if (!response.ok) {
