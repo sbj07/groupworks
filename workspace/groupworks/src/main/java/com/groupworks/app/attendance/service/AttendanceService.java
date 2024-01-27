@@ -57,6 +57,7 @@ public class AttendanceService {
         // 반차 체크
         if (vo.getHalfDayType().equals("Y") && startDate.isEqual(endDate)){
             vo.setUsedDays("0.5");
+            dao.cutAnnual(sessionTemplate, vo);
             return dao.insertVacation(sessionTemplate, vo);
         }
 
@@ -71,7 +72,7 @@ public class AttendanceService {
         float floatDays = (float) days;
         String usedDays = Float.toString(floatDays);
         vo.setUsedDays(String.valueOf(usedDays));
-
+        dao.cutAnnual(sessionTemplate, vo);
         return dao.insertVacation(sessionTemplate, vo);
     }
 
@@ -119,5 +120,10 @@ public class AttendanceService {
     // 휴가 리스트
     public List<VacationVo> getVacationList(String no) {
         return dao.getVacationList(sessionTemplate, no);
+    }
+
+    // 사용자별 사용 연차일 총합
+    public VacationVo getUsedAnnualDays(String no) {
+        return dao.getUsedAnnualDays(sessionTemplate, no);
     }
 }

@@ -11,16 +11,6 @@ const StyeldAttendDiv = styled.div`
     grid-template-columns: 1fr 1fr; // 두 개의 열로 구성
     gap: 10px; // 그리드 간격
 `;
-const StyledUserInfoDiv = styled.div`
-    display: grid;
-    grid-template-rows: 3fr 1fr; // 첫 번째 열을 3:1 비율로 2개의 행으로 구성
-    gap: 10px; // 내부 그리드 간격
-    /* background-color: aqua; */
-
-    & > :first-child {
-    }
-
-`;
 
 const StyledAttendInputDiv = styled.div`
     display: grid;
@@ -45,13 +35,7 @@ const AttendanceMain = ( ) => {
     
     return (
         <StyeldAttendDiv>
-            <StyledUserInfoDiv>
-                <UserInfoMain />
-                <div>
-                    남은 연차일
-                    사용 연차일
-                </div>
-            </StyledUserInfoDiv>
+            <UserInfoMain />
             <StyledAttendInputDiv>
                 <div>
                     <h3>일정등록</h3>
