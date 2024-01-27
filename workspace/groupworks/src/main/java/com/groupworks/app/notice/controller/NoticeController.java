@@ -2,6 +2,10 @@ package com.groupworks.app.notice.controller;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -11,9 +15,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -42,46 +48,93 @@ public class NoticeController {
 
 	private final NoticeService service;
 	
-	//작성
-	@PostMapping("insert")
-	public Map<String, String> insert(@RequestBody NoticeVo vo, MultipartFile f) throws Exception{
-		
-//		System.out.println("vo : " + vo);
+//	//작성(파일 저장 기능 추가 전)
+//	@PostMapping("insert")
+//	public Map<String, String> insert(@RequestBody NoticeVo vo, MultipartFile f) throws Exception{
+//		
+////		System.out.println("vo : " + vo);
+////	    if (f != null && !f.isEmpty()) {
+////	        System.out.println("f : " + f.getOriginalFilename());
+////	        String filePath = saveFile(f);
+////	        vo.setFilePath(filePath);
+////	    }
+//		
+//		
+////		String filePath = saveFile(f);
+////		vo.setFilePath(filePath);
+////		
+////		int result = service.insert(vo);
+////		
+////		Map<String, String> map = new HashMap<String, String>();
+////		map.put("msg", "good");
+////		
+////		if(result != 1) {
+////			map.put("msg", "bad");
+////		}
+////		return map;
+//		
+//	    System.out.println("vo : " + vo);
 //	    if (f != null && !f.isEmpty()) {
-//	        System.out.println("f : " + f.getOriginalFilename());
 //	        String filePath = saveFile(f);
-//	        vo.setFilePath(filePath);
+//	        if (filePath != null) { // 파일 경로가 null이 아닌 경우에만 설정
+//	            vo.setFilePath(filePath);
+//	        }
 //	    }
-		
-		
-//		String filePath = saveFile(f);
-//		vo.setFilePath(filePath);
-//		
-//		int result = service.insert(vo);
-//		
-//		Map<String, String> map = new HashMap<String, String>();
-//		map.put("msg", "good");
-//		
-//		if(result != 1) {
-//			map.put("msg", "bad");
-//		}
-//		return map;
-		
-	    System.out.println("vo : " + vo);
-	    if (f != null && !f.isEmpty()) {
-	        String filePath = saveFile(f);
-	        if (filePath != null) { // 파일 경로가 null이 아닌 경우에만 설정
-	            vo.setFilePath(filePath);
+//        
+//	    int result = service.insert(vo);
+//	    
+//	    Map<String, String> map = new HashMap<>();
+//	    map.put("msg", result == 1 ? "good" : "bad");
+//	    return map;
+//
+//	}//insert
+	
+	
+	//작성(파일 업로드 추가)
+	@PostMapping("insert")
+	public ResponseEntity<Map<String, String>> insert(@RequestParam("file") MultipartFile file, 
+	                                                  @ModelAttribute NoticeVo vo) {
+	    Map<String, String> response = new HashMap<>();
+	    try {
+	        if (file != null && !file.isEmpty()) {
+	            String filePath = saveFile(file);
+	            if (filePath != null) { // 파일 경로가 null이 아닌 경우에만 설정
+	                vo.setFilePath(filePath);
+	            }
 	        }
+	        
+	        int result = service.insert(vo);
+	        response.put("msg", result == 1 ? "공지사항 추가 성공" : "공지사항 추가 실패");
+	        return new ResponseEntity<>(response, HttpStatus.OK);
+	    } catch (Exception e) {
+	        response.put("msg", "서버 오류: " + e.getMessage());
+	        return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
 	    }
-        
-	    int result = service.insert(vo);
-	    
-	    Map<String, String> map = new HashMap<>();
-	    map.put("msg", result == 1 ? "good" : "bad");
-	    return map;
+	}
 
-	}//insert
+	private String saveFile(MultipartFile file) throws IOException {
+	    if (file.isEmpty()) {
+	        return null;
+	    }
+	    String uploadDir = "C:\\dev\\finalPrj\\workspace\\groupworks\\src\\main\\webapp\\resources\\upload\\notice\\img"; // 업로드 디렉토리 경로를 설정합니다
+	    Path uploadPath = Paths.get(uploadDir);
+
+	    if (!Files.exists(uploadPath)) {
+	        Files.createDirectories(uploadPath);
+	    }
+
+	    String fileName = StringUtils.cleanPath(file.getOriginalFilename());
+	    Path filePath = uploadPath.resolve(fileName);
+	    Files.copy(file.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
+
+	    // 파일 접근 가능한 웹 URL 경로로 변환합니다.
+	    // 예를 들어, 'resources/upload/notice/img' 디렉토리가 웹에서 접근 가능하도록 설정되어 있다면:
+	    String fileAccessPath = "/resources/upload/notice/img/" + fileName;
+
+	    return fileAccessPath;
+	}
+
+	
 	
 	/**
 	 * 파일을 서버에 저장하고, 파일 전체 경로를 리턴함
@@ -91,18 +144,20 @@ public class NoticeController {
 	 * @throws Exception
 	 * @throws  
 	 */
-	private String saveFile(MultipartFile f) throws Exception {
-	    if (f == null || f.isEmpty()) {
-	        return null; // 파일이 없으면 null을 반환
-	    }
-		String path = "C:\\dev\\finalPrj\\workspace\\groupworks\\src\\main\\webapp\\resources\\upload\\notice\\img";
-		String originName = f.getOriginalFilename();
 	
-		File target = new File(path + originName);
-		f.transferTo(target);
-		
-		return path + originName;
-	}
+	//기존 파일 저장 코드(수업)
+	//	private String saveFile(MultipartFile f) throws Exception {
+//	    if (f == null || f.isEmpty()) {
+//	        return null; // 파일이 없으면 null을 반환
+//	    }
+//		String path = "C:\\dev\\finalPrj\\workspace\\groupworks\\src\\main\\webapp\\resources\\upload\\notice\\img";
+//		String originName = f.getOriginalFilename();
+//	
+//		File target = new File(path + originName);
+//		f.transferTo(target);
+//		
+//		return path + originName;
+//	}
 
 
 //	//전체 목록 조회(번호)(렌더링)?  지섭 로그인멤버코드

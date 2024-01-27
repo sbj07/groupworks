@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import NoticeModal from './NoticeModal';
+import {FaFileDownload} from 'react-icons/fa';
 
 
 const StyledNoticeListDiv = styled.div`
@@ -72,6 +73,7 @@ const incrementClickCount = async (noticeNo) => {
 
 
 const NoticeList = ({ showTopFive, showWriteButton, showPagination, showEditAndDeleteProps }) => {
+    
     const navigate = useNavigate();
     //
     const [showEditAndDelete, setShowEditAndDelete] = useState(showEditAndDeleteProps);
@@ -83,7 +85,57 @@ const NoticeList = ({ showTopFive, showWriteButton, showPagination, showEditAndD
     const [totalItems, setTotalItems] = useState(0);
 
 
+    // const handleFileDownload = (filePath, e) => {
+    //     e.stopPropagation(); // 상위 요소로의 이벤트 전파를 막음
+    //     if (filePath) {
+    //         const encodedPath = encodeURI(filePath);
+    //         window.open(filePath);
+    //     }
+    // };
+    const handleFileDownload = (filePath, e) => {
+        e.stopPropagation(); // 상위 요소로의 이벤트 전파를 막음
     
+        // 파일 이름만 추출
+        const fileName = filePath.split('/').pop();
+        // 서버에서 설정된 정적 파일 경로를 사용
+        const downloadURL = `http://127.0.0.1:8888/resources/upload/notice/img/${fileName}`;
+    
+        // a 태그를 생성하여 프로그래매틱하게 클릭 이벤트를 발생시킵니다.
+        const link = document.createElement('a');
+        link.href = downloadURL;
+        link.setAttribute('download', fileName); // 다운로드되는 파일의 이름을 지정
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+    };
+    
+    
+    // const handleFileDownload = (fileName, e) => {
+    //     e.stopPropagation(); // 상위 요소로의 이벤트 전파를 막음
+    //     const baseURL = 'http://127.0.0.1:8888/resources/upload/notice/img/';
+    //     const downloadURL = `${baseURL}${fileName}`;
+        
+    //     // a 태그를 생성하여 프로그래매틱하게 클릭 이벤트를 발생시킵니다.
+    //     const link = document.createElement('a');
+    //     link.href = downloadURL;
+    //     link.download = fileName; // 다운로드되는 파일의 이름을 지정
+    //     link.click();
+    //     link.remove();
+    // };
+    
+    // React 컴포넌트 내부에서 파일 다운로드 링크를 렌더링하는 예시
+// function handleFileDownload({ filePath }) {
+//     // baseURL은 환경에 따라 달라질 수 있습니다. 여기서는 예시로 localhost를 사용합니다.
+//     const baseURL = 'http://127.0.0.1:8888';
+//     const downloadURL = `${baseURL}${filePath}`;
+  
+//     return (
+//       <a href={downloadURL} download>
+//         파일 다운로드
+//       </a>
+//     );
+//   }
+  
 
     // const handleNoticeClick = (notice) => {
     //     setSelectedNotice(notice);
@@ -389,7 +441,16 @@ const NoticeList = ({ showTopFive, showWriteButton, showPagination, showEditAndD
                             <td>{notice.memberNo}</td>
                             <td>{notice.title}</td>
                             <td>{notice.clickNo}</td>
-                            <td>{notice.filePath}</td>
+                            {/* <td>{notice.filePath}</td> */}
+                            <td>
+                                    {notice.filePath && (
+                                        <FaFileDownload 
+                                            onClick={(e) => handleFileDownload(notice.filePath, e)}
+                                            // onClick={(e) => handleFileDownload(notice.filePath.split('/').pop(), e)}
+                                            style={{ cursor: 'pointer' }}
+                                        />
+                                    )}
+                                </td>
                             <td>{notice.category}</td>
                             <td>{notice.emergencyYn}</td>
                             <td>{notice.openDepart}</td>
