@@ -30,16 +30,16 @@ const AddMember = () => {
     const [positionList, setPositionList] = useState([]);
 
     useEffect( () => {
-        fetch(`http://127.0.0.1:8888/app/api/member/depart`)
+        fetch(`http://127.0.0.1:8888/app/api/member/list/depart`)
         .then( (resp) => { return resp.json() })
         .then( (data) => {
-          setDepartList(data.list);
+          setDepartList(data.departList);
         });
     
-        fetch(`http://127.0.0.1:8888/app/api/member/position`)
+        fetch(`http://127.0.0.1:8888/app/api/member/list/position`)
         .then( (resp) => { return resp.json() })
         .then( (data) => {
-          setPositionList(data.list);
+          setPositionList(data.positionList);
         });
     }, []);
     
@@ -47,6 +47,7 @@ const AddMember = () => {
     const ListSelectBox = ( {prop, list} ) => {
         return (
             <Form.Select name={`${prop}No`} value={memberVo[`${prop}No`]} onChange={handleInputChange} >
+                <option value=''>목록</option>
             {
                 list.map( (data) => {
                     return <option key={data.name} value={data.no}>{data.name}</option>;

@@ -176,10 +176,11 @@ public class AttendanceApiController {
         VacationVo vo = service.getUsedAnnualDays(no);
         Map<String, String> map = new HashMap<>();
         map.put("msg", "okay");
-        map.put("totalDays",vo.getUsedDays());
         if(vo.getUsedDays() == null){
             map.put("totalDays", "0");
+            return map;
         }
+        map.put("totalDays",vo.getUsedDays());
         return map;
     }
 }

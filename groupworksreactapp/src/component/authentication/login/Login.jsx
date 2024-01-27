@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Button, Form } from 'react-bootstrap';
 import { Link, useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 
@@ -72,34 +73,20 @@ const Login = () => {
         <StyledLoginDiv>
             <StyeldLoginForm>
                 <h1>로그인</h1>
-                <br />
-                <form onSubmit={handleLoginSubmit}>
-                    <table>
-                        <tr>
-                            <td>
-                                <label>ID</label>
-                            </td>
-                            <td>
-                                <input type="text" name="id" placeholder='아이디를 입력하세요.' onChange={handleInputChange}/>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>
-                                <label>Password</label>
-                            </td>
-                            <td>
-                                <input type="password" name="pwd" placeholder='패스워드를 입력하세요.' onChange={handleInputChange} />
-                            </td>
-                        </tr>
-                        <tr>
-                            <td colSpan={2}>
-                                <button>Sign in</button>
-                            </td>
-                        </tr>
-                    </table>
-                </form>
+                    <Form onSubmit={handleLoginSubmit}>
+                         <Form.Group className="mb-3" controlId="formBasicEmail">
+                         <Form.Label>아이디</Form.Label>
+                         <Form.Control type="text" placeholder="ID" name='id' onChange={handleInputChange} />
+                        
+                         <Form.Label>패스워드</Form.Label>
+                         <Form.Control  type="password" placeholder="PassWord" name='pwd' onChange={handleInputChange} />
+                     </Form.Group>
+                     <Button variant="primary" type="submit">
+                        LOGIN
+                    </Button>
+                    </Form>
 
-                <label>계정이 없으시다면?</label>
+                <label>신규 서비스 이용자시면, 아래에 회사등록을 이용하시길 바랍니다.</label>
                 <Link to="/sign-up">이동하기</Link>
             </StyeldLoginForm>
         </StyledLoginDiv>

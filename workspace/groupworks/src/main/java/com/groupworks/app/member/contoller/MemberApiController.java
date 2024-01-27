@@ -67,6 +67,8 @@ public class MemberApiController {
         }
         map.put("msg", "okay");
         map.put("loginMemberNo", loginMember.getNo());
+        log.info("vo : {}",vo);
+        log.info("map : {}",map);
         return map;
     }
 
@@ -122,6 +124,7 @@ public class MemberApiController {
         }
         return map;
     }
+
     // 권한
     @GetMapping("list/auth")
     public Map<String, Object> getAuthList(){
