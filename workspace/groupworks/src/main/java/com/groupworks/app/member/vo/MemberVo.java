@@ -21,4 +21,10 @@ public class MemberVo {
     private String companyName;
     private String workStatusNo;
     private String delYn;
+
+    private String refreshToken;
+
+    public void updateRefreshToken(String refreshToken){
+        this.refreshToken = refreshToken;
+    }
 }
