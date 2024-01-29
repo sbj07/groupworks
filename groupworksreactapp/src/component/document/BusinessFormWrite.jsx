@@ -203,9 +203,9 @@ const BusinessTripFormWrite = () => {
     finishTime: ''
   });
   const [selectApply, setSelectApply] = useState({
-    firstApply: {name:'no', no:''},
-    midApply: {name:'no', no:''},
-    lastApply: {name:'no', no:''},
+    firstApply: {name:'', no:''},
+    midApply: {name:'', no:''},
+    lastApply: {name:'', no:''},
   });
 
   const fetchCompanyMember = () => {
@@ -370,7 +370,7 @@ const BusinessTripFormWrite = () => {
                                     <td style={{ width: '80px' }}>
                                         부 서
                                     </td>
-                                    <td><input type="text"value={loginMember.departmentName || ''} readOnly /></td>
+                                    <td><input type="text"value={loginMember.departName || ''} readOnly /></td>
                                     <td style={{ width: '80px' }}>
                                         직 급
                                     </td>

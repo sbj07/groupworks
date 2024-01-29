@@ -154,15 +154,17 @@
 	<!-- 승인대기목록 페이징  -->
  	<select id="applyListPage" resultType="VacationFormVo" parameterType="com.groupworks.app.page.vo.PageVo">
     SELECT *
-    FROM (
-        SELECT ROW_NUMBER() OVER (ORDER BY NO DESC) AS rnum, V.*
-        FROM VACATION_FORM V
-        WHERE V.FIRST_APPLY_NO = #{loginMemberNo}
-           OR V.MID_APPLY_NO = #{loginMemberNo}
-           OR V.LAST_APPLY_NO = #{loginMemberNo} 
-    ) WHERE rnum BETWEEN #{startRow} AND #{lastRow}
-    AND DEL_YN = 'N'
-    AND CATEGORY_NO = 1
+	FROM (
+	    SELECT ROW_NUMBER() OVER (ORDER BY NO DESC) AS rnum, V.*
+	    FROM VACATION_FORM V
+	    WHERE V.DEL_YN = 'N'
+	      AND V.CATEGORY_NO = 1
+	      AND (
+	        (V.FIRST_APPLY_NO = #{loginMemberNo} AND V.FIRST_STATUS != 2) 
+	        OR (V.MID_APPLY_NO = #{loginMemberNo} AND V.MID_STATUS != 2)
+	        OR (V.LAST_APPLY_NO = #{loginMemberNo} AND V.LAST_STATUS != 2)
+	      )
+	) WHERE rnum BETWEEN #{startRow} AND #{lastRow}
 	</select>
 	
 	<select id="selectList" resultType="VacationFormVo">

@@ -69,5 +69,25 @@ public class BusinessTripFormDao {
 	public List<VacationFormVo> applyListPage(SqlSessionTemplate sst, PageVo pageVo) {
 		return sst.selectList("BusinessTripFormMapper.applyListPage", pageVo);
 	}
+
+	public BusinessTripFormVo selectList(SqlSessionTemplate sst, String no) {
+		return sst.selectOne("BusinessTripFormMapper.selectList", no);
+	}
+
+	public int updateStatus(SqlSessionTemplate sst, BusinessTripFormVo formVo) {
+		return sst.update("BusinessTripFormMapper.updateStatus", formVo);
+	}
+
+	public int endApply(SqlSessionTemplate sst, String no, int status) {
+		return sst.update("BusinessTripFormMapper.endApply", no);
+	}
+	
+	public int updateRejection(SqlSessionTemplate sst, BusinessTripFormVo formVo) {
+		return sst.update("BusinessTripFormMapper.updateRejection", formVo);
+	}
+
+	public int endRejection(SqlSessionTemplate sst, BusinessTripFormVo vo) {
+		return sst.update("BusinessTripFormMapper.endRejection", vo);
+	}
 	
 }

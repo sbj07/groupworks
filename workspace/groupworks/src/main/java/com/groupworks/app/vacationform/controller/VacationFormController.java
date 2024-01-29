@@ -130,15 +130,15 @@ public class VacationFormController {
 		formVo.setLoginMemberNo(vo.getLoginMemberNo());
 		
 		//승인자 확인 및 업데이트
-		String updateSuccess = service.updateStatus(formVo);
+		boolean updateSuccess = service.updateStatus(formVo);
 		Map<String, String> map = new HashMap<>();
-		if(updateSuccess != null) {
+		if(updateSuccess) {
 			//모든 승인자가 승인한 경우, 휴가신청서 최종 업데이트
 			int result = service.endApply(vo);
 			if(result == 1) {
-				map.put("msg", "complete");
+				map.put("msg", "good");
 			} else {
-				map.put("msg", "pending");
+				map.put("msg", "bad");
 			}
 		} else {
 			map.put("msg", "bad");
@@ -158,9 +158,9 @@ public class VacationFormController {
 		if(updateSuccess) {
 			int result = service.endRejection(vo);
 			if(result == 1) {
-	            map.put("msg", "complete"); // 모든 승인자가 승인 완료
+	            map.put("msg", "good"); 
 	        } else {
-	            map.put("msg", "pending"); // 추가 승인 필요
+	            map.put("msg", "bad"); 
 	        }
 		} else {
 			map.put("msg", "bad");

@@ -24,14 +24,6 @@ public class BusinessTripFormService {
 		return dao.list(sst, writerNo);
 	}
 	
-	public List<BusinessTripFormVo> ingApprove() {
-		return dao.ingApprove(sst);
-	}
-	
-	public List<BusinessTripFormVo> edApprove() {
-		return dao.edApprove(sst);
-	}
-	
 	public int write(BusinessTripFormVo vo) {
 		return dao.write(sst, vo);
 	}
@@ -71,4 +63,48 @@ public class BusinessTripFormService {
 	public List<VacationFormVo> applyListPage(PageVo pageVo) {
 		return dao.applyListPage(sst, pageVo);
 	}
+
+	public BusinessTripFormVo selectList(String no) {
+		return dao.selectList(sst, no);
+	}
+
+	public boolean updateStatus(BusinessTripFormVo formVo) {
+		int result = dao.updateStatus(sst, formVo);
+        // 승인 상태 업데이트 후 다시 조회
+		BusinessTripFormVo resultVo = selectList(formVo.getNo());
+        // 모든 승인자가 승인했는지 확인
+        if (resultVo.getFirstStatus().equals("2") &&
+        		resultVo.getMidStatus().equals("2") &&
+        		resultVo.getLastStatus().equals("2") ) {
+        	return true;
+        }
+        else {
+        	return false;
+        }
+	}
+
+	public int endApply(BusinessTripFormVo vo) {
+		return dao.endApply(sst, vo.getNo(), 2);
+	}
+	
+	public boolean updateRejection(BusinessTripFormVo formVo) {
+		int result = dao.updateRejection(sst, formVo);
+		
+		BusinessTripFormVo resultVo = selectList(formVo.getNo());
+		
+		if(resultVo.getFirstStatus().equals("3") ||
+				resultVo.getMidStatus().equals("3") ||
+				resultVo.getLastStatus().equals("3") ) {
+			return true;
+		}
+		else {
+			return false;
+		}
+	}
+
+	public int endRejection(BusinessTripFormVo vo) {
+		return dao.endRejection(sst, vo);
+	}
+	
+	
 }
