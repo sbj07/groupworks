@@ -73,7 +73,7 @@ const incrementClickCount = async (noticeNo) => {
 
 
 const NoticeList = ({ showTopFive, showWriteButton, showPagination, showEditAndDeleteProps }) => {
-    
+    const loginMemberNo = sessionStorage.getItem("loginMemberNo");
     const navigate = useNavigate();
     //
     const [showEditAndDelete, setShowEditAndDelete] = useState(showEditAndDeleteProps);
@@ -418,14 +418,14 @@ const NoticeList = ({ showTopFive, showWriteButton, showPagination, showEditAndD
                 <thead>
                     <tr>
                         <th>번호</th>
-                        <th>작성자</th>
                         <th>제목</th>
-                        <th>조회수</th>
                         <th>파일</th>
-                        <th>카테고리</th>
+                        <th>작성자</th>
                         <th>긴급여부</th>
+                        <th>카테고리</th>
                         <th>공개부서</th>
                         <th>작성(수정)일자</th>
+                        <th>조회수</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -438,23 +438,22 @@ const NoticeList = ({ showTopFive, showWriteButton, showPagination, showEditAndD
                             // notice.deleteYn === 'y' ? null : (
                             <tr key={notice.noticeNo} onClick={() => handleNoticeClick(notice)}>
                             <td>{notice.noticeNo}</td>
-                            <td>{notice.memberNo}</td>
                             <td>{notice.title}</td>
-                            <td>{notice.clickNo}</td>
-                            {/* <td>{notice.filePath}</td> */}
                             <td>
-                                    {notice.filePath && (
+                                {notice.filePath && (
                                         <FaFileDownload 
                                             onClick={(e) => handleFileDownload(notice.filePath, e)}
                                             // onClick={(e) => handleFileDownload(notice.filePath.split('/').pop(), e)}
                                             style={{ cursor: 'pointer' }}
                                         />
-                                    )}
-                                </td>
-                            <td>{notice.category}</td>
+                                )}
+                            </td>
+                            <td>{notice.memberName}</td>
                             <td>{notice.emergencyYn}</td>
-                            <td>{notice.openDepart}</td>
+                            <td>{notice.categoryCon}</td>
+                            <td>{notice.departName}</td>
                             <td>{notice.updateDate ? `(${notice.updateDate})` : notice.enrollDate}</td>
+                            <td>{notice.clickNo}</td>
                         </tr>
                             ))
                             // )

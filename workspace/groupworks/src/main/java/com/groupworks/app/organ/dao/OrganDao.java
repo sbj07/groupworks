@@ -40,9 +40,12 @@ public class OrganDao {
 
 	
 	//삭제
-	public int delete(SqlSessionTemplate sst, OrganVo vo) {
-
-		return sst.delete("OrganMapper.delete", vo);
+//	public int delete(SqlSessionTemplate sst, OrganVo vo) {
+//
+//		return sst.delete("OrganMapper.delete", vo);
+//	}
+	public int delete(SqlSessionTemplate sst, String no) {
+	    return sst.delete("OrganMapper.delete", no);
 	}
 
 

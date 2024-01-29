@@ -61,12 +61,15 @@ public class OrganService {
 
 
 	//삭제
-	public int delete(OrganVo vo) {
+//	public int delete(OrganVo vo) {
+//
+//		return dao.delete(sst, vo);
+//	}
 
-		return dao.delete(sst, vo);
+	public int delete(String no) {
+	    return dao.delete(sst, no);
 	}
 
-	
 	
 	
 }//class

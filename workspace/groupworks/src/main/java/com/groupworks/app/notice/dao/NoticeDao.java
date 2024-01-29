@@ -7,7 +7,9 @@ import java.util.Map;
 import org.mybatis.spring.SqlSessionTemplate;
 import org.springframework.stereotype.Repository;
 
+import com.groupworks.app.member.vo.DepartVo;
 import com.groupworks.app.member.vo.MemberVo;
+import com.groupworks.app.notice.vo.CategoryVo;
 import com.groupworks.app.notice.vo.NoticeVo;
 import com.groupworks.app.page.vo.PageVo;
 
@@ -30,6 +32,25 @@ public class NoticeDao {
 //	public List<NoticeVo> list(SqlSessionTemplate sst, String loginMember) {
 //
 //		return sst.selectList("NoticeMapper.list", loginMember);
+//	}
+
+	//카테고리 가져오기
+	public List<CategoryVo> getCategoryList(SqlSessionTemplate sst) {
+	    return sst.selectList("NoticeMapper.getCategoryList");
+	}
+
+	//부서 가져오기
+	public List<DepartVo> getDepartList(SqlSessionTemplate sst) {
+	    return sst.selectList("NoticeMapper.getDepartList");
+	}
+
+	//기존 카테고리, 부서 가져오기
+//	public String findCategoryNoByCon(SqlSessionTemplate sst, String categoryCon) {
+//	    return sst.selectOne("NoticeMapper.findCategoryNoByCon", categoryCon);
+//	}
+//
+//	public String findDepartNoByName(SqlSessionTemplate sst, String departName) {
+//	    return sst.selectOne("NoticeMapper.findDepartNoByName", departName);
 //	}
 	
 	//목록 조회

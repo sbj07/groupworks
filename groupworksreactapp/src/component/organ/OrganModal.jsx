@@ -1,5 +1,6 @@
 import React from 'react';
 import Modal from 'react-modal';
+import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 
 
@@ -26,22 +27,37 @@ export const Overlay = styled.div`
     z-index: 1000;
 `;
 
+// function groupByDepartmentName(list) {
+//     // return list.reduce((acc, vo) => {
+//     //     if (!acc[vo.departNo]) {
+//     //         acc[vo.departNo] = [];
+//     //     }
+//     //     acc[vo.departNo].push(vo);
+//     //     return acc;
+//     // }, {});
+//     return list.reduce((acc, member) => {
+//         // 여기서 member.departName은 부서 이름을 나타냅니다. 실제 필드명에 맞게 조정해야 합니다.
+//         const departmentName = member.departmentName;
+
+//         if (!acc[departmentName]) {
+//             acc[departmentName] = [];
+//         }
+//         acc[departmentName].push(member);
+//         return acc;
+//     }, {});
+// }
+
 const OrganModal = ({ modalIsOpen, selectedVo, closeModal, navigateToEdit, onDelete, organ }) => {
+    const navigate = useNavigate();
+    const loginMemberNo = sessionStorage.getItem("loginMemberNo");
 
     const navigateToDelete = () => {
-        // if (!organ) {
-        //     console.error('organ 객체가 정의되지 않음');
-        //     return;
-        // }
-    
-        // if (window.confirm("정말로 삭제하시겠습니까?")) {
-        //     onDelete(organ.orgNo);
-        // }
-            if (selectedVo && selectedVo.orgNo) {
-                onDelete(selectedVo.orgNo);
-            }
+        if (selectedVo && selectedVo.no && window.confirm("정말로 삭제하시겠습니까?")) {
+            onDelete(selectedVo.no);
             closeModal();
+        }
     };
+    
 
     return (
         <Modal
@@ -59,12 +75,12 @@ const OrganModal = ({ modalIsOpen, selectedVo, closeModal, navigateToEdit, onDel
             {selectedVo && (
                 <div>
                     <p>이름: {selectedVo.name}</p>
-                    <p>부서: {selectedVo.departNo}</p>
-                    <p>직책: {selectedVo.positionNo}</p>
+                    <p>부서: {selectedVo.departName}</p>
+                    <p>직책: {selectedVo.positionName}</p>
                     <p>번호: {selectedVo.tel}</p>
                     <p>이메일: {selectedVo.email}</p>
-                    <button onClick={navigateToEdit}>수정</button>
-                    <button onClick={navigateToDelete}>삭제</button>
+                    {/* <button onClick={navigateToEdit}>수정</button>
+                    <button onClick={navigateToDelete}>삭제</button> */}
                     <button onClick={closeModal}>닫기</button>
                 </div>
             )}

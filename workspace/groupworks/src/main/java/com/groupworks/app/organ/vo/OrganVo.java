@@ -17,7 +17,7 @@ public class OrganVo {
 //	private String positionNo;
 //	private String delYn;
 
-	private String orgNo;
+	private String no;
 	private String memberNo;
 	private String name;
 	private String profile;
@@ -27,8 +27,9 @@ public class OrganVo {
 	private String address;
 	private String departNo;
 	private String companyNo;
+	private String companyName;
 	private String positionNo;
 	private String deleteYn;
-	private String departmentName;
+	private String departName;
 	private String positionName;
 }//class
