@@ -6,43 +6,59 @@
 
 <!-- 	공지사항 작성 -->
 	<insert id="insert">
-		INSERT INTO NOTICE (
-		    NOTICE_NO
-		    , MEMBER_NO
-		    , TITLE
-		    , CONTENT
-		    , CATEGORY
-		    , OPEN_DEPART
-		    , FILE_PATH
-		    )
-		VALUES (
-		    SEQ_NOTICE_NO.NEXTVAL
-		    , #{memberNo}
-		    , #{title}
-		    , #{content}
-		    , #{category}
-		    , #{openDepart}
-		    , #{filePath}
-		)
+ INSERT INTO NOTICE (
+        NOTICE_NO
+        , MEMBER_NO
+        , TITLE
+        , CONTENT
+        , CATEGORY
+        , OPEN_DEPART
+        , FILE_PATH
+    )
+    VALUES (
+        SEQ_NOTICE_NO.NEXTVAL
+        , #{memberNo}
+        , #{title}
+        , #{content}
+        , (SELECT CATEGORY_NO FROM NOTICE_CATEGORY WHERE CATEGORY_CON = #{categoryCon})
+        , (SELECT NO FROM DEPARTMENT WHERE NAME = #{departName})
+        , #{filePath}
+    )
 	</insert>
 
+    <!-- 카테고리 목록 조회 -->
+    <select id="getCategoryList" resultType="com.groupworks.app.notice.vo.CategoryVo">
+        SELECT
+	        NO
+	        , NAME
+        FROM NOTICE_CATEGORY
+    </select>
+
+    <!-- 부서 목록 조회 -->
+    <select id="getDepartList" resultType="com.groupworks.app.member.vo.DepartVo">
+        SELECT
+	        NO
+	        , NAME
+        FROM DEPARTMENT
+    </select>
 
 <!-- 	전체 목록 조회 -->
 	<select id="list" resultType="com.groupworks.app.notice.vo.NoticeVo">
-        	SELECT
+         	SELECT
 			    N.NOTICE_NO
 			    , N.MEMBER_NO
 			    , M.NAME as memberName
 			    , N.TITLE
 			    , N.CLICK_NO
 			    , N.FILE_PATH
-			    , N.CATEGORY
+			    , NC.CATEGORY_CON as categoryCon;
 			    , N.EMERGENCY_YN
 			    , N.OPEN_DEPART
 			    , N.ENROLL_DATE
 			    , N.UPDATE_DATE
 			FROM NOTICE N
-			JOIN MEMBER M ON N.MEMBER_NO = M.NO 
+			JOIN MEMBER M ON N.MEMBER_NO = M.NO
+            JOIN NOTICE_CATEGORY NC ON N.CATEGORY = NC.CATEGORY_NO
 			WHERE N.DELETE_YN = 'N'
 			AND M.COMPANY_NO = (
 			                    SELECT 
@@ -142,11 +158,43 @@
 <!-- 	    OFFSET #{startRow} ROWS FETCH NEXT #{boardLimit} ROWS ONLY -->
 <!-- 	</select> -->
 <select id="listPaged" resultType="com.groupworks.app.notice.vo.NoticeVo" parameterType="com.groupworks.app.page.vo.PageVo">
-    SELECT *
+    SELECT 
+		N.NOTICE_NO
+	    , N.MEMBER_NO
+	    , M.NAME as memberName
+	    , N.TITLE
+	    , N.CLICK_NO
+	    , N.FILE_PATH
+	    , NC.CATEGORY_CON as categoryCon
+        , D.NAME as departName
+	    , N.EMERGENCY_YN
+	    , N.OPEN_DEPART
+ 		, TO_CHAR(N.ENROLL_DATE, 'YYYY-MM-DD HH24:MI') AS ENROLL_DATE
+        , TO_CHAR(N.UPDATE_DATE, 'YYYY-MM-DD HH24:MI') AS UPDATE_DATE
     FROM (
-        SELECT ROW_NUMBER() OVER (ORDER BY NOTICE_NO DESC) AS rnum, N.*
-        FROM NOTICE N
-    ) WHERE rnum BETWEEN #{startRow} AND #{lastRow}
+        SELECT ROW_NUMBER() OVER (ORDER BY NOTICE_NO DESC) AS rnum,
+       	NOTICE_NO
+	    , MEMBER_NO
+	    , TITLE
+	    , CLICK_NO
+	    , FILE_PATH
+	    , CATEGORY
+	    , EMERGENCY_YN
+	    , OPEN_DEPART
+	    , ENROLL_DATE
+	    , UPDATE_DATE
+        FROM NOTICE
+    ) N
+    JOIN MEMBER M ON N.MEMBER_NO = M.NO
+    JOIN NOTICE_CATEGORY NC ON N.CATEGORY = NC.CATEGORY_NO
+    JOIN DEPARTMENT D ON N.OPEN_DEPART = D.NO
+    WHERE rnum BETWEEN #{startRow} AND #{lastRow}
+<!-- 	AND M.COMPANY_NO = ( -->
+<!-- 						    SELECT  -->
+<!-- 						    	COMPANY_NO -->
+<!-- 						    FROM MEMBER -->
+<!-- 						    WHERE NO = #{loginMemberNo} -->
+<!-- 						        ) -->
 </select>
 
 </mapper>

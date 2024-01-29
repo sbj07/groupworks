@@ -11,6 +11,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -170,19 +171,31 @@ public class OrganController {
 //	}
 	
 	//삭제(gpt)
-	@DeleteMapping("delete/{orgNo}")
-	public ResponseEntity<?> delete(OrganVo vo) {
+//	@DeleteMapping("delete/{no}")
+//	public ResponseEntity<?> delete(OrganVo vo) {
+//	    try {
+//	        int result = service.delete(vo);
+//	        if(result != 1) {
+//	            throw new Exception("삭제 실패");
+//	        }
+//	        return ResponseEntity.ok().body(Map.of("message", "조직도 삭제 성공"));
+//	    } catch(Exception e) {
+//	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of("message", "조직도 삭제 실패"));
+//	    }
+//	}
+	@DeleteMapping("delete/{no}")
+	public ResponseEntity<?> delete(@PathVariable String no) {
 	    try {
-	        int result = service.delete(vo);
+	        int result = service.delete(no);
 	        if(result != 1) {
 	            throw new Exception("삭제 실패");
 	        }
-	        return ResponseEntity.ok().body(Map.of("message", "조직도 삭제 성공"));
+	        return ResponseEntity.ok().body(Map.of("message", "삭제 성공"));
 	    } catch(Exception e) {
-	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of("message", "조직도 삭제 실패"));
+	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of("message", "삭제 실패"));
 	    }
 	}
-	
+
 	
 }//class
 

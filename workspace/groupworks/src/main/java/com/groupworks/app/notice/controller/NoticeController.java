@@ -31,8 +31,11 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
+import com.groupworks.app.company.vo.CompanyVo;
+import com.groupworks.app.member.vo.DepartVo;
 import com.groupworks.app.member.vo.MemberVo;
 import com.groupworks.app.notice.service.NoticeService;
+import com.groupworks.app.notice.vo.CategoryVo;
 import com.groupworks.app.notice.vo.NoticeVo;
 import com.groupworks.app.page.vo.PageVo;
 
@@ -93,15 +96,25 @@ public class NoticeController {
 	//작성(파일 업로드 추가)
 	@PostMapping("insert")
 	public ResponseEntity<Map<String, String>> insert(@RequestParam("file") MultipartFile file, 
-	                                                  @ModelAttribute NoticeVo vo) {
+	                                                  @RequestParam("title") String title,
+	                                                  @RequestParam("content") String content,
+	                                                  @RequestParam("memberNo") String memberNo,
+	                                                  @RequestParam("categoryCon") String categoryCon,
+	                                                  @RequestParam("departName") String departName) {
 	    Map<String, String> response = new HashMap<>();
 	    try {
+	        String filePath = null;
 	        if (file != null && !file.isEmpty()) {
-	            String filePath = saveFile(file);
-	            if (filePath != null) { // 파일 경로가 null이 아닌 경우에만 설정
-	                vo.setFilePath(filePath);
-	            }
+	            filePath = saveFile(file);
 	        }
+	        
+	        NoticeVo vo = new NoticeVo();
+	        vo.setTitle(title);
+	        vo.setContent(content);
+	        vo.setMemberNo(memberNo);
+	        vo.setFilePath(filePath);
+	        vo.setCategoryCon(categoryCon);
+	        vo.setDepartName(departName);
 	        
 	        int result = service.insert(vo);
 	        response.put("msg", result == 1 ? "공지사항 추가 성공" : "공지사항 추가 실패");
@@ -111,6 +124,27 @@ public class NoticeController {
 	        return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
 	    }
 	}
+
+//	@PostMapping("insert")
+//	public ResponseEntity<Map<String, String>> insert(@RequestParam("file") MultipartFile file, 
+//	                                                  @ModelAttribute NoticeVo vo) {
+//	    Map<String, String> response = new HashMap<>();
+//	    try {
+//	        if (file != null && !file.isEmpty()) {
+//	            String filePath = saveFile(file);
+//	            if (filePath != null) { // 파일 경로가 null이 아닌 경우에만 설정
+//	                vo.setFilePath(filePath);
+//	            }
+//	        }
+//	        
+//	        int result = service.insert(vo);
+//	        response.put("msg", result == 1 ? "공지사항 추가 성공" : "공지사항 추가 실패");
+//	        return new ResponseEntity<>(response, HttpStatus.OK);
+//	    } catch (Exception e) {
+//	        response.put("msg", "서버 오류: " + e.getMessage());
+//	        return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+//	    }
+//	}
 
 	private String saveFile(MultipartFile file) throws IOException {
 	    if (file.isEmpty()) {
@@ -134,7 +168,33 @@ public class NoticeController {
 	    return fileAccessPath;
 	}
 
+	//공지사항 카테고리 데이터 가져오는 api
+	@GetMapping("list/categoryList")
+	public Map<String, Object> getCategoryList() {
+        List<CategoryVo> categoryList = service.getCategoryList();
+        Map<String, Object> map = new HashMap<>();
+        map.put("msg", "okay");
+        map.put("categories", categoryList);
+        if(categoryList == null) {
+            map.put("msg", "nope");
+        }
+        return map;
+	}
 	
+	//부서 데이터 가져오는 api
+	@GetMapping("list/departList")
+	public Map<String, Object> getDepartList() {
+        List<DepartVo> departList = service.getDepartList();
+        Map<String, Object> map = new HashMap<>();
+        map.put("msg", "okay");
+        map.put("list", departList);
+        if(departList == null) {
+            map.put("msg", "nope");
+        }
+        return map;
+	}
+
+
 	
 	/**
 	 * 파일을 서버에 저장하고, 파일 전체 경로를 리턴함

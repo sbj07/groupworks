@@ -4,22 +4,16 @@ import styled from 'styled-components';
 import OrganModal from './OrganModal';
 
 
-function groupByDepartmentName(list) {
-    // return list.reduce((acc, vo) => {
-    //     if (!acc[vo.departNo]) {
-    //         acc[vo.departNo] = [];
-    //     }
-    //     acc[vo.departNo].push(vo);
-    //     return acc;
-    // }, {});
+function groupByDepartName(list) {
+
     return list.reduce((acc, member) => {
         // 여기서 member.departName은 부서 이름을 나타냅니다. 실제 필드명에 맞게 조정해야 합니다.
-        const departmentName = member.departmentName;
+        const departName = member.departName;
 
-        if (!acc[departmentName]) {
-            acc[departmentName] = [];
+        if (!acc[departName]) {
+            acc[departName] = [];
         }
-        acc[departmentName].push(member);
+        acc[departName].push(member);
         return acc;
     }, {});
 }
@@ -93,6 +87,7 @@ const OrganList = () => {
         .then(resp => resp.json())
         .then(data => {
             if (data.voList && Array.isArray(data.voList)) {
+                const filteredVoList = data.voList.filter(member => member.delYn !== 'Y');
                 setOrganVoList(data.voList);
             } else {
                 console.error('Data is not an array:', data);
@@ -109,8 +104,8 @@ const OrganList = () => {
         loadOrganVoList();
     }, []);
 
-    const handleDelete = orgNo => {
-        fetch(`http://127.0.0.1:8888/app/organ/delete/${orgNo}`, {
+    const handleDelete = no => {
+        fetch(`http://127.0.0.1:8888/app/organ/delete/${no}`, {
             method: 'DELETE',
             headers: {
                 'Content-Type' : 'application/json',
@@ -147,10 +142,15 @@ const OrganList = () => {
     const [modalIsOpen, setIsOpen] = useState(false);
     const [selectedVo, setSelectedVo] = useState(null);
 
-    const openModal = (vo) => {
+    // const openModal = (vo) => {
+    //     setIsOpen(true);
+    //     setSelectedVo(vo);
+    // }
+    const openModal = (member) => {
         setIsOpen(true);
-        setSelectedVo(vo);
+        setSelectedVo(member);
     }
+    
 
     const closeModal = () => {
         setIsOpen(false);
@@ -163,116 +163,98 @@ const OrganList = () => {
     }
 
 
+    // return (
+    //     <StyledOrganListDiv>
+    //     <h1>조직도 목록 조회</h1>
+    //     <button onClick={handleOrganWrite}>조직도 작성</button>
+    //          {
+    //         Array.isArray(organVoList) && organVoList.length === 0
+    //         ?
+    //         <div>로딩 중...</div>
+    //         :
+    //         Object.entries(groupByDepartmentName(organVoList)).map(([departmentName, members]) => (
+    //             <StyledTable key={departmentName}>
+    //                 <thead>
+    //                     <tr className="depart-header">
+    //                         <th colSpan="5">부서 : {departmentName}</th>
+    //                     </tr>
+    //                     <tr>
+    //                         <th>프로필</th>
+    //                         <th>이름</th>
+    //                         <th>직책</th>
+    //                         <th>전화번호</th>
+    //                         <th>이메일</th>
+    //                     </tr>
+    //                 </thead>
+    //                 <tbody>
+    //                 {members.map(member => (
+    //                         <tr key={member.no} onClick={() => openModal(member)}>
+    //                             <td>
+    //                             {member.profile && <img src={`/path/to/your/images/${member.profile}`} alt="Profile" style={{ width: '50px', height: '50px' }}/>}
+    //                                 </td>
+    //                             <td>{member.name}</td>
+    //                             <td>{member.positionName}</td>
+    //                             <td>{member.tel}</td>
+    //                             <td>{member.email}</td>
+    //                         </tr>
+    //                     ))}
+    //                     {/* {members.map(member => (
+    //                         <tr key={member.no}>
+    //                             <td>{member.name}</td>
+    //                             <td>{member.positionNo}</td>
+    //                             <td>{member.tel}</td>
+    //                             <td>{member.email}</td>
+    //                         </tr>
+    //                     ))} */}
+    //                 </tbody>
+    //             </StyledTable>
+    //         ))
+    //     }
+    //         <OrganModal
+    //             modalIsOpen={modalIsOpen}
+    //             selectedVo={selectedVo}
+    //             closeModal={closeModal}
+    //             navigateToEdit={navigateToEdit}
+    //             onDelete={handleDelete}
+    //             organ={selectedVo}
+    //         />
+    // </StyledOrganListDiv>
+    // );
     return (
-        // <StyledOrganListDiv>
-        //     <h1>조직도 목록 조회</h1>
-        //     <table>
-        //         <thead>
-        //             <tr>dd부</tr>
-        //             <tr>
-        //                 <th>이름</th>
-        //                 <th>부서</th>
-        //                 <th>직책</th>
-        //                 <th>전화번호</th>
-        //                 <th>이메일</th>
-        //             </tr>
-        //         </thead>
-        //         <tbody>
-        //             {
-        //                 Array.isArray(organVoList) && organVoList.length === 0
-        //                 ?
-        //                 <tr><td colSpan="7">로딩 중...</td></tr>
-        //                 :
-        //                 organVoList.map(vo => (
-        //                     <tr key={vo.no}>
-        //                         <td>{vo.name}</td>
-        //                         <td>{vo.departNo}</td>
-        //                         <td>{vo.positionNo}</td>
-        //                         <td>{vo.tel}</td>
-        //                         <td>{vo.email}</td>
-        //                     </tr>
-        //                 ))
-
-        //             }
-        //         </tbody>
-        //     </table>
-        // </StyledOrganListDiv>
         <StyledOrganListDiv>
-        <h1>조직도 목록 조회</h1>
-        <button onClick={handleOrganWrite}>조직도 작성</button>
-        {/* {
+            <h1>조직도</h1>
+            {/* <button onClick={handleOrganWrite}>조직도 작성</button> */}
+            {
                 Array.isArray(organVoList) && organVoList.length === 0
-                ?
-                <div>로딩 중...</div>
-                :
-                Object.entries(groupByDepartNo(organVoList)).map(([departNo, list]) => (
-                    <StyledTable key={departNo}>
+                ? <div>로딩 중...</div>
+                : Object.entries(groupByDepartName(organVoList)).map(([departName, members]) => (
+                    <StyledTable key={departName}>
                         <thead>
                             <tr className="depart-header">
-                                <th colSpan="5">부서 번호: {departNo}</th>
+                                <th colSpan="5">부서: {departName}</th>
                             </tr>
                             <tr>
+                                <th>프로필</th>
                                 <th>이름</th>
-                                <th>부서</th>
                                 <th>직책</th>
                                 <th>전화번호</th>
                                 <th>이메일</th>
                             </tr>
                         </thead>
                         <tbody>
-                            {list.map(vo => (
-                                <tr key={vo.orgNo} onClick={() => openModal(vo)}>
-                                    <td>{vo.name}</td>
-                                    <td>{vo.departNo}</td>
-                                    <td>{vo.positionNo}</td>
-                                    <td>{vo.tel}</td>
-                                    <td>{vo.email}</td>
+                            {members.map(member => (
+                                <tr key={member.no} onClick={() => openModal(member)}>
+                                    <td>{member.profile && <img src={`/path/to/your/images/${member.profile}`} alt="Profile" style={{ width: '50px', height: '50px' }}/>}</td>
+                                    <td>{member.name}</td>
+                                    <td>{member.positionName}</td> {/* 직책 필드명 확인 필요 */}
+                                    <td>{member.tel}</td>
+                                    <td>{member.email}</td>
                                 </tr>
                             ))}
                         </tbody>
                     </StyledTable>
-                )
-                )
-            } */}
-             {
-            Array.isArray(organVoList) && organVoList.length === 0
-            ?
-            <div>로딩 중...</div>
-            :
-            Object.entries(groupByDepartmentName(organVoList)).map(([departmentName, members]) => (
-                <StyledTable key={departmentName}>
-                    <thead>
-                        <tr className="depart-header">
-                            <th colSpan="4">부서 : {departmentName}</th>
-                        </tr>
-                        <tr>
-                            <th>이름</th>
-                            <th>직책</th>
-                            <th>전화번호</th>
-                            <th>이메일</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                    {members.map(member => (
-                            <tr key={member.name} onClick={() => openModal(member)}>
-                                <td>{member.name}</td>
-                                <td>{member.positionName}</td>
-                                <td>{member.tel}</td>
-                                <td>{member.email}</td>
-                            </tr>
-                        ))}
-                        {/* {members.map(member => (
-                            <tr key={member.no}>
-                                <td>{member.name}</td>
-                                <td>{member.positionNo}</td>
-                                <td>{member.tel}</td>
-                                <td>{member.email}</td>
-                            </tr>
-                        ))} */}
-                    </tbody>
-                </StyledTable>
-            ))
-        }
+                ))
+            }
             <OrganModal
                 modalIsOpen={modalIsOpen}
                 selectedVo={selectedVo}
@@ -281,25 +263,9 @@ const OrganList = () => {
                 onDelete={handleDelete}
                 organ={selectedVo}
             />
-    </StyledOrganListDiv>
+        </StyledOrganListDiv>
     );
+
 };
 
 export default OrganList;
-            // <Modal
-            //     isOpen={modalIsOpen}
-            //     onRequestClose={closeModal}
-            //     contentLabel="부서원 정보"
-            // >
-            //     <h2>부서원 정보</h2>
-            //     {selectedVo && <div>
-            //         <p>이름: {selectedVo.name}</p>
-            //         <p>부서: {selectedVo.departNo}</p>
-            //         <p>직책: {selectedVo.positionNo}</p>
-            //         <p>전화번호: {selectedVo.tel}</p>
-            //         <p>이메일: {selectedVo.email}</p>
-            //         {/* ... 기타 정보 표시 ... */}
-            //         <button onClick={navigateToEdit}>수정</button>
-            //         <button onClick={closeModal}>닫기</button>
-            //     </div>}
-            // </Modal>

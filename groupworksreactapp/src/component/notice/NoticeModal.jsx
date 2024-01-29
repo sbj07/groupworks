@@ -35,6 +35,7 @@ const StyledModalHeader = styled.h2`
 `;
 
 const NoticeModal = ({ notice, onClose, onSave, onDelete, showEditAndDelete }) => {
+    const loginMemberNo = sessionStorage.getItem("loginMemberNo")
     const [isEditing, setIsEditing] = useState(false);
     const [editedNotice, setEditedNotice] = useState(notice);
 
@@ -97,7 +98,7 @@ const NoticeModal = ({ notice, onClose, onSave, onDelete, showEditAndDelete }) =
                 <StyledModalHeader>{notice.title}</StyledModalHeader>
                 <StyledModalContent>
                     <p><strong>내용:</strong> {notice.content}</p>
-                    <p><strong>작성자:</strong> {notice.memberNo}</p>
+                    <p><strong>작성자:</strong> {notice.memberName}</p>
                     <p><strong>조회수:</strong> {notice.clickNo}</p>
                     <p><strong>첨부파일:</strong> {notice.filePath}</p>
                     <p><strong>카테고리:</strong> {notice.category}</p>

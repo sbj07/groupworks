@@ -18,4 +18,10 @@ public class NoticeVo {
 	private String enrollDate;
 	private String updateDate;
 	private String deleteYn;
+	//카테고리테이블
+	private String categoryCon;
+	private String categoryNo;
+	//부서테이블
+	private String departNo;
+	private String departName;
 }

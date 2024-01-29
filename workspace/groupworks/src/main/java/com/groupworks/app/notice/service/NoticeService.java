@@ -6,8 +6,10 @@ import org.mybatis.spring.SqlSessionTemplate;
 import org.springframework.stereotype.Service;
 
 import com.groupworks.app.member.service.MemberService;
+import com.groupworks.app.member.vo.DepartVo;
 import com.groupworks.app.member.vo.MemberVo;
 import com.groupworks.app.notice.dao.NoticeDao;
+import com.groupworks.app.notice.vo.CategoryVo;
 import com.groupworks.app.notice.vo.NoticeVo;
 import com.groupworks.app.page.vo.PageVo;
 
@@ -26,16 +28,6 @@ public class NoticeService {
 	//작성	
 	public int insert(NoticeVo vo) {
 		
-//		String str = vo.getFilePath().replace("C:\\dev\\finalPrj\\workspace\\groupworks\\src\\main\\webapp", "http://127.0.0.1:8888/app");
-//		vo.setFilePath(str);
-//		
-//		if(vo.getTitle().length() < 1) {
-//			throw new IllegalStateException();
-//		}
-//		
-//		return dao.insert(sst, vo);
-		
-		
 	    if (vo.getFilePath() != null) {
 //	        String str = vo.getFilePath().replace("C:\\dev\\finalPrj\\workspace\\groupworks\\src\\main\\webapp", "http://127.0.0.1:8888/app");
 	    	String str = vo.getFilePath().replace("C:\\dev\\finalPrj\\workspace\\groupworks\\src\\main\\webapp", "");
@@ -46,9 +38,29 @@ public class NoticeService {
 	        throw new IllegalStateException();
 	    }
 	    
+//        // 카테고리 이름과 부서 이름을 ID로 변환
+//	    String categoryNo = dao.findCategoryNoByCon(sst, vo.getCategoryCon());
+//	    String departNo = dao.findDepartNoByName(sst, vo.getDepartName());
+//        
+//        // 변환된 ID를 NoticeVo에 설정
+//        vo.setCategory(categoryNo);
+//        vo.setOpenDepart(departNo);
+        
 	    return dao.insert(sst, vo);
 	}
 
+	//카테고리 가져오는 메소드
+	public List<CategoryVo> getCategoryList() {
+	    return dao.getCategoryList(sst);
+	}
+
+	//부서 가져오는 메소드
+	public List<DepartVo> getDepartList() {
+	    return dao.getDepartList(sst);
+	}
+
+	
+	
 	//목록 조회
 //	public List<NoticeVo> list(String memberNo) {
 //
