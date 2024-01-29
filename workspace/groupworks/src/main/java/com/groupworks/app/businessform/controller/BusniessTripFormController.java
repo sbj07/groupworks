@@ -46,7 +46,6 @@ public class BusniessTripFormController {
 		if(memberList == null) {
 			map.put("msg", "bad");
 		}
-		System.out.println(memberList);
 		return map;
 	}
 	
@@ -63,19 +62,6 @@ public class BusniessTripFormController {
 		return map;
 	}
 		
-//	//출장신청서 조회
-//	@GetMapping("list")
-//	public Map<String, Object> list(@RequestParam String writerNo) {
-//		List<BusinessTripFormVo> businessTripList = service.list(writerNo); 
-//		Map<String, Object> map = new HashMap<>();
-//		map.put("msg", "good");
-//		map.put("businessTripList", businessTripList);
-//		if(businessTripList == null) {
-//			map.put("msg", "bad");
-//		}
-//		return map;
-//	}
-	
 	//승인자로 선택된 사람의 휴가신청서 리스트 조회 
 	@GetMapping("apply-list")
 	public Map<String, Object> applyList(@RequestParam String loginMemberNo, 
@@ -109,43 +95,14 @@ public class BusniessTripFormController {
 	    map.put("businessTripList", businessTripList);
 	    map.put("pageInfo", pageVo); // 페이지 정보 추가
 
-//	    if(vacationVoList == null) { 
-//	        map.put("msg", "bad");
-//	    }
 	    return map;
-	}
-	
-	//결재대기 목록 조회
-	@GetMapping("ing-approve")
-	public Map<String, Object> ingApprove() {
-		List<BusinessTripFormVo> ingList = service.ingApprove();
-		Map<String, Object> map = new HashMap<>();
-		map.put("msg", "good");
-		map.put("ingList", ingList);
-		if(ingList == null) {
-			map.put("msg", "bad");
-		}
-		return map;
-	}
-	
-	//결재완료 목록 조회
-	@GetMapping("end-approve")
-	public Map<String, Object> edApprove() {
-		List<BusinessTripFormVo> edList = service.edApprove();
-		Map<String, Object> map = new HashMap<>();
-		map.put("msg", "good");
-		map.put("edList", edList);
-		if(edList == null) {
-			map.put("msg", "bad");
-		}
-		return map;
 	}
 	
 	//출장신청서 작성
 	@PostMapping("write")
-	public Map<String, String> write(@RequestBody BusinessTripFormVo vo) {
+	public Map<String, Object> write(@RequestBody BusinessTripFormVo vo) {
 		int result = service.write(vo);
-		Map<String, String> map = new HashMap<String, String>();
+		Map<String, Object> map = new HashMap<String, Object>();
 		map.put("msg", "good");
 		if(result != 1) {
 			map.put("msg", "bad");
@@ -154,24 +111,45 @@ public class BusniessTripFormController {
 	}
 	
 	//출장신청서 승인
-	@PutMapping("apply")
-	public Map<String, String> apply(BusinessTripFormVo vo) {
-		int result = service.apply(vo);
-		Map<String, String> map = new HashMap<String, String>();
-		map.put("msg", "good");
-		if(result != 1) {
+	@PostMapping("apply")
+	public Map<String, String> apply(@RequestBody BusinessTripFormVo vo) {
+		//휴가신청서 데이터 가져오기
+		BusinessTripFormVo formVo = service.selectList(vo.getNo());
+		formVo.setLoginMemberNo(vo.getLoginMemberNo());
+		
+		//승인자 확인 및 업데이트
+		boolean updateSuccess = service.updateStatus(formVo);
+		Map<String, String> map = new HashMap<>();
+		if(updateSuccess) {
+			//모든 승인자가 승인한 경우, 휴가신청서 최종 업데이트
+			int result = service.endApply(vo);
+			if(result == 1) {
+				map.put("msg", "good");
+			} else {
+				map.put("msg", "bad");
+			}
+		} else {
 			map.put("msg", "bad");
 		}
 		return map;
 	}
 	
 	//출장신청서 반려
-	@PutMapping("rejection")
-	public Map<String, String> rejection(BusinessTripFormVo vo) {
-		int result = service.rejection(vo);
+	@PostMapping("rejection")
+	public Map<String, String> rejection(@RequestBody BusinessTripFormVo vo) {
+		BusinessTripFormVo formVo = service.selectList(vo.getNo());
+		formVo.setLoginMemberNo(vo.getLoginMemberNo());
+		
+		boolean updateSuccess = service.updateRejection(formVo);
 		Map<String, String> map = new HashMap<String, String>();
-		map.put("msg", "good");
-		if(result != 1) {
+		if(updateSuccess) {
+			int result = service.endRejection(vo);
+			if(result == 1) {
+	            map.put("msg", "good"); 
+	        } else {
+	            map.put("msg", "bad"); 
+	        }
+		} else {
 			map.put("msg", "bad");
 		}
 		return map;

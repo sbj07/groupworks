@@ -72,7 +72,7 @@ public class VacationFormService {
 	}
 
 	//승인했는지 안했는지 확인 로직
-	public String updateStatus(VacationFormVo formVo) {
+	public boolean updateStatus(VacationFormVo formVo) {
 
 		int result = dao.updateStatus(sst, formVo);
         // 승인 상태 업데이트 후 다시 조회
@@ -81,10 +81,10 @@ public class VacationFormService {
         if (resultVo.getFirstStatus().equals("2") &&
         		resultVo.getMidStatus().equals("2") &&
         		resultVo.getLastStatus().equals("2") ) {
-        	return "complete";
+        	return true;
         }
         else {
-        	return "pending";
+        	return false;
         }
 	}
 

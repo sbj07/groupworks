@@ -18,18 +18,19 @@
 		AND M.AUTH_NO != 3
 	</select>
 	
-	<!-- 승인자로 선택된 휴가신청서 리스트 조회 --> 
-	<select id="applyList" resultType="VacationFormVo">
+	<!-- 승인자로 선택된 출장신청서 리스트 조회 --> 
+	<select id="applyList" resultType="BusinessTripFormVo">
 		SELECT 
 	        NO
 	        , VACATION_NO
 	        , CONTENT
 	        , WRITE_DATE
+	        , CATEGORY
 	    FROM BUSINESS_TRIP_FORM
 	    WHERE (
-	    		FIRST_APPLY_NO = #{loginMemberNo}
-	    		OR MID_APPLY_NO = #{loginMemberNo}
-	    		OR LAST_APPLY_NO = #{loginMemberNo}
+	    		(FIRST_APPLY_NO = #{loginMemberNo} AND FIRST_STATUS = 2)
+		        OR (MID_APPLY_NO = #{loginMemberNo} AND MID_STATUS = 2)
+		        OR (LAST_APPLY_NO = #{loginMemberNo} AND LAST_STATUS = 2)
 	    	   ) 
 	    AND CATEGORY_NO = 1
 	    AND DEL_YN = 'N'
@@ -39,74 +40,26 @@
    	<!-- 출장신청서 조회 -->
  	<select id="list" resultType="BusinessTripFormVo">
 	 	SELECT 
-	 		NO
-	 		, WRITER_NO
-	 		, FIRST_APPLY_NO
-	 		, MID_APPLY_NO
-	 		, LAST_APPLY_NO
-	 		, CATEGORY_NO
-	 		, START_TIME
-	 		, FINISH_TIME
-	 		, CONTENT
-	 		, TO_CHAR(WRITE_DATE, 'YYYY-MM-DD') AS WRITE_DATE
-    		, TO_CHAR(DOCUMENT_DATE, 'YYYY-MM-DD') AS DOCUMENT_DATE
-	 		, REJECTION
-	 	FROM BUSINESS_TRIP_FORM 
+	 		B.NO
+	 		, B.WRITER_NO
+	 		, B.FIRST_APPLY_NO
+	 		, B.MID_APPLY_NO
+	 		, B.LAST_APPLY_NO
+	 		, B.CATEGORY_NO
+	 		, D.CATEGORY
+	 		, B.START_TIME
+	 		, B.FINISH_TIME
+	 		, B.CONTENT
+	 		, B.TO_CHAR(WRITE_DATE, 'YYYY-MM-DD') AS WRITE_DATE
+    		, B.TO_CHAR(DOCUMENT_DATE, 'YYYY-MM-DD') AS DOCUMENT_DATE
+	 		, B.REJECTION
+	 	FROM BUSINESS_TRIP_FORM B
+	 	JOIN DOCUMENT_CATEGORY D ON B.CATEGORY_NO = D.NO
 	    WHERE WRITER_NO = #{writerNo}
 	    AND DEL_YN = 'N'
 	    ORDER BY NO DESC
  	</select>
  	
- 	<!-- 출장신청서 결재대기 조회 -->
- 	<select id="selectIng" resultType="BusinessTripFormVo">
-	 	 SELECT
-		 	 NO
-	 		, WRITER_NO
-	 		, FIRST_APPLY_NO
-	 		, MID_APPLY_NO
-	 		, LAST_APPLY_NO
-	 		, CATEGORY_NO
-	 		, START_TIME
-	 		, FINISH_TIME
-	 		, CONTENT
-	 		, WRITE_DATE
-	 		, DOCUMENT_DATE
-	 		, REJECTION
-	 	 FROM BUSINESS_TRIP_FORM
-	 	 WHERE CATEGORY_NO = 
-	 	 					(
-	 	 					SELECT NO 
-	 	 					FROM DOCUMENT_CATEGORY 
-	 	 					WHERE NO = 1
-	 	 					)
-	  	 AND DEL_YN = 'N'
-	</select>
-
-		<!-- 출장신청서   결재완료 조회 -->
- 	<select id="selectEd" resultType="BusinessTripFormVo">
-	 	 SELECT 
-		 	 NO
-	 		, WRITER_NO
-	 		, FIRST_APPLY_NO
-	 		, MID_APPLY_NO
-	 		, LAST_APPLY_NO
-	 		, CATEGORY_NO
-	 		, START_TIME
-	 		, FINISH_TIME
-	 		, CONTENT
-	 		, WRITE_DATE
-	 		, DOCUMENT_DATE
-	 		, REJECTION
-	 	 FROM BUSINESS_TRIP_FORM  
-	 	 WHERE CATEGORY_NO IN
-	 	 					(
-	 	 					SELECT NO 
-	 	 					FROM DOCUMENT_CATEGORY 
-	 	 					WHERE NO IN (2, 3)
-	 	 					)
-	  	 AND DEL_YN = 'N'
-	</select>
-	
      <!-- 출장신청서 등록 -->
  	<insert id="insert">
  	INSERT INTO BUSINESS_TRIP_FORM 
@@ -135,31 +88,26 @@
     )
  	</insert>
  	
- 	<!-- 출장신청서 승인 -->
- 	<update id="apply">
- 	 UPDATE BUSINESS_TRIP_FORM 
- 	 	SET CATEGORY_NO = 
-                        (
-                        SELECT NO 
-                        FROM DOCUMENT_CATEGORY 
-                        WHERE NO = 2
-                        )
-        , DOCUMENT_DATE = SYSDATE 
-    	WHERE NO = #{no}
- 	</update>
- 	
  	<!-- 출장신청서 반려 -->
- 	<update id="rejection">
+ 	<update id="rejection" parameterType="BusinessTripFormVo">
  	  UPDATE BUSINESS_TRIP_FORM 
  	  	SET CATEGORY_NO = 
                         (
                         SELECT NO 
                         FROM DOCUMENT_CATEGORY 
-                        WHERE CATEGORY = 3
+                        WHERE NO = #{no}
                         )
-    , DOCUMENT_DATE = SYSDATE
-    , REJECTION = #{rejection} 
-    WHERE NO = #{no}
+    		DOCUMENT_DATE = SYSDATE,
+	        REJECTION = #{rejection},
+	        FIRST_STATUS = CASE WHEN FIRST_APPLY_NO = #{loginMemberNo} THEN 3 ELSE FIRST_STATUS END,
+	        MID_STATUS = CASE WHEN MID_APPLY_NO = #{loginMemberNo} THEN 3 ELSE MID_STATUS END,
+	        LAST_STATUS = CASE WHEN LAST_APPLY_NO = #{loginMemberNo} THEN 3 ELSE LAST_STATUS END
+    	WHERE NO = #{no}
+    	AND (
+            FIRST_APPLY_NO = #{loginMemberNo}
+            OR MID_APPLY_NO = #{loginMemberNo}
+            OR LAST_APPLY_NO = #{loginMemberNo}
+        	)	
  	</update>
 
  	 <!-- 출장신청서 삭제 -->
@@ -167,7 +115,7 @@
 	 	 UPDATE BUSINESS_TRIP_FORM 
 	 	 	SET DEL_YN = 'Y' 
 	 	 WHERE NO = #{no}
-	 	 AND DEL_YN = 'N'
+	 	 AND WRITER_NO = #{writerNo}
  	</update>
  	
  	<!-- 출장신청서 개수 조회 -->
@@ -181,7 +129,7 @@
  	<select id="listPaged" resultType="BusinessTripFormVo" parameterType="com.groupworks.app.page.vo.PageVo">
     SELECT *
     FROM (
-        SELECT ROW_NUMBER() OVER (ORDER BY NO DESC) AS rnum, B.*
+        SELECT ROW_NUMBER() OVER (ORDER BY B.NO DESC) AS rnum, B.*
         FROM BUSINESS_TRIP_FORM B
         WHERE B.WRITER_NO = #{writerNo} 
 	    AND DEL_YN = 'N'
@@ -196,6 +144,7 @@
         OR MID_APPLY_NO = #{loginMemberNo}
         OR LAST_APPLY_NO = #{loginMemberNo})
         AND DEL_YN = 'N'
+        AND CATEGORY_NO = 1
 	</select>
 	
 	<!-- 승인대기목록 페이징  -->
@@ -204,11 +153,80 @@
     FROM (
         SELECT ROW_NUMBER() OVER (ORDER BY NO DESC) AS rnum, B.*
         FROM BUSINESS_TRIP_FORM B
-        WHERE B.FIRST_APPLY_NO = #{loginMemberNo}
-           OR B.MID_APPLY_NO = #{loginMemberNo}
-           OR B.LAST_APPLY_NO = #{loginMemberNo} 
+        WHERE B.DEL_YN = 'N'
+          AND B.CATEGORY_NO = 1
+	      AND (
+	        (B.FIRST_APPLY_NO = #{loginMemberNo} AND B.FIRST_STATUS != 2) 
+	        OR (B.MID_APPLY_NO = #{loginMemberNo} AND B.MID_STATUS != 2)
+	        OR (B.LAST_APPLY_NO = #{loginMemberNo} AND B.LAST_STATUS != 2)
+	      )
     ) WHERE rnum BETWEEN #{startRow} AND #{lastRow}
-    AND DEL_YN = 'N'
 	</select>
+	
+	<select id="selectList" resultType="BusinessTripFormVo">
+		SELECT 
+			NO
+			, WRITER_NO
+			, FIRST_APPLY_NO
+			, MID_APPLY_NO
+			, LAST_APPLY_NO
+			, START_TIME
+			, FINISH_TIME
+			, CONTENT
+			, WRITE_DATE
+			, FIRST_STATUS
+			, MID_STATUS
+			, LAST_STATUS
+			, REJECTION
+		FROM BUSINESS_TRIP_FORM
+		WHERE NO = #{no}
+		AND CATEGORY_NO = 1
+	</select>
+	
+	<update id="updateStatus" parameterType="BusinessTripFormVo">
+		UPDATE BUSINESS_TRIP_FORM
+		<set>
+			<if test="firstApplyNo == loginMemberNo">
+				FIRST_STATUS = 2
+			</if>
+			<if test="midApplyNo == loginMemberNo">
+				MID_STATUS = 2
+			</if>
+			<if test="lastApplyNo == loginMemberNo">
+				LAST_STATUS = 2
+			</if>
+		</set>
+			WHERE NO = #{no}
+	</update>
+ 	
+ 	<update id="endApply" parameterType="map">
+		UPDATE BUSINESS_TRIP_FORM 
+			SET CATEGORY_NO = 2, DOCUMENT_DATE = SYSDATE 
+			WHERE NO = #{no}
+	</update>
+	
+	<update id="updateRejection" parameterType="BusinessTripFormVo">
+		UPDATE BUSINESS_TRIP_FORM
+		<set>
+			<if test="firstApplyNo == loginMemberNo">
+				FIRST_STATUS = 3
+			</if>
+			<if test="midApplyNo == loginMemberNo">
+				MID_STATUS = 3
+			</if>
+			<if test="lastApplyNo == loginMemberNo">
+				LAST_STATUS = 3
+			</if>
+		</set>
+			WHERE NO = #{no}
+	</update>
+	
+	<update id="endRejection" parameterType="BusinessTripFormVo">
+		UPDATE BUSINESS_TRIP_FORM
+			SET CATEGORY_NO = 3
+			, DOCUMENT_DATE = SYSDATE
+			, REJECTION = #{rejection}
+			WHERE NO = #{no}
+	</update>
  	
 </mapper>
