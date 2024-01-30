@@ -23,7 +23,7 @@
 	        NO
 	        , VACATION_NO
 	        , CONTENT
-	        , WRITE_DATE
+	        , TO_CHAR(WRITE_DATE, 'YYYY-MM-DD') AS WRITE_DATE
 	        , CATEGORY
 	    FROM VACATION_FORM
 	    WHERE (
@@ -132,7 +132,20 @@
  	<select id="listPaged" resultType="VacationFormVo" parameterType="com.groupworks.app.page.vo.PageVo">
     SELECT *
     FROM (
-        SELECT ROW_NUMBER() OVER (ORDER BY V.NO DESC) AS rnum, V.*, D.CATEGORY
+        SELECT ROW_NUMBER() OVER (ORDER BY V.NO DESC) AS rnum,
+        	V.NO,
+            V.WRITER_NO,
+            V.FIRST_APPLY_NO,
+            V.MID_APPLY_NO,
+            V.LAST_APPLY_NO,
+            V.CATEGORY_NO,
+            TO_CHAR(V.START_TIME, 'YYYY-MM-DD') AS START_TIME,
+            TO_CHAR(V.FINISH_TIME, 'YYYY-MM-DD') AS FINISH_TIME,
+            V.CONTENT,
+            TO_CHAR(V.WRITE_DATE, 'YYYY-MM-DD') AS WRITE_DATE,
+            TO_CHAR(V.DOCUMENT_DATE, 'YYYY-MM-DD') AS DOCUMENT_DATE,
+            V.REJECTION,
+            D.CATEGORY
         FROM VACATION_FORM V
         JOIN DOCUMENT_CATEGORY D ON V.CATEGORY_NO = D.NO
         WHERE V.WRITER_NO = #{writerNo} 
@@ -155,7 +168,19 @@
  	<select id="applyListPage" resultType="VacationFormVo" parameterType="com.groupworks.app.page.vo.PageVo">
     SELECT *
 	FROM (
-	    SELECT ROW_NUMBER() OVER (ORDER BY NO DESC) AS rnum, V.*
+	    SELECT ROW_NUMBER() OVER (ORDER BY NO DESC) AS rnum,
+	    	V.NO,
+            V.WRITER_NO,
+            V.FIRST_APPLY_NO,
+            V.MID_APPLY_NO,
+            V.LAST_APPLY_NO,
+            V.CATEGORY_NO,
+            TO_CHAR(V.START_TIME, 'YYYY-MM-DD') AS START_TIME,
+            TO_CHAR(V.FINISH_TIME, 'YYYY-MM-DD') AS FINISH_TIME,
+            V.CONTENT,
+            TO_CHAR(V.WRITE_DATE, 'YYYY-MM-DD') AS WRITE_DATE,
+            TO_CHAR(V.DOCUMENT_DATE, 'YYYY-MM-DD') AS DOCUMENT_DATE,
+            V.REJECTION
 	    FROM VACATION_FORM V
 	    WHERE V.DEL_YN = 'N'
 	      AND V.CATEGORY_NO = 1
@@ -178,7 +203,7 @@
 	 		,START_TIME
 	 		,FINISH_TIME
 	 		,CONTENT
-	 		,WRITE_DATE
+	 		,TO_CHAR(WRITE_DATE, 'YYYY-MM-DD') AS WRITE_DATE
 	 		,FIRST_STATUS
 	 		,MID_STATUS
 	 		,LAST_STATUS

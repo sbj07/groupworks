@@ -14,19 +14,28 @@ const StyledBusinessTripFormListDiv = styled.div`
 
   table {
     width: 80%; // 테이블의 너비를 조정
-    border-collapse: collapse; // 테이블 사이의 간격 없애기
+    border-collapse: separate; // 테이블 사이의 간격 없애기
+    border-spacing: 0 10px;
     margin: 20px 0; // 테이블 상하 여백 추가
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); // 테이블에 그림자 효과 추가
 
     th, td {
-      padding: 12px 15px; // 셀 패딩 조정
+      border: none;
+      padding: 15px; // 셀 패딩 조정
       border: 1px solid #e1e1e1; // 셀 경계선 색상 조정
-      text-align: left; // 텍스트 왼쪽 정렬
+      text-align: center; // 텍스트 왼쪽 정렬
+      border-radius: 8px;
     }
     
     th {
-      background-color: #f4f4f4; // 테이블 헤더 배경색 조정
-      color: #333; // 테이블 헤더 글자색 조정
+      border: none;
+      min-width: 160px;
+      background-color: #5a7bda; // 테이블 헤더 배경색 조정
+      color: white; // 테이블 헤더 글자색 조정
+    }
+
+    td {
+        border: none;
     }
 
     tr:nth-child(odd) {
@@ -168,26 +177,66 @@ const BusinessTripFormList = ({}) => {
             onRequestClose={closeRejectionModal}
             contentLabel="반려 사유 입력"
             style={{
-              overlay: {
-                backgroundColor: 'rgba(0, 0, 0, 0.75)' // 모달의 배경색을 어둡게 설정
+                overlay: {
+                  backgroundColor: 'rgba(0, 0, 0, 0.75)',
+                  display: 'flex',
+                  justifyContent: 'center',
+                  alignItems: 'center'
                 },
-              content: {
-                top: '50%',
-                left: '50%',
-                right: 'auto',
-                bottom: 'auto',
-                marginRight: '-50%',
-                transform: 'translate(-50%, -50%)'
-              }
-            }}
+                content: {
+                  position: 'relative',
+                  inset: 'auto',
+                  margin: 'auto',
+                  border: '1px solid #ccc',
+                  background: '#fff',
+                  overflow: 'auto',
+                  borderRadius: '10px',
+                  outline: 'none',
+                  padding: '40px',
+                  width: '40%',
+                  minWidth: '300px',
+                  maxHeight: 'calc(100% - 40px)', // 화면의 높이에서 40px 뺀 만큼
+                }
+              }}
           >
             <h2>반려 사유 입력</h2>
             <textarea 
               value={rejection}
               onChange={(e) => setRejection(e.target.value)}
+              style={{
+                width: '100%',
+                height: '150px',
+                marginBottom: '20px',
+                padding: '10px',
+                border: '1px solid #ddd',
+                borderRadius: '4px',
+                fontSize: '16px',
+                resize: 'vertical'
+              }}
             />
-            <button onClick={handleRejectionClick}>반려</button>
-            <button onClick={closeRejectionModal}>닫기</button>
+            <button onClick={handleRejectionClick}
+            style={{
+                padding: '10px 20px',
+                marginRight: '10px',
+                border: 'none',
+                borderRadius: '4px',
+                fontWeight: 'bold',
+                cursor: 'pointer',
+                transition: 'all 0.2s ease',
+                backgroundColor: '#ffc107',
+                color: 'white'
+            }}>반려</button>
+            <button onClick={closeRejectionModal}
+            style={{
+                padding: '10px 20px',
+                border: 'none',
+                borderRadius: '4px',
+                fontWeight: 'bold',
+                cursor: 'pointer',
+                transition: 'all 0.2s ease',
+                backgroundColor: '#9e9e9e',
+                color: 'white'
+            }}>닫기</button>
           </Modal>
         );
       };
@@ -224,7 +273,7 @@ const BusinessTripFormList = ({}) => {
                         backgroundColor: 'white', // 모달 배경색
                         boxShadow: '0 4px 10px rgba(0, 0, 0, 0.25)', // 모달 그림자
                         maxWidth: '500px', // 모달 최대 너비
-                        width: 'auto', // 모달 너비 자동 조정
+                        width: '300px', // 모달 너비 자동 조정
                         maxHeight: 'calc(100% - 40px)', // 모달 최대 높이, 화면과의 간격을 위해 계산
                         overflow: 'auto' // 내용이 많을 경우 스크롤 가능
                       }
@@ -367,11 +416,11 @@ const BusinessTripFormList = ({}) => {
                     {
                         formList.length === 0
                         ?
-                        <h1>등록한 결재 목록이 없습니다.</h1>
+                        <h3>등록한 결재 목록이 없습니다.</h3>
                         :
                         formList.map( vo => <tr key = {vo.no}>
                             <td>{vo.no}</td>    
-                            <td>{vo.categoryNo}</td>    
+                            <td>{vo.category}</td>    
                             <td>{vo.writeDate}</td>
                             <td>{vo.documentDate}</td>
                             <td>{vo.rejection}</td>   
@@ -413,7 +462,7 @@ const BusinessTripFormList = ({}) => {
                     {
                         applyList.length === 0
                         ?
-                        <h1>처리할 결재 목록이 없습니다.</h1>
+                        <h3>처리할 결재 목록이 없습니다.</h3>
                         :
                         applyList.map( vo => <tr key = {vo.no}>
                             <td>{vo.no}</td>    
