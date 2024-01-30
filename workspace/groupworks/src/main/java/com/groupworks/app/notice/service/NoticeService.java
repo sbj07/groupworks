@@ -41,11 +41,11 @@ public class NoticeService {
 //        // 카테고리 이름과 부서 이름을 ID로 변환
 //	    String categoryNo = dao.findCategoryNoByCon(sst, vo.getCategoryCon());
 //	    String departNo = dao.findDepartNoByName(sst, vo.getDepartName());
-//        
-//        // 변환된 ID를 NoticeVo에 설정
-//        vo.setCategory(categoryNo);
-//        vo.setOpenDepart(departNo);
-        
+////        
+////        // 변환된 ID를 NoticeVo에 설정
+////        vo.setCategory(categoryNo);
+////        vo.setOpenDepart(departNo);
+        log.info("{}" + vo);
 	    return dao.insert(sst, vo);
 	}
 
@@ -59,24 +59,6 @@ public class NoticeService {
 	    return dao.getDepartList(sst);
 	}
 
-	
-	
-	//목록 조회
-//	public List<NoticeVo> list(String memberNo) {
-//
-//		return dao.list(sst, memberNo);
-//	}
-
-	//	public List<NoticeVo> list(String loginMember) {
-//
-//		return dao.list(sst, loginMember);
-//	}
-	
-//	//전체 목록 조회(기존)
-//	public List<NoticeVo> list() {
-//
-//		return dao.list(sst);
-//	}
 	//전체 목록 조회(기존)
 	public List<NoticeVo> list() {
 
@@ -96,10 +78,6 @@ public class NoticeService {
 	//상세조회 + 조회수 증가
 	public NoticeVo detail(NoticeVo vo) {
 
-//		int result = dao.increaseHit(sst, vo);
-//		if(result != 1) {
-//			throw new IllegalStateException();
-//		}
 		return dao.detail(sst, vo);
 	}
 	
@@ -114,26 +92,7 @@ public class NoticeService {
 		return dao.detail(sst, vo);
 	}
 
-	//수정
-//	public int edit(NoticeVo vo) {
-//		
-//		if(vo == null) {
-//			throw new IllegalStateException("vo가 없어서 업데이트 불가능");
-//		}
-////		if(vo.getTitle() != null && vo.getTitle().length() < 1) {
-////			throw new IllegalStateException();
-////		}
-//	    if ((vo.getTitle() == null || vo.getTitle().isEmpty()) && 
-//            (vo.getContent() == null || vo.getContent().isEmpty()) && 
-//            (vo.getFilePath() == null || vo.getFilePath().isEmpty()) && 
-//            (vo.getCategory() == null || vo.getCategory().isEmpty()) &&
-//            (vo.getOpenDepart() == null))
-//	    {
-//        throw new IllegalStateException("수정할 내용이 없습니다.");
-//        }
-//
-//		return dao.edit(sst, vo);
-//	}
+
 	//수정(지피티 수정본)
 	public int edit(NoticeVo vo) {
 	    if (vo == null) {

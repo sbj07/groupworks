@@ -13,42 +13,50 @@ const StyledNoticeListDiv = styled.div`
     align-items: center;
     flex-direction: column;
     text-align: center;
-    background-color: #E0E8F7;
-    border: 2px solid #357ABD;
+    color: #333; // 텍스트 색상 변경
+    font-family: 'Arial', sans-serif; // 글꼴 변경
     & > table {
-        width: 100%;
-        height: 100%;
-        border-collapse: collapse;
-        border: 1px solid #357ABD;
+        width: 80%; // 테이블 너비 유지
+        border-collapse: separate; // 테이블 테두리 분리
+        border-spacing: 0 10px; // 셀 간격 조정
         margin-top: 20px;
+        box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1); // 테이블 그림자 추가
     }
     & > table th, td {
-        // 테이블 헤더와 셀 스타일 추가
-        border: 1px solid #357ABD;
-        padding: 8px;
-        text-align: center;
+        border: none; // 테두리 제거
+        padding: 8px; // 패딩 증가
+        background-color: rgba(255, 255, 255, 0.8); // 셀 배경 투명도 조정
+        border-radius: 8px; // 둥근 모서리 추가
+        font-size: 14px;
     }
     & > table th {
-        // 테이블 헤더 스타일 추가
-        background-color: #357ABD;
+        min-width: 135px; // 헤더 최소 너비 설정
+        background-color: rgba(53, 122, 189, 0.8); // 헤더 배경 투명도 조정
         color: white;
+        font-size: 14px; // 글꼴 크기 변경
     }
     & > button {
-        width: 30%;
-        background-color: #357ABD;
+        width: 20%; // 버튼 너비 조정
+        background-color: rgba(53, 122, 189, 0.8); // 버튼 배경 투명도 조정
         color: white;
         border: none;
-        padding: 10px;
+        padding: 15px 20px; // 패딩 조정
         cursor: pointer;
         margin-top: 20px;
-        /* font-size: 2rem; */
+        border-radius: 20px; // 버튼 둥근 모서리 추가
+        box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2); // 버튼 그림자 추가
     }
     & > h1 {
-        // 헤더 스타일 추가
-        font-size: 24px;
-        margin-bottom: 10px;
+        font-size: 28px; // 헤더 글꼴 크기 변경
+        margin-bottom: 15px; // 여백 조정
+        color: #333; // 헤더 색상 변경
     }
+
+
 `;
+
+
+
 
 // 조회수 증가 함수
 const incrementClickCount = async (noticeNo) => {
@@ -110,47 +118,7 @@ const NoticeList = ({ showTopFive, showWriteButton, showPagination, showEditAndD
     };
     
     
-    // const handleFileDownload = (fileName, e) => {
-    //     e.stopPropagation(); // 상위 요소로의 이벤트 전파를 막음
-    //     const baseURL = 'http://127.0.0.1:8888/resources/upload/notice/img/';
-    //     const downloadURL = `${baseURL}${fileName}`;
-        
-    //     // a 태그를 생성하여 프로그래매틱하게 클릭 이벤트를 발생시킵니다.
-    //     const link = document.createElement('a');
-    //     link.href = downloadURL;
-    //     link.download = fileName; // 다운로드되는 파일의 이름을 지정
-    //     link.click();
-    //     link.remove();
-    // };
-    
-    // React 컴포넌트 내부에서 파일 다운로드 링크를 렌더링하는 예시
-// function handleFileDownload({ filePath }) {
-//     // baseURL은 환경에 따라 달라질 수 있습니다. 여기서는 예시로 localhost를 사용합니다.
-//     const baseURL = 'http://127.0.0.1:8888';
-//     const downloadURL = `${baseURL}${filePath}`;
-  
-//     return (
-//       <a href={downloadURL} download>
-//         파일 다운로드
-//       </a>
-//     );
-//   }
-  
-
-    // const handleNoticeClick = (notice) => {
-    //     setSelectedNotice(notice);
-    // };
-
-    //조회수 증가 코드 수정해야 함↑
-    // const handleNoticeClick = async (notice) => {
-    //     const success = await incrementClickCount(notice.noticeNo);
-    
-    //     if (success) {
-    //         // 조회수 증가 후 공지사항의 조회수를 업데이트
-    //         const updatedNotice = { ...notice, clickNo: notice.clickNo + 1 };
-    //         setSelectedNotice(updatedNotice);
-    //     }
-    // };
+ 
     const handlePreviousPage = () => {
         if (currentPage > 1) {
             setCurrentPage(currentPage - 1);
@@ -172,66 +140,7 @@ const NoticeList = ({ showTopFive, showWriteButton, showPagination, showEditAndD
         setSelectedNotice(null);
     };
     
-    // const handleEdit = (notice) => {
-    //     // NoticeEdit 컴포넌트로 이동
-    //     navigate("/notice/edit", { state: { notice: notice } });
-    // };
 
-    //공지사항 삭제
-    // const handleDelete = noticeNo => {
-    //     fetch(`http://127.0.0.1:8888/app/notice/delete/${noticeNo}`, {
-    //         method: 'DELETE',
-    //         headers: {
-    //             'Content-Type': 'application/json',
-    //         },
-    //     })
-    //     .then(response => {
-    //         // 응답이 OK인지 확인
-    //         if (!response.ok) {
-    //             throw new Error('서버 오류 발생');
-    //         }
-
-    //         const contentType = response.headers.get('content-type');
-    //         if (contentType && contentType.includes('application/json')) {
-    //             return response.json(); // 응답이 JSON 형식이면 JSON으로 파싱
-    //         } else {
-    //             return response.text(); // 응답이 JSON 형식이 아니면 텍스트로 처리
-    //         }
-    //     })
-    //     .then(data => {
-    //         // data는 JSON 객체 또는 텍스트 문자열입니다.
-    //         console.log('삭제 성공:', data);
-    //         alert("공지사항 삭제 성공");
-    //         loadNoticeVoList(); // 공지사항 목록 다시 로드
-    //     })
-    //     .catch(error => {
-    //         console.error('삭제 실패:', error);
-    //         alert("공지사항 삭제 실패");
-    //     });
-    // };
-    // const handleDelete = noticeNo => {
-    //     fetch(`http://127.0.0.1:8888/app/notice/delete/${noticeNo}`, {
-    //         method: 'DELETE',
-    //         headers: {
-    //             'Content-Type': 'application/json',
-    //         },
-    //     })
-    //     .then(response => {
-    //         if (!response.ok) {
-    //             throw new Error('서버 오류 발생');
-    //         }
-    //         return response.text(); // 이 경우, 서버 응답이 JSON이 아닐 수 있으므로 text() 사용
-    //     })
-    //     .then(data => {
-    //         console.log('삭제 성공:', data);
-    //         alert("공지사항 삭제 성공");
-    //         loadNoticeVoList(); // 공지사항 목록 다시 로드
-    //     })
-    //     .catch(error => {
-    //         console.error('삭제 실패:', error);
-    //         alert("공지사항 삭제 실패");
-    //     });
-    // };
     
 
 
@@ -265,43 +174,16 @@ const NoticeList = ({ showTopFive, showWriteButton, showPagination, showEditAndD
 
 
 
-
-    // const loadNoticeVoList = () => {
-    //     // fetch("http://127.0.0.1:8888/app/notice/list")
-    //     const loginMemberNo = sessionStorage.getItem("loginMemberNo")
-
-    //     if(loginMemberNo){
-    //     fetch(`http://127.0.0.1:8888/app/notice/list?page=${currentPage}&size=${itemsPerPage}&memberNo=${loginMemberNo}`)
-    //     .then( resp => resp.json() )
-    //     .then(data => {
-    //         // console.log("가장 최근에 저장된 공지사항 데이터 : ", data);
-    //         if (data.voList && Array.isArray(data.voList)) {
-    //             const listToShow = showTopFive ? data.voList.slice(0, 5) : data.voList;
-    //             setNoticeVoList(listToShow);
-    //         } else {
-    //             console.error('Data is not an array:', data);
-    //             setNoticeVoList([]); // 데이터가 배열이 아닌 경우 빈 배열로 설정
-    //         }
-    //     })
-    //     .catch(error => {
-    //         console.error('Fetch error:', error);
-    //         setNoticeVoList([]); // 에러 발생 시 빈 배열로 설정
-    //     });
-    //     }else{
-    //           // 사용자 번호가 없는 경우
-    //           console.error('No user number found');
-    //           setNoticeVoList([]); // 사용자 번호가 없으면 빈 배열로 설정
-    //     }
-    // };
     const loadNoticeVoList = async () => {
         const loginMemberNo = sessionStorage.getItem("loginMemberNo");
     
         if (loginMemberNo) {
-            const response = await fetch(`http://127.0.0.1:8888/app/notice/list?page=${currentPage}&size=${itemsPerPage}&memberNo=${loginMemberNo}`);
+            const response = await fetch(`http://127.0.0.1:8888/app/notice/list?page=${currentPage}&limit=${itemsPerPage}&memberNo=${loginMemberNo}`);
             const data = await response.json();
             if (data.voList && Array.isArray(data.voList)) {
                 const listToShow = showTopFive ? data.voList.slice(0, 5) : data.voList;
                 setNoticeVoList(listToShow);
+                console.log(noticeVoList);
             } else {
                 console.error('Data is not an array:', data);
                 setNoticeVoList([]);
@@ -357,25 +239,7 @@ const NoticeList = ({ showTopFive, showWriteButton, showPagination, showEditAndD
             alert("공지사항 삭제 실패");
         });
     };
-    // const loadNoticeVoList = () => {
-    //     // fetch(`http://127.0.0.1:8888/app/notice/list?page=${currentPage}&size=${itemsPerPage}`)
-    //     const url = showTopFive
-    //         ? `http://127.0.0.1:8888/app/notice/list?page=1&size=5`
-    //         : `http://127.0.0.1:8888/app/notice/list?page=${currentPage}&size=${itemsPerPage}`;
-    //     fetch(url)
-    //     .then(response => response.json())
-    //     .then(data => {
-    //         if (data.voList && Array.isArray(data.voList)) {
-    //             setNoticeVoList(data.voList);
-    //         } else {
-    //             setNoticeVoList([]);
-    //         }
-    //     })
-    //     .catch(error => {
-    //         console.error('Fetch error:', error);
-    //         setNoticeVoList([]);
-    //     });
-    // };
+
     
 
     useEffect( () => {
@@ -389,31 +253,22 @@ const NoticeList = ({ showTopFive, showWriteButton, showPagination, showEditAndD
             return null; // 페이징을 표시하지 않음
         }
         
-        const totalItems = 60; // 예시로 총 아이템 수를 설정, 실제로는 데이터에서 가져와야 합니다.
+        const totalItems = 60; 
         const maxPage = Math.ceil(totalItems / itemsPerPage);
 
         return (
             <div>
                 <button onClick={handlePreviousPage} disabled={currentPage === 1}>이전</button>
                 <span>{currentPage} / {maxPage}</span>
-                {/* <button onClick={handleNextPage}>다음</button> */}
                 <button onClick={handleNextPage} disabled={currentPage === maxPage}>다음</button>
             </div>
         );
     };
-    //    const renderPagination = (currentPage, setCurrentPage, totalPages) => {
-    // return (
-    //     <div>
-    //         <button onClick={() => setCurrentPage(currentPage - 1)} disabled={currentPage === 1}>이전</button>
-    //         <span>{currentPage}</span>
-    //         <button onClick={() => setCurrentPage(currentPage + 1)} disabled={currentPage === totalPages}>다음</button>
-    //     </div>
-    //     );
-    // };
+
 
     return (
         <StyledNoticeListDiv>
-            <h1>공지사항</h1>{showWriteButton && <button onClick={() => navigate("/notice/insert")}>공지사항 작성하기</button>}
+            {showWriteButton && <button onClick={() => navigate("/notice/insert")}>공지사항 작성하기</button>}
             <table>
                 <thead>
                     <tr>
@@ -424,7 +279,7 @@ const NoticeList = ({ showTopFive, showWriteButton, showPagination, showEditAndD
                         <th>긴급여부</th>
                         <th>카테고리</th>
                         <th>공개부서</th>
-                        <th>작성(수정)일자</th>
+                        <th>작성일자</th>
                         <th>조회수</th>
                     </tr>
                 </thead>

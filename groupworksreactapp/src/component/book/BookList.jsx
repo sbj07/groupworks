@@ -71,7 +71,17 @@ const BookList = () => {
         }, []);
 
 
-
+        // const formatDateTime = (dateTimeString) => {
+        //     const date = new Date(dateTimeString);
+        //     return date.toLocaleString('ko-KR', {
+        //         year: 'numeric',
+        //         month: '2-digit',
+        //         day: '2-digit',
+        //         hour: '2-digit',
+        //         minute: '2-digit',
+        //     });
+        // };
+        
 ///////
 // const handleDelete = bookNo => {
 //     fetch(`http://127.0.0.1:8888/app/book/delete/${bookNo}`, {

@@ -13,12 +13,16 @@ import com.groupworks.app.notice.vo.CategoryVo;
 import com.groupworks.app.notice.vo.NoticeVo;
 import com.groupworks.app.page.vo.PageVo;
 
+import lombok.extern.slf4j.Slf4j;
+
 @Repository
+@Slf4j
 public class NoticeDao {
 	
 	//작성
 	public int insert(SqlSessionTemplate sst, NoticeVo vo) {
 
+		log.info("{}" + vo);
 		return sst.insert("NoticeMapper.insert", vo);
 	}
 

@@ -101,7 +101,7 @@ const NoticeModal = ({ notice, onClose, onSave, onDelete, showEditAndDelete }) =
                     <p><strong>작성자:</strong> {notice.memberName}</p>
                     <p><strong>조회수:</strong> {notice.clickNo}</p>
                     <p><strong>첨부파일:</strong> {notice.filePath}</p>
-                    <p><strong>카테고리:</strong> {notice.category}</p>
+                    <p><strong>카테고리:</strong> {notice.categoryCon}</p>
                     <p><strong>긴급 여부:</strong> {notice.emergencyYn}</p>
                     <p><strong>작성일자:</strong> {notice.enrollDate}</p>
                 </StyledModalContent>

@@ -31,12 +31,12 @@
 		    , B.MEMBER_NO
             , M.NAME as memberName
 		    , B.BOOK_PLACE
-		    , B.START_DATE
-		    , B.END_DATE
+		    , TO_CHAR(B.START_DATE, 'YYYY-MM-DD HH24:MI') AS START_DATE
+		    , TO_CHAR(B.END_DATE, 'YYYY-MM-DD HH24:MI') AS END_DATE
 		    , B.BOOK_PURPOSE
-		    , B.BOOK_DATE
-		    , B.UPDATE_DATE
-		    , B.CANCEL_DATE
+		    , TO_CHAR(B.BOOK_DATE, 'YYYY-MM-DD HH24:MI') AS BOOK_DATE
+		    , TO_CHAR(B.UPDATE_DATE, 'YYYY-MM-DD HH24:MI') AS UPDATE_DATE
+		    , TO_CHAR(B.CANCEL_DATE, 'YYYY-MM-DD HH24:MI') AS CANCEL_DATE
 		FROM BOOK B
         JOIN MEMBER M ON B.MEMBER_NO = M.NO
 		WHERE CANCEL_DATE IS NULL
@@ -48,35 +48,45 @@
     <choose>
         <when test="startDate != null and endDate != null">
             SELECT
-			    BOOK_NO
-			    , MEMBER_NO
-			    , BOOK_PLACE
-			    , START_DATE
-			    , END_DATE
-			    , BOOK_PURPOSE
-			    , BOOK_DATE
-			    , UPDATE_DATE
-			    , CANCEL_DATE
-            FROM BOOK
-            WHERE START_DATE &gt;= #{startDate} AND END_DATE &lt;= #{endDate}
-            ORDER BY BOOK_NO DESC
+                B.BOOK_NO
+                , B.MEMBER_NO
+                , M.NAME as memberName
+                , B.BOOK_PLACE
+                , TO_CHAR(B.START_DATE, 'YYYY-MM-DD HH24:MI') AS START_DATE
+                , TO_CHAR(B.END_DATE, 'YYYY-MM-DD HH24:MI') AS END_DATE
+                , B.BOOK_PURPOSE
+                , TO_CHAR(B.BOOK_DATE, 'YYYY-MM-DD HH24:MI') AS BOOK_DATE
+                , TO_CHAR(B.UPDATE_DATE, 'YYYY-MM-DD HH24:MI') AS UPDATE_DATE
+                , TO_CHAR(B.CANCEL_DATE, 'YYYY-MM-DD HH24:MI') AS CANCEL_DATE
+            FROM BOOK B
+            JOIN MEMBER M ON B.MEMBER_NO = M.NO
+            WHERE B.START_DATE &gt;= #{startDate}
+            AND B.END_DATE &lt;= #{endDate}
+            AND B.CANCEL_DATE IS NULL
+            ORDER BY B.BOOK_NO DESC
         </when>
         <otherwise>
             SELECT
-			    BOOK_NO
-			    , MEMBER_NO
-			    , BOOK_PLACE
-			    , START_DATE
-			    , END_DATE
-			    , BOOK_PURPOSE
-			    , BOOK_DATE
-			    , UPDATE_DATE
-			    , CANCEL_DATE
-            FROM BOOK
-            ORDER BY BOOK_NO DESC
+                B.BOOK_NO
+                , B.MEMBER_NO
+                , M.NAME as memberName
+                , B.BOOK_PLACE
+                , TO_CHAR(B.START_DATE, 'YYYY-MM-DD HH24:MI') AS START_DATE
+                , TO_CHAR(B.END_DATE, 'YYYY-MM-DD HH24:MI') AS END_DATE
+                , B.BOOK_PURPOSE
+                , TO_CHAR(B.BOOK_DATE, 'YYYY-MM-DD HH24:MI') AS BOOK_DATE
+                , TO_CHAR(B.UPDATE_DATE, 'YYYY-MM-DD HH24:MI') AS UPDATE_DATE
+                , TO_CHAR(B.CANCEL_DATE, 'YYYY-MM-DD HH24:MI') AS CANCEL_DATE
+            FROM BOOK B
+            JOIN MEMBER M ON B.MEMBER_NO = M.NO
+            WHERE B.CANCEL_DATE IS NULL
+            ORDER BY B.BOOK_NO DESC
         </otherwise>
     </choose>
 </select>
+
+
+
 
 
 <!-- 상세 조회 -->

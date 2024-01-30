@@ -71,41 +71,70 @@ const NoticeWrite = () => {
     //
     const [categories, setCategories] = useState([]); // 카테고리 데이터를 저장할 상태
     const [departments, setDepartments] = useState([]); // 부서 데이터를 저장할 상태
-
-    // 카테고리와 부서 데이터를 로드하는 함수
-    const loadSelectOptions = async () => {
-        try {
-            const categoryResponse = await fetch('http://127.0.0.1:8888/app/notice/categories');
-            const departmentResponse = await fetch('http://127.0.0.1:8888/app/notice/departments');
-            if (!categoryResponse.ok || !departmentResponse.ok) {
-                throw new Error('데이터를 불러오는 데 실패했습니다.');
-            }
-            const categoryData = await categoryResponse.json();
-            const departmentData = await departmentResponse.json();
-            setCategories(categoryData);
-            setDepartments(departmentData);
-        } catch (error) {
-            console.error('데이터 로딩 에러:', error);
-        }
-    };
-
-    useEffect(() => {
-        loadSelectOptions();
-    }, []);
-    //
+    // const [emergencies, setEmergencies] = useState();
     const [noticeData, setNoticeData] = useState({
-        memberNo: loginMemberNo,
+        // memberNo: loginMemberNo,
         title: '',
         content: '',
         category: '',
-        emergencyYn: '',
         openDepart: '',
+        // emergencyYn: '',
         file: null
         
     });
+
+    // 카테고리와 부서 데이터를 로드하는 함수
+    // const loadSelectOptions = async () => {
+    //     try {
+    //         const categoryResponse = await fetch('http://127.0.0.1:8888/app/notice/list/categoryList');
+    //         const departmentResponse = await fetch('http://127.0.0.1:8888/app/notice/list/departList');
+    //         if (!departmentResponse.ok) {
+    //             throw new Error('데이터를 불러오는 데 실패했습니다.');
+    //         }
+    //         const categoryData = await categoryResponse.json();
+    //         const departmentData = await departmentResponse.json();
+    //         setCategories(categoryData);
+    //         setDepartments(departmentData.list);
+    //         console.log(categoryData);
+    //         console.log(departmentData.list);
+    //     } catch (error) {
+    //         console.error('데이터 로딩 에러:', error);
+    //     }
+    // };
+
+    useEffect(() => {
+        fetch('http://127.0.0.1:8888/app/notice/list/categoryList')
+        .then(resp => resp.json())
+        .then(data => {
+            if (data && data.categories) {
+                setCategories(data.categories);
+            }
+        });
+        // loadSelectOptions();
+
+        fetch('http://127.0.0.1:8888/app/notice/list/departList')
+        .then(resp => resp.json())
+        .then(data => {
+            if (data && data.list) {
+                setDepartments(data.list);
+            }
+        });
+
+
+        // fetch('http://127.0.0.1:8888/app/notice/list/emergencyYn')
+        // .then( resp => resp.json())
+        // .then( data => {
+        //     console.log(data.list);
+        //     setDepartments(data.list);
+    }, []);
+    //
+
     
     const handleInputChange = (e) => {
-        setNoticeData({ ...noticeData, [e.target.name]: e.target.value });
+                // 숫자 타입의 필드 처리 (category, openDepart)
+                const { name, value } = e.target;
+                const updatedValue = (name === 'category' || name === 'openDepart') ? parseInt(value, 10) : value;
+                setNoticeData({ ...noticeData, [name]: updatedValue });
     };
 
     //기존 파일 수정 코드
@@ -141,25 +170,24 @@ const NoticeWrite = () => {
     useEffect( () => {
         func();
     },[]);
+
+
     const handleSubmit = async (e) => {
         e.preventDefault();
 
         // 데이터 전송 로직
 
-        const selectedCategoryCon = categories.find(cat => cat.categoryNo === noticeData.category)?.categoryCon;
-        const selectedDepartName = departments.find(dep => dep.departNo === noticeData.openDepart)?.departName;
+        // const selectedCategoryCon = categories.find(cat => cat.categoryNo === noticeData.categoryNo)?.categoryCon;
+        // const selectedDepartName = departments.find(dep => dep.departNo === noticeData.openDepart)?.departName;
+        // const selectEmergencyYn = emergencies.find(emer => emer.emergencyYn === noticeData.emergencyYn)?.emergencyYn;
 
 
         const formData = new FormData();
         formData.append('title', noticeData.title);
         formData.append('content', noticeData.content);
-        formData.append('memberNo', noticeData.memberNo);
-        // formData.append('category', noticeData.category);
-        formData.append('categoryCon', selectedCategoryCon);
-
-        // formData.append('openDepart', noticeData.openDepart);
-        formData.append('departName', selectedDepartName);
-        // formData.append('memberNo', memberNo);
+        formData.append('memberNo', loginMemberNo); // 로그인한 멤버 번호
+        formData.append('category', noticeData.category); // 카테고리 번호
+        formData.append('openDepart', noticeData.openDepart);
         if (noticeData.file) {
             formData.append('file', noticeData.file);
         }
@@ -185,6 +213,35 @@ const NoticeWrite = () => {
         }
     };
 
+    // const categoryList = categories && Array.isArray(categories) && (() => {
+    //     // console.log("categories: ", categories); // 로그를 찍어 확인
+    //     return categories.map(category => (
+    //         <option key={category.categoryNo} value={category.categoryNo}>
+    //             {category.categoryCon}
+    //         </option>
+    //     ));
+    // })();
+    
+    // const departList = departments && Array.isArray(departments) && (() => {
+    //     // console.log("departments: ", departments); // 로그를 찍어 확인
+    //     return departments.map(department => (
+    //         <option key={department.no} value={department.no}>
+    //             {department.name}
+    //         </option>
+    //     ));
+    // })();
+
+    const categoryOptions = categories.map(category => (
+        <option key={category.categoryNo} value={category.categoryNo}>
+            {category.categoryCon}
+        </option>
+    ));
+
+    const departmentOptions = departments.map(department => (
+        <option key={department.no} value={department.no}>
+            {department.name}
+        </option>
+    ));
 
     return (
         <Form onSubmit={handleSubmit}>
@@ -216,6 +273,16 @@ const NoticeWrite = () => {
                 />
             </Label> */}
             <Label>이름 : {loginMemberVo.name}</Label>
+            {/* <Label>
+                카테고리:
+                <Select
+                    name="category"
+                    value={noticeData.category}
+                    onChange={handleInputChange}
+                >
+                    {categoryList}
+                </Select>
+            </Label> */}
             <Label>
                 카테고리:
                 <Select
@@ -223,13 +290,20 @@ const NoticeWrite = () => {
                     value={noticeData.category}
                     onChange={handleInputChange}
                 >
-                    {categories.map(category => (
-                        <option key={category.categoryNo} value={category.categoryNo}>
-                            {category.categoryCon}
-                        </option>
-                    ))}
+                    {categoryOptions}
                 </Select>
             </Label>
+            {/* <Label>
+                공개 부서:
+                <Select
+                    name="openDepart"
+                    value={noticeData.openDepart}
+                    onChange={handleInputChange}
+                >
+                        {departList}
+                    
+                </Select>
+            </Label> */}
             <Label>
                 공개 부서:
                 <Select
@@ -237,11 +311,7 @@ const NoticeWrite = () => {
                     value={noticeData.openDepart}
                     onChange={handleInputChange}
                 >
-                    {departments.map(department => (
-                        <option key={department.departNo} value={department.departNo}>
-                            {department.departName}
-                        </option>
-                    ))}
+                    {departmentOptions}
                 </Select>
             </Label>
             <Label>
@@ -252,6 +322,16 @@ const NoticeWrite = () => {
                     onChange={handleFileChange}
                 />
             </Label>
+            {/* <Label>
+                긴급 여부:
+                <Select
+                name='emergencyYn'
+                value={noticeData.emergencyYn}
+                onChange={handleInputChange}
+                >
+                    {emergencyYn}
+                </Select>
+            </Label> */}
             {/* 기타 필드 */}
             <SubmitButton type="submit">저장</SubmitButton>
         </Form>
