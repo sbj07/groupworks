@@ -6,19 +6,19 @@ import TodoWrite from './TodoWrite';
 
 const StyledTodoDiv = styled.div`
   width: 100%;
-  height: 100%;
+  height: 90%;
   display: flex;
   justify-content: center;
   align-items: center;
   flex-direction: column;
+  margin-bottom: 50px;
   & > table {
     width: 100%; 
     height: 100%;
     border-collapse: collapse; 
-    margin: 20px 0; 
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); 
     th, td {
-      padding: 15px; 
+      padding: 8px; 
       border: none;
       text-align: center; 
       border-radius: 8px;

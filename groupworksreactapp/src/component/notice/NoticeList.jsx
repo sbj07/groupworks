@@ -9,7 +9,6 @@ const StyledNoticeListDiv = styled.div`
     width: 100%;
     height: 100%;
     display: flex;
-    justify-content: center;
     align-items: center;
     flex-direction: column;
     text-align: center;
@@ -19,7 +18,6 @@ const StyledNoticeListDiv = styled.div`
         width: 80%; // 테이블 너비 유지
         border-collapse: separate; // 테이블 테두리 분리
         border-spacing: 0 10px; // 셀 간격 조정
-        margin-top: 20px;
         box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1); // 테이블 그림자 추가
     }
     & > table th, td {
@@ -30,7 +28,7 @@ const StyledNoticeListDiv = styled.div`
         font-size: 14px;
     }
     & > table th {
-        min-width: 135px; // 헤더 최소 너비 설정
+        min-width: 100px; // 헤더 최소 너비 설정
         background-color: rgba(53, 122, 189, 0.8); // 헤더 배경 투명도 조정
         color: white;
         font-size: 14px; // 글꼴 크기 변경
