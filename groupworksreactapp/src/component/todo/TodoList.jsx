@@ -18,14 +18,22 @@ const StyledTodoDiv = styled.div`
     margin: 20px 0; 
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); 
     th, td {
-      padding: 12px 15px; 
-      border: 1px solid #e1e1e1; 
-      text-align: left; 
+      padding: 15px; 
+      border: none;
+      text-align: center; 
+      border-radius: 8px;
     }
     th {
-      background-color: #f4f4f4; 
-      color: #333; 
+      border: none;
+      min-width: 160px;
+      background-color: #6e8efb; // 테이블 헤더 배경색 조정
+      color: white; 
     }
+
+    td {
+        border: none;
+    }
+    
     tr:nth-child(odd) {
       background-color: #fafafa; 
     }

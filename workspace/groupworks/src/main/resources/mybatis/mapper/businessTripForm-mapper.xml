@@ -24,7 +24,7 @@
 	        NO
 	        , VACATION_NO
 	        , CONTENT
-	        , WRITE_DATE
+	        , TO_CHAR(WRITE_DATE, 'YYYY-MM-DD') AS WRITE_DATE
 	        , CATEGORY
 	    FROM BUSINESS_TRIP_FORM
 	    WHERE (
@@ -129,8 +129,22 @@
  	<select id="listPaged" resultType="BusinessTripFormVo" parameterType="com.groupworks.app.page.vo.PageVo">
     SELECT *
     FROM (
-        SELECT ROW_NUMBER() OVER (ORDER BY B.NO DESC) AS rnum, B.*
+        SELECT ROW_NUMBER() OVER (ORDER BY B.NO DESC) AS rnum,
+        	  B.NO,
+              B.WRITER_NO,
+              B.FIRST_APPLY_NO,
+              B.MID_APPLY_NO,
+              B.LAST_APPLY_NO,
+              B.CATEGORY_NO, 
+              TO_CHAR(B.START_TIME, 'YYYY-MM-DD') AS START_TIME,
+              TO_CHAR(B.FINISH_TIME, 'YYYY-MM-DD') AS FINISH_TIME,
+              B.CONTENT,
+              TO_CHAR(B.WRITE_DATE, 'YYYY-MM-DD') AS WRITE_DATE,
+              TO_CHAR(B.DOCUMENT_DATE, 'YYYY-MM-DD') AS DOCUMENT_DATE,
+              B.REJECTION,
+              D.CATEGORY
         FROM BUSINESS_TRIP_FORM B
+        JOIN DOCUMENT_CATEGORY D ON B.CATEGORY_NO = D.NO
         WHERE B.WRITER_NO = #{writerNo} 
 	    AND DEL_YN = 'N'
     ) WHERE rnum BETWEEN #{startRow} AND #{lastRow}
@@ -151,7 +165,19 @@
  	<select id="applyListPage" resultType="BusinessTripFormVo" parameterType="com.groupworks.app.page.vo.PageVo">
     SELECT *
     FROM (
-        SELECT ROW_NUMBER() OVER (ORDER BY NO DESC) AS rnum, B.*
+        SELECT ROW_NUMBER() OVER (ORDER BY NO DESC) AS rnum,
+        	 B.NO,
+             B.WRITER_NO,
+             B.FIRST_APPLY_NO,
+             B.MID_APPLY_NO,
+             B.LAST_APPLY_NO,
+             B.CATEGORY_NO,
+             TO_CHAR(B.START_TIME, 'YYYY-MM-DD') AS START_TIME,
+             TO_CHAR(B.FINISH_TIME, 'YYYY-MM-DD') AS FINISH_TIME,
+             B.CONTENT,
+             TO_CHAR(B.WRITE_DATE, 'YYYY-MM-DD') AS WRITE_DATE,
+             TO_CHAR(B.DOCUMENT_DATE, 'YYYY-MM-DD') AS DOCUMENT_DATE,
+             B.REJECTION
         FROM BUSINESS_TRIP_FORM B
         WHERE B.DEL_YN = 'N'
           AND B.CATEGORY_NO = 1
@@ -173,7 +199,7 @@
 			, START_TIME
 			, FINISH_TIME
 			, CONTENT
-			, WRITE_DATE
+			, TO_CHAR(WRITE_DATE, 'YYYY-MM-DD') AS WRITE_DATE
 			, FIRST_STATUS
 			, MID_STATUS
 			, LAST_STATUS

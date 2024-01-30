@@ -21,6 +21,7 @@ const StyledDocumentListDiv = styled.div`
     border-radius: 5px; 
     cursor: pointer; 
     transition: background-color 0.2s ease-in-out;
+    font-weight: bold;
     &:hover {
       opacity: 0.9; 
     }
