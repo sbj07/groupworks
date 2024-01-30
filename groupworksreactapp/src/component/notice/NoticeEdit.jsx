@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import { Form } from 'react-bootstrap';
 import { useLocation, useNavigate } from 'react-router';
 import styled from 'styled-components';
 
@@ -24,6 +25,8 @@ const NoticeEdit = () => {
     const navigate = useNavigate();
     const notice = location.state ? location.state.notice : null; // notice가 없는 경우를 고려
     const [editedNotice, setEditedNotice] = useState(notice);
+    const [categoryList, setCategoryList] = useState([]);
+    const [departList, setDepartList] = useState([]);
 
     const handleChange = (e) => {
         setEditedNotice({ ...editedNotice, [e.target.name]: e.target.value });
@@ -47,7 +50,6 @@ const NoticeEdit = () => {
             formData.append('file', editedNotice.file);
         }
 
-
         // 수정된 공지사항 데이터를 서버로 전송합니다.
         fetch('http://127.0.0.1:8888/app/notice/edit', {
             method: 'POST',
@@ -68,6 +70,60 @@ const NoticeEdit = () => {
             alert("공지사항 수정 실패")
         });
     };
+
+    useEffect( () => {
+        fetch("http://127.0.0.1:8888/app/notice/list/categoryList")
+        .then(resp => resp.json())
+        .then(data => {
+            if(data.msg === "okay"){
+                setCategoryList(data.categories);
+                console.log(categoryList);
+            }
+        })
+
+        fetch("http://127.0.0.1:8888/app/api/member/list/depart")
+        .then( resp => resp.json() )
+        .then( data => {
+            if(data.msg === 'okay') {
+                setDepartList(data.departList);
+            }
+            else {
+                alert("사원 목록 로드 실패");
+            }
+        });
+
+
+    },[]);
+
+    const CategoryListOption = () => {
+        return (
+            <Form.Select name="category" value={editedNotice.category} 
+            onChange={handleChange} >
+                <option value=''>카테고리</option>
+                {
+                    categoryList.map( (data) => {
+                        return <option key={data.categoryCon} value={data.categoryNo} >{data.categoryCon}</option>;
+                    })
+                }
+            </Form.Select>
+        );
+    };
+
+    const DepartListOption = () => {
+        return (
+            <Form.Select name="depart" value={editedNotice.depart} 
+            onChange={handleChange} >
+                <option value=''>공개부서</option>
+                {
+                    departList.map( (data) => {
+                        return <option key={data.name} value={data.no} >{data.name}</option>;
+                    })
+                }
+            </Form.Select>
+        );
+    };
+
+
     
     // 파일 첨부 처리
     const handleFileChange = (e) => {
@@ -101,22 +157,21 @@ const NoticeEdit = () => {
                 <br />
                 <label>
                     카테고리:
-                    <input
-                        type="text"
-                        name="category"
-                        value={editedNotice.category}
-                        onChange={handleChange}
-                    />
+                    
+                    <CategoryListOption />
+                  
                 </label>
                 <br />
                 <label>
                     공개 부서:
-                    <input
+
+                    <DepartListOption />
+                    {/* <input
                         type="text"
                         name="openDepart"
                         value={editedNotice.openDepart}
                         onChange={handleChange}
-                    />
+                    /> */}
                 </label>
                 <br />
                 <label>

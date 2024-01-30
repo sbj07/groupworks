@@ -231,10 +231,10 @@ const OrganList = () => {
                     <StyledTable key={departName}>
                         <thead>
                             <tr className="depart-header">
-                                <th colSpan="5">부서: {departName}</th>
+                                <th colSpan="4">부서: {departName}</th>
                             </tr>
                             <tr>
-                                <th>프로필</th>
+                                {/* <th>프로필</th> */}
                                 <th>이름</th>
                                 <th>직책</th>
                                 <th>전화번호</th>
@@ -244,7 +244,7 @@ const OrganList = () => {
                         <tbody>
                             {members.map(member => (
                                 <tr key={member.no} onClick={() => openModal(member)}>
-                                    <td>{member.profile && <img src={`/path/to/your/images/${member.profile}`} alt="Profile" style={{ width: '50px', height: '50px' }}/>}</td>
+                                    {/* <td>{member.profile && <img src={`/path/to/your/images/${member.profile}`} alt="Profile" style={{ width: '50px', height: '50px' }}/>}</td> */}
                                     <td>{member.name}</td>
                                     <td>{member.positionName}</td> {/* 직책 필드명 확인 필요 */}
                                     <td>{member.tel}</td>

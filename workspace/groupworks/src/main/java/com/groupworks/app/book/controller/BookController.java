@@ -85,7 +85,9 @@ public class BookController {
 	//예약 목록 조회(번호)(렌더링)
 	@GetMapping("list")
 	public Map<String, Object> list(@RequestParam(required = false) String startDate,
-            						@RequestParam(required = false) String endDate) {
+            						@RequestParam(required = false) String endDate,
+            						@RequestParam(value = "page", defaultValue = "1") int currentPage, 
+	                                @RequestParam(value = "limit", defaultValue = "10") int boardLimit) {
 		List<BookVo> voList = service.listByDateRange(startDate, endDate);
 		
 		Map<String, Object> map = new HashMap<>();
