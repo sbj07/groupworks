@@ -139,34 +139,7 @@
 <select id="listPaged" resultType="com.groupworks.app.notice.vo.NoticeVo" parameterType="com.groupworks.app.page.vo.PageVo">
 
     SELECT 
-	*
-	FROM (
-        SELECT
-            ROW_NUMBER() OVER (ORDER BY  N.NOTICE_NO) AS RN,
-            N.NOTICE_NO
-            , N.MEMBER_NO
-            , M.NAME AS MEMBER_NAME
-            , N.TITLE
-            , N.CONTENT
-            , N.CLICK_NO
-            , N.FILE_PATH
-            , C.CATEGORY_CON
-            , D.NAME AS DEPART_NAME
-            , N.EMERGENCY_YN
-            , TO_CHAR(N.ENROLL_DATE, 'YYYY-MM-DD HH24:MI') AS ENROLL_DATE
-            , TO_CHAR(N.UPDATE_DATE, 'YYYY-MM-DD HH24:MI') AS UPDATE_DATE
-        FROM NOTICE N
-        JOIN MEMBER M ON N.MEMBER_NO = M.NO
-        JOIN NOTICE_CATEGORY C ON N.CATEGORY = C.CATEGORY_NO
-        JOIN DEPARTMENT D ON D.NO = N.OPEN_DEPART
-        WHERE M.COMPANY_NO = (
-                                SELECT
-                                COMPANY_NO
-                                FROM MEMBER
-                                WHERE NO = #{loginMemberNo}
-                                )
-        AND N.DELETE_YN = 'N')
-	WHERE RN BETWEEN #{startRow} AND #{lastRow}
+
 </select>
 
 

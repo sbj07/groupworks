@@ -62,7 +62,7 @@ public class BusniessTripFormController {
 		return map;
 	}
 		
-	//승인자로 선택된 사람의 휴가신청서 리스트 조회 
+	//승인자로 선택된 사람의 출장신청서 리스트 조회 
 	@GetMapping("apply-list")
 	public Map<String, Object> applyList(@RequestParam String loginMemberNo, 
 							             @RequestParam(value = "page", defaultValue = "1") int currentPage, 
