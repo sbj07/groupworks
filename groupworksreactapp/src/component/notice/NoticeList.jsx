@@ -4,7 +4,81 @@ import styled from 'styled-components';
 import NoticeModal from './NoticeModal';
 import {FaFileDownload} from 'react-icons/fa';
 
+const StyledTableHeader = styled.th`
+    &.number {
+        width: 10%; // 번호의 너비
+    }
+    &.title {
+        width: 30%; // 제목의 너비
+    }
+    &.file {
+        width: 10%; // 제목의 너비
+    }
+    &.writer {
+        width: 20%; // 제목의 너비
+    }
+    &.emergency {
+        width: 10%; // 제목의 너비
+    }
+    &.category {
+        width: 20%; // 제목의 너비
+    }
+    &.open {
+        width: 20%; // 제목의 너비
+    }
+    &.enrollDate {
+        width: 30%; // 제목의 너비
+    }
+    &.clickNo {
+        width: 10%; // 제목의 너비
+    }
+`;
 
+const ButtonContainer = styled.div`
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 20px;
+    width: 100%;
+    position: relative; // 상대 위치 설정
+`;
+
+const CenteredButtons = styled.div`
+    display: flex;
+    align-items: center;
+`;
+
+const LeftAlignedButton = styled.button`
+    background-color: rgba(53, 122, 189, 0.8);
+    color: white;
+    border: none;
+    padding: 15px 20px;
+    cursor: pointer;
+    border-radius: 20px;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+`;
+
+const RightAlignedButton = styled.button`
+    background-color: rgba(53, 122, 189, 0.8);
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    cursor: pointer;
+    border-radius: 20px;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+    margin-left: auto; // 오른쪽 정렬
+`;
+
+const MiddlePosition = styled.div`
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: flex;
+    justify-content: center; // 수평 가운데 정렬
+    align-items: center; // 수직 가운데 정렬
+`;
 const StyledNoticeListDiv = styled.div`
     width: 100%;
     height: 100%;
@@ -12,6 +86,7 @@ const StyledNoticeListDiv = styled.div`
     align-items: center;
     flex-direction: column;
     text-align: center;
+    /* margin-left: 15%; */
     color: #333; // 텍스트 색상 변경
     font-family: 'Arial', sans-serif; // 글꼴 변경
     & > table {
@@ -28,17 +103,16 @@ const StyledNoticeListDiv = styled.div`
         font-size: 14px;
     }
     & > table th {
-        min-width: 100px; // 헤더 최소 너비 설정
+        min-width: 120px; // 헤더 최소 너비 설정
         background-color: rgba(53, 122, 189, 0.8); // 헤더 배경 투명도 조정
         color: white;
         font-size: 14px; // 글꼴 크기 변경
     }
     & > button {
-        width: 20%; // 버튼 너비 조정
+        width: 10%; // 버튼 너비 조정
         background-color: rgba(53, 122, 189, 0.8); // 버튼 배경 투명도 조정
         color: white;
         border: none;
-        padding: 15px 20px; // 패딩 조정
         cursor: pointer;
         margin-top: 20px;
         border-radius: 20px; // 버튼 둥근 모서리 추가
@@ -49,7 +123,9 @@ const StyledNoticeListDiv = styled.div`
         margin-bottom: 15px; // 여백 조정
         color: #333; // 헤더 색상 변경
     }
-
+    & th:hover, & td:hover {
+        background-color: #fafad2; // 셀 호버 배경색 변경
+    }
 
 `;
 
@@ -125,10 +201,9 @@ const NoticeList = ({ showTopFive, showWriteButton, showPagination, showEditAndD
 
     const handleNextPage = () => {
         
-        const totalItems = 100; 
         const maxPage = Math.ceil(totalItems / itemsPerPage);
     
-        // 현재 페이지가 최대 페이지보다 작을 경우에만 페이지 번호를 증가시킵니다.
+        // 현재 페이지가 최대 페이지보다 작을 경우에만 페이지 번호를 증가
         if (currentPage < maxPage) {
             setCurrentPage(currentPage + 1);
         }
@@ -179,6 +254,7 @@ const NoticeList = ({ showTopFive, showWriteButton, showPagination, showEditAndD
             const response = await fetch(`http://127.0.0.1:8888/app/notice/list?page=${currentPage}&limit=${itemsPerPage}&memberNo=${loginMemberNo}`);
             const data = await response.json();
             if (data.voList && Array.isArray(data.voList)) {
+                setTotalItems(data.totalCount); // 총 아이템 수를 설정
                 const listToShow = showTopFive ? data.voList.slice(0, 5) : data.voList;
                 setNoticeVoList(listToShow);
                 console.log(noticeVoList);
@@ -214,7 +290,9 @@ const NoticeList = ({ showTopFive, showWriteButton, showPagination, showEditAndD
     };
 
     const handleDelete = noticeNo => {
-        fetch(`http://127.0.0.1:8888/app/notice/delete/${noticeNo}`, {
+        const loginMemberNo = sessionStorage.getItem("loginMemberNo");
+        fetch(`http://127.0.0.1:8888/app/notice/delete/${noticeNo}?memberNo=${loginMemberNo}`, {
+            method: 'DELETE',
             method: 'DELETE',
             headers: {
                 'Content-Type': 'application/json',
@@ -230,7 +308,8 @@ const NoticeList = ({ showTopFive, showWriteButton, showPagination, showEditAndD
             console.log('삭제 성공:', data);
             alert("공지사항 삭제 성공");
             handleCloseModal();
-            setNoticeVoList(noticeVoList.filter(notice => notice.noticeNo !== noticeNo));
+            loadNoticeVoList();
+            // setNoticeVoList(noticeVoList.filter(notice => notice.noticeNo !== noticeNo));
         })
         .catch(error => {
             console.error('삭제 실패:', error);
@@ -251,34 +330,38 @@ const NoticeList = ({ showTopFive, showWriteButton, showPagination, showEditAndD
             return null; // 페이징을 표시하지 않음
         }
         
-        const totalItems = 60; 
         const maxPage = Math.ceil(totalItems / itemsPerPage);
 
         return (
-            <div>
+            <ButtonContainer>
+                <MiddlePosition>
+                <CenteredButtons>
                 <button onClick={handlePreviousPage} disabled={currentPage === 1}>이전</button>
                 <span>{currentPage} / {maxPage}</span>
                 <button onClick={handleNextPage} disabled={currentPage === maxPage}>다음</button>
-            </div>
+                </CenteredButtons>
+                </MiddlePosition>
+            </ButtonContainer>
         );
     };
-
-
+    
+    
     return (
         <StyledNoticeListDiv>
-            {showWriteButton && <button onClick={() => navigate("/notice/insert")}>공지사항 작성하기</button>}
+            {showWriteButton && <RightAlignedButton onClick={() => navigate("/notice/insert")}>작성하기</RightAlignedButton>}
+            
             <table>
                 <thead>
                     <tr>
-                        <th>번호</th>
-                        <th>제목</th>
-                        <th>파일</th>
-                        <th>작성자</th>
-                        <th>긴급여부</th>
-                        <th>카테고리</th>
-                        <th>공개부서</th>
-                        <th>작성일자</th>
-                        <th>조회수</th>
+                        <StyledTableHeader className='number'>번호</StyledTableHeader>
+                        <StyledTableHeader className='title'>제목</StyledTableHeader>
+                        <StyledTableHeader className='file'>파일</StyledTableHeader>
+                        <StyledTableHeader className='writer'>작성자</StyledTableHeader>
+                        <StyledTableHeader className='emergency'>긴급여부</StyledTableHeader>
+                        <StyledTableHeader className='category'>카테고리</StyledTableHeader>
+                        <StyledTableHeader className='open'>공개부서</StyledTableHeader>
+                        <StyledTableHeader className='enrollDate'>작성일자</StyledTableHeader>
+                        <StyledTableHeader className='clickNo'>조회수</StyledTableHeader>
                     </tr>
                 </thead>
                 <tbody>

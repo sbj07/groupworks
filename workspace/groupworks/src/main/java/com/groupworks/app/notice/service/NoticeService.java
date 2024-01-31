@@ -70,8 +70,8 @@ public class NoticeService {
 	    return dao.listPaged(sst, pageVo);
 	}
 //	전체 갯수 조회(기존)
-	public int getListCount() {
-	    return dao.getListCount(sst);
+	public int getListCount(String memberNo) {
+	    return dao.getListCount(sst, memberNo);
 	}
 	
 

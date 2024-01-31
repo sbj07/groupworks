@@ -18,9 +18,9 @@ public class OrganDao {
 	}
 
 	//전체 목록 조회(번호)
-	public List<OrganVo> list(SqlSessionTemplate sst, MemberVo loginMember) {
+	public List<OrganVo> list(SqlSessionTemplate sst, String loginMemberNo) {
 		
-		return sst.selectList("OrganMapper.list", loginMember.getCompanyNo());
+		return sst.selectList("OrganMapper.list", loginMemberNo);
 	
 	}
 

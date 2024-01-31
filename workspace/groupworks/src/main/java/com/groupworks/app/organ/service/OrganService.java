@@ -37,9 +37,9 @@ public class OrganService {
 
 	
 	//전체 목록 조회(번호)
-	public List<OrganVo> list(MemberVo loginMember) {
+	public List<OrganVo> list(String loginMemberNo) {
 	
-		return dao.list(sst, loginMember);
+		return dao.list(sst, loginMemberNo);
 	}
 
 	

@@ -86,9 +86,10 @@ public class BookController {
 	@GetMapping("list")
 	public Map<String, Object> list(@RequestParam(required = false) String startDate,
             						@RequestParam(required = false) String endDate,
+            						@RequestParam(required = false) String memberName,
             						@RequestParam(value = "page", defaultValue = "1") int currentPage, 
 	                                @RequestParam(value = "limit", defaultValue = "10") int boardLimit) {
-		List<BookVo> voList = service.listByDateRange(startDate, endDate);
+		List<BookVo> voList = service.listByDateRange(startDate, endDate, memberName);
 		
 		Map<String, Object> map = new HashMap<>();
 		map.put("msg", "good");

@@ -72,8 +72,8 @@ public class NoticeDao {
 	    return sst.selectList("NoticeMapper.listPaged", pageVo);
 	}
 	//전체 수 조회(기존)
-	public int getListCount(SqlSessionTemplate sst) {
-	    return sst.selectOne("NoticeMapper.getListCount");
+	public int getListCount(SqlSessionTemplate sst, String memberNo) {
+	    return sst.selectOne("NoticeMapper.getListCount", memberNo);
 	}
 
 

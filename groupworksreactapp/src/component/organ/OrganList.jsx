@@ -20,69 +20,84 @@ function groupByDepartName(list) {
 
 
 const StyledOrganListDiv = styled.div`
-    width: 100%;
+    width: 100vh;
     height: 100%;
     display: flex;
     justify-content: center;
     align-items: center;
     flex-direction: column;
+    overflow: hidden;
+    padding: 20px;
+    margin-left: 50%; // 중앙 정렬 보정
+    box-sizing: border-box;
+
     & > table {
-        width: 80%;
-        height: 80%;
-        border: 3px solid black;
+        max-width: 100%; // 테이블 최대 너비 제한
+        max-height: 90%; // 테이블 최대 높이 제한
+        border-radius: 10px;
+        box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
     }
     & > button {
-        width: 30%;
-        font-size: 2rem;
+        margin-top: 20px;
+        width: 20%;
+        font-size: 1.5rem;
+        background-color: #ffefd5; // 버튼 색상 변경
+        border: none;
+        border-radius: 20px; // 둥근 모서리
+        padding: 10px 20px;
+        cursor: pointer;
+        transition: background-color 0.3s ease, transform 0.2s ease;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1); // 그림자 효과 추가
+    }
+    & > button:hover {
+        background-color: #f0e68c; // 호버 색상 변경
+        transform: translateY(-2px); // 클릭 효과
     }
 `;
 
 
 const StyledTable = styled.table`
-    width: 100%;
+    width: 90%;
+    margin-top: 20px;
     border-collapse: collapse;
-    margin-bottom: 20px; // 각 테이블 사이의 간격
+    background-color: #ffffff;
+    border-radius: 15px; // 모서리 둥글게
+    overflow: hidden; // 스크롤바 스타일링을 위한 설정
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1); // 그림자 변경
 
     & th, & td {
-        border: 1px solid black;
-        padding: 8px;
+        border-bottom: 1px solid #eee; // Softer border color
+        padding: 15px; // Increased padding for a more spacious look
         text-align: center;
     }
 
     & .depart-header {
-        background-color: lightgray; // 헤더 배경색
-        font-size: 1.2em; // 헤더 폰트 사이즈
+        background-color: #e6e6fa; 
+        font-size: 1.2em;
+        color: #333;
+    }
+
+    & th, & td {
+        transition: background-color 0.3s ease;
+    }
+
+    & th:hover, & td:hover {
+        background-color: #fafad2; // 셀 호버 배경색 변경
     }
 `;
 
 const OrganList = () => {
 
-    const navigate = useNavigate();
     const loginMemberNo = sessionStorage.getItem("loginMemberNo");
+    const navigate = useNavigate();
     // const [loginMemberVo, setLoginMemberVo] = useState([]);
 
     const [organVoList, setOrganVoList] = useState([]);
-    const loadOrganVoList = () => {
-        // const companyNo = 1;
-        // fetch(`http://127.0.0.1:8888/app/organ/list?loginMemberNo=${loginMemberNo}`)
-        // fetch(`http://127.0.0.1:8888/app/member/companyNo?loginMemberNo=${loginMemberNo}`)
-        // .then(resp => resp.json())
-        // .then(data => {
-        //     setLoginMemberVo(data.loginMemberVo);
-        //     console.log("데이터 갖고옴");
-        //     console.log(data.voList);
 
-        //     if (data.voList && Array.isArray(data.voList)) {
-        //         setOrganVoList(data.voList);
-        //     } else {
-        //         console.error('Data is not an array:', data);
-        //         setOrganVoList([]); // 데이터가 배열이 아닌 경우 빈 배열로 설정
-        //     }
-        // })
-        // .catch(error => {
-        //     console.error('Fetch error:', error);
-        //     setOrganVoList([]); // 에러 발생 시 빈 배열로 설정
-        // });
+    const loadOrganVoList = () => {
+        const loginMemberNo = sessionStorage.getItem("loginMemberNo");
+
+        console.log(loginMemberNo);
         fetch(`http://127.0.0.1:8888/app/organ/list?loginMemberNo=${loginMemberNo}`)
         .then(resp => resp.json())
         .then(data => {
@@ -162,64 +177,6 @@ const OrganList = () => {
         closeModal();
     }
 
-
-    // return (
-    //     <StyledOrganListDiv>
-    //     <h1>조직도 목록 조회</h1>
-    //     <button onClick={handleOrganWrite}>조직도 작성</button>
-    //          {
-    //         Array.isArray(organVoList) && organVoList.length === 0
-    //         ?
-    //         <div>로딩 중...</div>
-    //         :
-    //         Object.entries(groupByDepartmentName(organVoList)).map(([departmentName, members]) => (
-    //             <StyledTable key={departmentName}>
-    //                 <thead>
-    //                     <tr className="depart-header">
-    //                         <th colSpan="5">부서 : {departmentName}</th>
-    //                     </tr>
-    //                     <tr>
-    //                         <th>프로필</th>
-    //                         <th>이름</th>
-    //                         <th>직책</th>
-    //                         <th>전화번호</th>
-    //                         <th>이메일</th>
-    //                     </tr>
-    //                 </thead>
-    //                 <tbody>
-    //                 {members.map(member => (
-    //                         <tr key={member.no} onClick={() => openModal(member)}>
-    //                             <td>
-    //                             {member.profile && <img src={`/path/to/your/images/${member.profile}`} alt="Profile" style={{ width: '50px', height: '50px' }}/>}
-    //                                 </td>
-    //                             <td>{member.name}</td>
-    //                             <td>{member.positionName}</td>
-    //                             <td>{member.tel}</td>
-    //                             <td>{member.email}</td>
-    //                         </tr>
-    //                     ))}
-    //                     {/* {members.map(member => (
-    //                         <tr key={member.no}>
-    //                             <td>{member.name}</td>
-    //                             <td>{member.positionNo}</td>
-    //                             <td>{member.tel}</td>
-    //                             <td>{member.email}</td>
-    //                         </tr>
-    //                     ))} */}
-    //                 </tbody>
-    //             </StyledTable>
-    //         ))
-    //     }
-    //         <OrganModal
-    //             modalIsOpen={modalIsOpen}
-    //             selectedVo={selectedVo}
-    //             closeModal={closeModal}
-    //             navigateToEdit={navigateToEdit}
-    //             onDelete={handleDelete}
-    //             organ={selectedVo}
-    //         />
-    // </StyledOrganListDiv>
-    // );
     return (
         <StyledOrganListDiv>
             <h1>조직도</h1>
@@ -231,7 +188,7 @@ const OrganList = () => {
                     <StyledTable key={departName}>
                         <thead>
                             <tr className="depart-header">
-                                <th colSpan="4">부서: {departName}</th>
+                                <th colSpan="4"> {departName}</th>
                             </tr>
                             <tr>
                                 {/* <th>프로필</th> */}
