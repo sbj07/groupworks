@@ -15,6 +15,13 @@ export const StyledModal = styled.div`
     border-radius: 10px;
     box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
     max-width: 500px;
+    h2 {
+        text-align: center; // h2 태그 내용만 가운데 정렬
+    }
+    
+    .button-container {
+        text-align: center; // 버튼을 오른쪽으로 정렬
+    }
 `;
 
 export const Overlay = styled.div`
@@ -71,17 +78,19 @@ const OrganModal = ({ modalIsOpen, selectedVo, closeModal, navigateToEdit, onDel
             } }}
         >
             <StyledModal>
-            <h2>부서원 정보</h2>
             {selectedVo && (
                 <div>
-                    <p>이름: {selectedVo.name}</p>
+                    <h2>{selectedVo.name}</h2>
+                    <br />
                     <p>부서: {selectedVo.departName}</p>
                     <p>직책: {selectedVo.positionName}</p>
                     <p>번호: {selectedVo.tel}</p>
                     <p>이메일: {selectedVo.email}</p>
+                    <div className="button-container">
                     {/* <button onClick={navigateToEdit}>수정</button>
                     <button onClick={navigateToDelete}>삭제</button> */}
                     <button onClick={closeModal}>닫기</button>
+                    </div>
                 </div>
             )}
             </StyledModal>

@@ -92,17 +92,13 @@
 <!-- 	    AND M.DEL_YN = 'N' -->
 <!-- 	    ORDER BY M.POSITION_NO DESC, M.DEPART_NO -->
 	SELECT
-			C.NAME as companyName
-		    , O.PROFILE
-		    , D.NAME as departName
+		    D.NAME as departName
 		    , M.NAME
 		    , P.NAME as positionName
 		    , M.TEL
 		    , M.EMAIL
 		FROM MEMBER M
-		JOIN COMPANY C ON M.COMPANY_NO = C.NO
 		JOIN DEPARTMENT D ON M.DEPART_NO = D.NO
-		JOIN ORGAN O ON M.NO = O.ORG_NO
 		JOIN POSITION P ON M.POSITION_NO = P.NO
 		WHERE DEL_YN = 'N'
 		AND M.COMPANY_NO = (

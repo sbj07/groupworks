@@ -28,6 +28,9 @@ const NoticeEdit = () => {
     const [categoryList, setCategoryList] = useState([]);
     const [departList, setDepartList] = useState([]);
 
+    const loginMemberNo = sessionStorage.getItem("loginMemberNo");
+    const [loginMemberVo, setLoginMemberVo] = useState([]);
+
     const handleChange = (e) => {
         setEditedNotice({ ...editedNotice, [e.target.name]: e.target.value });
     };
@@ -92,6 +95,12 @@ const NoticeEdit = () => {
             }
         });
 
+        fetch(`http://127.0.0.1:8888/app/api/member/${loginMemberNo}`)
+        .then( resp => resp.json() )
+        .then( data => {
+            setLoginMemberVo(data.loginMemberVo);
+        });
+        
 
     },[]);
 
@@ -111,7 +120,7 @@ const NoticeEdit = () => {
 
     const DepartListOption = () => {
         return (
-            <Form.Select name="depart" value={editedNotice.depart} 
+            <Form.Select name="openDepart" value={editedNotice.openDepart} 
             onChange={handleChange} >
                 <option value=''>공개부서</option>
                 {
@@ -136,6 +145,8 @@ const NoticeEdit = () => {
         <StyledNoticeEditDiv>
             <h1>공지사항 수정</h1>
             <form onSubmit={handleSubmit}>
+                <label>작성자 : {loginMemberVo.name}</label>
+                <br />
                 <label>
                     제목:
                     <input

@@ -132,7 +132,15 @@
 	
 <!-- 	전체 공지사항 수 조회 -->
 	<select id="getListCount" resultType="int">
-    	SELECT COUNT(*) FROM NOTICE
+   	    SELECT COUNT(*)
+	    FROM NOTICE N
+	    JOIN MEMBER M ON N.MEMBER_NO = M.NO
+	    WHERE M.COMPANY_NO = (
+	        SELECT COMPANY_NO
+	        FROM MEMBER
+	        WHERE NO = #{loginMemberNo}
+	    )
+	    AND N.DELETE_YN = 'N'
 	</select>
 	
 
@@ -143,7 +151,7 @@
 	*
 	FROM (
         SELECT
-            ROW_NUMBER() OVER (ORDER BY  N.NOTICE_NO) AS RN,
+            ROW_NUMBER() OVER (ORDER BY N.NOTICE_NO DESC) AS RN,
             N.NOTICE_NO
             , N.MEMBER_NO
             , M.NAME AS MEMBER_NAME
@@ -169,8 +177,6 @@
         AND N.DELETE_YN = 'N')
 	WHERE RN BETWEEN #{startRow} AND #{lastRow}
 </select>
-
-
 
 
 </mapper>

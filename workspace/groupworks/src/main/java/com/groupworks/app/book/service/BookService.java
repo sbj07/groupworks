@@ -51,7 +51,7 @@ public class BookService {
 //	public List<BookVo> listByDateRange(String startDate, String endDate) {
 //	    return dao.listByDateRange(sst, startDate, endDate);
 //	}
-    public List<BookVo> listByDateRange(String startDate, String endDate) {
+    public List<BookVo> listByDateRange(String startDate, String endDate, String memberName) {
         if ((startDate == null || startDate.isEmpty()) && (endDate == null || endDate.isEmpty())) {
             return dao.list(sst); // 모든 목록 조회
         }
@@ -61,7 +61,7 @@ public class BookService {
             LocalDate start = LocalDate.parse(startDate, formatter);
             LocalDate end = LocalDate.parse(endDate, formatter);
 
-            return dao.listByDateRange(sst, startDate, endDate);
+            return dao.listByDateRange(sst, startDate, endDate, memberName);
         } catch (DateTimeParseException e) {
             // 잘못된 날짜 형식 처리
             return dao.list(sst);

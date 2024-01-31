@@ -58,13 +58,19 @@
                 , TO_CHAR(B.BOOK_DATE, 'YYYY-MM-DD HH24:MI') AS BOOK_DATE
                 , TO_CHAR(B.UPDATE_DATE, 'YYYY-MM-DD HH24:MI') AS UPDATE_DATE
                 , TO_CHAR(B.CANCEL_DATE, 'YYYY-MM-DD HH24:MI') AS CANCEL_DATE
-            FROM BOOK B
-            JOIN MEMBER M ON B.MEMBER_NO = M.NO
-            WHERE B.START_DATE &gt;= #{startDate}
-            AND B.END_DATE &lt;= #{endDate}
-            AND B.CANCEL_DATE IS NULL
+		    FROM BOOK B
+		    JOIN MEMBER M ON B.MEMBER_NO = M.NO
+		    WHERE CANCEL_DATE IS NULL
+		    <if test="startDate != null and endDate != null">
+		        AND B.START_DATE &gt;= #{startDate}
+		        AND B.END_DATE &lt;= #{endDate}
+		    </if>
+		    <if test="memberName != null and memberName != ''">
+		        AND M.NAME LIKE '%' || #{memberName} || '%' -- 예약자명으로 필터링
+		    </if>
             ORDER BY B.BOOK_NO DESC
         </when>
+
         <otherwise>
             SELECT
                 B.BOOK_NO

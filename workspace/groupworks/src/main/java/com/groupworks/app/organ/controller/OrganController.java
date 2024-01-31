@@ -100,7 +100,7 @@ public class OrganController {
 		
 		MemberVo loginMember = memberService.getLoginMember(loginMemberNo);
 		
-		List<OrganVo> voList = service.list(loginMember);
+		List<OrganVo> voList = service.list(loginMemberNo);
 		
 		Map<String, Object> map = new HashMap<>();
 		map.put("msg", "good");
