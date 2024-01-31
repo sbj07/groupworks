@@ -146,9 +146,6 @@ const BookList = () => {
         navigate('/book/insert');
     };
 
-
-//////////////////
-
     const [modalIsOpen, setIsOpen] = useState(false);
     const [selectedVo, setSelectedVo] = useState(null);
 
@@ -196,7 +193,6 @@ const BookList = () => {
                     예약자명:
                     <input type="text" value={searchName} onChange={handleSearchNameChange} />
                 </label>
-                {/* <button onClick={handleSearch}>조회</button> */}
             </div>
             <StyledTable>
                 <thead>

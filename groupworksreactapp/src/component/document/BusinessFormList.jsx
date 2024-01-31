@@ -82,6 +82,7 @@ const BusinessTripFormList = ({}) => {
     const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
     const [loginMember, setLoginMember] = useState([]);
     
+    // 미사용 함수
     const handleClick = () => {
         navigate('/document/businessWrite');
     };

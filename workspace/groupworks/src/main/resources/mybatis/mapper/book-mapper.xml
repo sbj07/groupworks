@@ -97,10 +97,6 @@
     </choose>
 </select>
 
-
-
-
-
 <!-- 상세 조회 -->
 	<select id="detail" resultType="com.groupworks.app.book.vo.BookVo">
 		SELECT
@@ -115,7 +111,6 @@
 		    , CANCEL_DATE
 		FROM BOOK
 		WHERE BOOK_NO = #{bookNo}
-<!-- 		AND CANCEL_DATE = NULL -->
 	</select>
 
 <!-- 수정 -->
