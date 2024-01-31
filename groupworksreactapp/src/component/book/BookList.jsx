@@ -177,12 +177,12 @@ const BookList = () => {
             <h1>예약 조회</h1>
             <button onClick={handleBookWrite}>예약 신청</button>
             {showModal && <BookModal closeModal={handleBookWrite} userName={loginMemberName}/>}
-            <div>
+            {/* <div>
                 <label>
                     예약자명:
                     <input type="text" value={searchName} onChange={handleSearchNameChange} />
                 </label>
-            </div>
+            </div> */}
             <div>
                 <label>
                     시작 날짜:
@@ -192,7 +192,11 @@ const BookList = () => {
                     종료 날짜:
                     <input type="date" name="endDate" value={endDate} onChange={handleDateChange} />
                 </label>
-                <button onClick={handleSearch}>조회</button>
+                <label>
+                    예약자명:
+                    <input type="text" value={searchName} onChange={handleSearchNameChange} />
+                </label>
+                {/* <button onClick={handleSearch}>조회</button> */}
             </div>
             <StyledTable>
                 <thead>

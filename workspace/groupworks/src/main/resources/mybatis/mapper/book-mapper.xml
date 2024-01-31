@@ -86,6 +86,12 @@
             FROM BOOK B
             JOIN MEMBER M ON B.MEMBER_NO = M.NO
             WHERE B.CANCEL_DATE IS NULL
+            		AND M.COMPANY_NO = (
+			                    SELECT 
+			                    	COMPANY_NO
+			                    FROM MEMBER
+			                    WHERE NO = #{loginMemberNo}
+			                    )
             ORDER BY B.BOOK_NO DESC
         </otherwise>
     </choose>
