@@ -248,7 +248,7 @@ const VacationFormList = ({}) => {
         <div>
             <button onClick={() => setCurrentPage(currentPage - 1)} disabled={currentPage === 1}>이전</button>
             <span>{currentPage}</span>
-            <button onClick={() => setCurrentPage(currentPage + 1)} disabled={currentPage === totalPages}>다음</button>
+            <button onClick={() => setCurrentPage(currentPage + 1)} disabled={currentPage >= totalPages}>다음</button>
         </div>
         );
     };
@@ -418,7 +418,7 @@ const VacationFormList = ({}) => {
                     {
                         formList.length === 0
                         ?
-                        <h3>등록한 결재 목록이 없습니다.</h3>
+                        <h3>Loading</h3>
                         :
                         formList.map( vo => <tr key = {vo.no}>
                             <td >{vo.no}</td>    
@@ -464,7 +464,7 @@ const VacationFormList = ({}) => {
                     {
                         applyList.length === 0
                         ?
-                        <h3>처리할 결재 목록이 없습니다.</h3>
+                        <h3>Loading</h3>
                         :
                         applyList.map( vo => <tr key = {vo.no}>
                             <td>{vo.no}</td>    
