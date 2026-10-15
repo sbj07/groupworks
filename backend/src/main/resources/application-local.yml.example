@@ -1,0 +1,12 @@
+# 이 파일을 application-local.yml 로 복사한 뒤 값을 채우세요.
+# application-local.yml 은 .gitignore 에 등록되어 있어 커밋되지 않습니다.
+spring:
+  datasource:
+    url: jdbc:oracle:thin:@127.0.0.1:1521:xe
+    username: C##GROUPWORKS
+    password: change-me
+
+app:
+  jwt:
+    # 32바이트 이상 임의 문자열
+    secret: change-me-to-a-random-string-of-at-least-32-bytes

@@ -1,0 +1,40 @@
+server:
+  port: 8888
+  servlet:
+    # 프론트가 http://127.0.0.1:8888/app/... 으로 호출하므로 기존 컨텍스트 경로 유지
+    context-path: /app
+    encoding:
+      charset: UTF-8
+      force: true
+
+spring:
+  profiles:
+    active: ${SPRING_PROFILES_ACTIVE:local}
+  datasource:
+    driver-class-name: oracle.jdbc.OracleDriver
+    url: ${DB_URL:jdbc:oracle:thin:@127.0.0.1:1521:xe}
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+    hikari:
+      maximum-pool-size: 20
+      connection-timeout: 3000
+  servlet:
+    multipart:
+      max-file-size: 5MB
+      max-request-size: 10MB
+
+mybatis:
+  # 별칭(typeAlias), mapUnderscoreToCamelCase 등은 기존 config.xml 그대로 사용
+  config-location: classpath:mybatis/config.xml
+  mapper-locations: classpath:mybatis/mapper/*-mapper.xml
+
+app:
+  jwt:
+    secret: ${JWT_SECRET}
+  upload-dir: ${UPLOAD_DIR:./uploads}
+  cors:
+    allowed-origins: ${CORS_ALLOWED_ORIGINS:http://localhost:3000,http://127.0.0.1:3000}
+
+logging:
+  level:
+    com.groupworks.app: info
