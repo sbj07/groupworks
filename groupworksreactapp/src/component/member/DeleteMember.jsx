@@ -3,9 +3,9 @@ import { Button, Form, Table } from 'react-bootstrap';
 import styled from 'styled-components';
 
 const StyledDeleteDiv = styled.div`
-    margin-top: 10vh;
+    overflow-x: auto;
     & > table {
-        width: 70vw;
+        width: 100%;
     }
 `;
 const DeleteMember = () => {

@@ -1,43 +1,46 @@
 import React, { useEffect } from 'react';
 import styled from 'styled-components';
+import { useNavigate } from 'react-router-dom';
 import Main from './Main';
 import Sidebar from './sidebar/Sidebar';
-import { useNavigate } from 'react-router-dom';
+import Topbar from './Topbar';
+import useLoginMember from '../hooks/useLoginMember';
 
-const StyledLayoutDiv = styled.div`
-    width: 100vw;
-    height: 100%;
-    background-color: white;
-    display: grid;
-    grid-template-columns: 1fr 8fr;
-    grid-template-rows: 1fr;
-    place-items: center center;
-    grid-gap: 2vw;
-    a{
-        color:inherit;
-        text-decoration: none;
-        &:hover{
-            color: gray;
-        }
-    }
+// 사이드바는 화면 높이에 고정되고, 오른쪽 본문만 스크롤된다.
+const StyledLayout = styled.div`
+    min-height: 100vh;
+`;
+
+const Content = styled.div`
+    margin-left: var(--gw-sidebar-width);
+    min-width: 0;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
 `;
 
 const Layout = () => {
-    const loginMemberNo = sessionStorage.getItem("loginMemberNo");
+    const loginMemberNo = sessionStorage.getItem('loginMemberNo');
     const navigate = useNavigate();
+    const member = useLoginMember();
+
     useEffect(() => {
         if (loginMemberNo === null) {
-            navigate("/login");
+            navigate('/login');
         }
     }, [loginMemberNo, navigate]);
 
+    if (loginMemberNo === null) return null;
+
     return (
-        loginMemberNo !== null && 
-        <StyledLayoutDiv>
-            <Sidebar />
-            <Main />
-        </StyledLayoutDiv>
+        <StyledLayout>
+            <Sidebar member={member} />
+            <Content>
+                <Topbar member={member} />
+                <Main />
+            </Content>
+        </StyledLayout>
     );
 };
 
-export default Layout;  
+export default Layout;

@@ -78,12 +78,12 @@ section > .index_section2 table{
   line-height: 40px;
   width: 1350px;
   text-align: center;
-  border: 1px solid black;
+  border: 1px solid var(--gw-border);
   border-radius: 8px;
 }
 
 #e-pay-list th{
-  border-bottom: 1px solid black;
+  border-bottom: 1px solid var(--gw-border);
 }
 
 #e-pay-list td{
@@ -124,7 +124,7 @@ section > .index_section2 table{
   border: none;
 }
 #table2 button{
-  border-radius: 30px;
+  border-radius: 8px;
   font-size: 20px;
   background: none;
 }
@@ -175,7 +175,7 @@ section > .index_section2 table{
    }
    
 table, th, td {
-  border: 1.5px solid black; /* 검은색 테두리 적용 */
+  border: 1.1px solid var(--gw-border); /* 검은색 테두리 적용 */
 }
 
 th, td {
@@ -183,8 +183,8 @@ th, td {
 }
    .form-radio::before{ border-radius: 50%; }
    .input-chek, .input-radio{ display: none; }
-   .input-chek:checked + .form-chek::before, .input-radio:checked + .form-radio::before{ background: #5b18ff; }
-   .input-chek:checked + .form-chek, .input-radio:checked + .form-radio{ color: #5b18ff; }
+   .input-chek:checked + .form-chek::before, .input-radio:checked + .form-radio::before{ background: var(--gw-primary); }
+   .input-chek:checked + .form-chek, .input-radio:checked + .form-radio{ color: var(--gw-primary); }
    .leaveDetailTextArea { font-size: 25px; }
 `;
 

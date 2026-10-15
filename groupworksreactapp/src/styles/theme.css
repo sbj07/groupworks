@@ -1,0 +1,259 @@
+@import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css');
+
+/* ---------- 디자인 토큰 ---------- */
+:root {
+  --gw-navy: #0f2a78;
+  --gw-navy-dark: #0a1e58;
+  --gw-navy-active: rgba(255, 255, 255, 0.14);
+  --gw-primary: #2459e0;
+  --gw-primary-hover: #1b47b8;
+  --gw-primary-soft: #e8efff;
+  --gw-primary-soft-hover: #d6e2ff;
+  --gw-success: #1f9d6b;
+  --gw-danger: #e5484d;
+  --gw-warning: #f5a524;
+
+  --gw-bg: #f3f5f9;
+  --gw-surface: #ffffff;
+  --gw-surface-2: #f8f9fc;
+  --gw-row-hover: #f1f4fb;
+  --gw-border: #e5e8ef;
+  --gw-text: #1d2433;
+  --gw-text-muted: #6b7280;
+
+  --gw-radius: 14px;
+  --gw-radius-sm: 8px;
+  --gw-shadow: 0 1px 2px rgba(16, 24, 40, 0.04), 0 4px 16px rgba(16, 24, 40, 0.06);
+  --gw-shadow-sm: 0 1px 3px rgba(16, 24, 40, 0.08);
+
+  --gw-sidebar-width: 232px;
+  --gw-topbar-height: 64px;
+
+  /* Bootstrap 기본 색을 같은 톤으로 */
+  --bs-primary: var(--gw-primary);
+  --bs-primary-rgb: 36, 89, 224;
+  --bs-body-font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Malgun Gothic', sans-serif;
+  --bs-body-color: var(--gw-text);
+  --bs-border-color: var(--gw-border);
+}
+
+/* ---------- 기본 ---------- */
+html, body, #root {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--gw-bg);
+  color: var(--gw-text);
+  font-family: var(--bs-body-font-family);
+  font-size: 14px;
+  -webkit-font-smoothing: antialiased;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+h1, h2, h3, h4 {
+  color: var(--gw-text);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+h1 { font-size: 22px; }
+h2 { font-size: 18px; }
+h3 { font-size: 16px; }
+
+/* ---------- 버튼 ---------- */
+.btn {
+  border-radius: var(--gw-radius-sm);
+  font-weight: 600;
+  font-size: 13px;
+  padding: 7px 14px;
+}
+
+.btn-lg {
+  font-size: 14px;
+  padding: 10px 18px;
+}
+
+.btn-primary {
+  --bs-btn-bg: var(--gw-primary);
+  --bs-btn-border-color: var(--gw-primary);
+  --bs-btn-hover-bg: var(--gw-primary-hover);
+  --bs-btn-hover-border-color: var(--gw-primary-hover);
+  --bs-btn-active-bg: var(--gw-primary-hover);
+  --bs-btn-active-border-color: var(--gw-primary-hover);
+}
+
+.btn + .btn {
+  margin-left: 6px;
+}
+
+/* 컴포넌트 안의 기본 <button> 도 같은 톤 */
+button:not(.btn):not(.fc-button):not(.gw-reset) {
+  font-family: inherit;
+}
+
+/* ---------- 폼 ---------- */
+.form-control,
+.form-select {
+  border-radius: var(--gw-radius-sm);
+  border-color: var(--gw-border);
+  font-size: 14px;
+  padding: 9px 12px;
+}
+
+.form-control:focus,
+.form-select:focus {
+  border-color: var(--gw-primary);
+  box-shadow: 0 0 0 3px rgba(36, 89, 224, 0.15);
+}
+
+.form-label {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--gw-text-muted);
+  margin-bottom: 4px;
+}
+
+/* ---------- 테이블 ---------- */
+table {
+  font-size: 13px;
+}
+
+.table {
+  --bs-table-hover-bg: var(--gw-row-hover);
+}
+
+.table > thead th {
+  background: var(--gw-surface-2);
+  color: var(--gw-text-muted);
+  font-weight: 600;
+  border-bottom: 1px solid var(--gw-border);
+}
+
+/* ---------- FullCalendar ---------- */
+.fc {
+  --fc-border-color: var(--gw-border);
+  --fc-button-bg-color: var(--gw-surface);
+  --fc-button-border-color: var(--gw-border);
+  --fc-button-text-color: var(--gw-text);
+  --fc-button-hover-bg-color: var(--gw-surface-2);
+  --fc-button-hover-border-color: var(--gw-border);
+  --fc-button-active-bg-color: var(--gw-primary);
+  --fc-button-active-border-color: var(--gw-primary);
+  --fc-event-bg-color: var(--gw-primary);
+  --fc-event-border-color: var(--gw-primary);
+  --fc-today-bg-color: var(--gw-primary-soft);
+  font-size: 13px;
+}
+
+.fc .fc-toolbar-title {
+  font-size: 18px;
+  font-weight: 700;
+}
+
+.fc .fc-button {
+  border-radius: var(--gw-radius-sm);
+  font-size: 13px;
+  font-weight: 600;
+  box-shadow: none !important;
+}
+
+.fc .fc-col-header-cell-cushion,
+.fc .fc-daygrid-day-number {
+  color: var(--gw-text-muted);
+  font-weight: 600;
+}
+
+/* ---------- 모달 (react-modal) ---------- */
+.ReactModal__Content {
+  border: none !important;
+  border-radius: var(--gw-radius) !important;
+  box-shadow: 0 20px 48px rgba(16, 24, 40, 0.18) !important;
+}
+
+/* ---------- 공통 카드 ---------- */
+.gw-card {
+  background: var(--gw-surface);
+  border: 1px solid var(--gw-border);
+  border-radius: var(--gw-radius);
+  box-shadow: var(--gw-shadow);
+}
+
+.gw-scroll::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+.gw-scroll::-webkit-scrollbar-thumb {
+  background: rgba(107, 114, 128, 0.35);
+  border-radius: 8px;
+}
+
+/* ---------- 화면별 표를 같은 모양으로 ----------
+   기존 컴포넌트마다 제각각인 표 머리글/행 색을 카드 안에서는 통일한다. */
+.gw-card table:not(.fc table) {
+  width: 100%;
+  border-collapse: collapse !important;
+  border-spacing: 0 !important;
+  box-shadow: none !important;
+}
+
+.gw-card table:not(.fc table) th {
+  background: var(--gw-surface-2) !important;
+  color: var(--gw-text-muted) !important;
+  font-weight: 600;
+  font-size: 12px;
+  padding: 10px 12px !important;
+  border: none !important;
+  border-bottom: 1px solid var(--gw-border) !important;
+  border-radius: 0 !important;
+  white-space: nowrap;
+}
+
+.gw-card table:not(.fc table) td {
+  background: transparent !important;
+  white-space: nowrap;
+  padding: 11px 12px !important;
+  border: none !important;
+  border-bottom: 1px solid var(--gw-border) !important;
+  border-radius: 0 !important;
+}
+
+.gw-card table:not(.fc table) tbody tr {
+  background: transparent !important;
+}
+
+.gw-card table:not(.fc table) tbody tr:hover td {
+  background: var(--gw-row-hover) !important;
+}
+
+@media (max-width: 900px) {
+  :root {
+    --gw-sidebar-width: 68px;
+  }
+}
+
+/* 클래스 없이 쓰인 기본 버튼(페이지 이동 등) */
+.gw-card button:not([class]) {
+  padding: 6px 12px;
+  border: 1px solid var(--gw-border);
+  border-radius: var(--gw-radius-sm);
+  background: var(--gw-surface);
+  color: var(--gw-text);
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.gw-card button:not([class]):hover:not(:disabled) {
+  border-color: var(--gw-primary);
+  color: var(--gw-primary);
+}
+
+.gw-card button:not([class]):disabled {
+  opacity: 0.45;
+}

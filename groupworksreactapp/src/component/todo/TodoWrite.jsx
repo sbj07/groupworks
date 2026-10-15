@@ -38,11 +38,11 @@ const StyledTodoWriteDiv = styled.div`
           border-radius: 5px;
           border: none;
           color: white;
-          background: #6e8efb;
+          background: var(--gw-primary);
           cursor: pointer;
           transition: background-color 0.2s ease-in-out;
           &:hover {
-            background-color: #5a7bda;
+            background-color: var(--gw-primary);
           }
         }
       }

@@ -1,58 +1,101 @@
 import React, { useEffect, useState } from 'react';
-import { Button, Form } from 'react-bootstrap';
-import { useNavigate } from 'react-router-dom';
+import { Button } from 'react-bootstrap';
 import styled from 'styled-components';
 import EditMember from '../member/EditMember';
+import Card from '../common/Card';
+import { Avatar } from '../Topbar';
 
-const UserInfoDiv = styled.div`
-    display: grid;
-    grid-template-rows: 3fr 1fr; // 첫 번째 열을 3:1 비율로 2개의 행으로 구성
-    gap: 10px; // 내부 그리드 간격
-
-`;
-const StyledInfoDiv = styled.div`
+const Profile = styled.div`
     display: flex;
     flex-direction: column;
-    background-color: white;
-    border: 2px solid black;
-    border-radius: 30px;
     align-items: center;
-    & > div {
-        text-align: center;
+    text-align: center;
+
+    & > strong {
+        margin-top: 12px;
+        font-size: 18px;
+    }
+
+    & > span {
+        margin-top: 2px;
+        color: var(--gw-text-muted);
+        font-size: 13px;
     }
 `;
 
-const StyledAnnualDiv = styled.div`
-    border: 2px solid black;
-    border-radius: 30px;
-    display: flex;
-    flex-direction: column;
-    background-color: white;
-    align-items: center;
-    justify-content: center;
+const Clock = styled.div`
+    margin: 18px 0 16px;
+    font-size: 30px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    font-variant-numeric: tabular-nums;
+    text-align: center;
 `;
+
+const Stats = styled.div`
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    margin-bottom: 16px;
+
+    & > div {
+        padding: 12px;
+        border-radius: 10px;
+        background: var(--gw-surface-2);
+        text-align: center;
+    }
+
+    & small {
+        display: block;
+        color: var(--gw-text-muted);
+        font-size: 12px;
+    }
+
+    & b {
+        font-size: 18px;
+    }
+`;
+
+const Actions = styled.div`
+    display: grid;
+    gap: 6px;
+
+    & .btn + .btn {
+        margin-left: 0;
+    }
+`;
+
+const useClock = () => {
+    const [now, setNow] = useState(new Date());
+    useEffect(() => {
+        const timer = setInterval(() => setNow(new Date()), 1000);
+        return () => clearInterval(timer);
+    }, []);
+    return [now.getHours(), now.getMinutes(), now.getSeconds()]
+        .map((n) => String(n).padStart(2, '0'))
+        .join(' : ');
+};
 
 const UserInfoMain = () => {
     const loginMemberNo = sessionStorage.getItem("loginMemberNo");
-    const navigate = useNavigate();
-    const [loginMemberVo, setLoginMemberVo] = useState([]);
+    const [loginMemberVo, setLoginMemberVo] = useState({});
     const [totalDays, setTotalDays] = useState();
     const [openModal, setOpenModal] = useState(false);
+    const time = useClock();
 
-    
     useEffect( () => {
         fetch(`http://127.0.0.1:8888/app/api/member/${loginMemberNo}`)
         .then( resp => resp.json() )
         .then( data => {
-            setLoginMemberVo(data.loginMemberVo);
+            setLoginMemberVo(data.loginMemberVo ?? {});
         });
-        
+
         fetch(`http://127.0.0.1:8888/app/api/attendance/vacation/total/${loginMemberNo}`)
         .then( resp => resp.json() )
         .then( data => {
             setTotalDays(data.totalDays);
         })
-    },[]);
+    },[loginMemberNo]);
 
     const handleMemberEdit = () => {
         setOpenModal(true);
@@ -62,42 +105,26 @@ const UserInfoMain = () => {
     }
 
     return (
-        <UserInfoDiv>
-            <StyledInfoDiv>
-                <div><h2>[회원 정보]</h2></div>
-                <Form.Group className="mb-3" controlId="formBasicEmail">
-                        <Form.Label>이름 : {loginMemberVo.name}</Form.Label>
-                        <br />
-                        <Form.Label>회사명(현재 회사번호) : {loginMemberVo.companyName}</Form.Label>
-                        <br />
-                            <Form.Label>부서명 : { loginMemberVo.departName }</Form.Label>
-                        <br /> 
-                            <Form.Label>직책명 : { loginMemberVo.positionName }</Form.Label>
-                        <br />
-                </Form.Group>
-                {
-                    loginMemberVo.authNo === '1' &&
-                        <>
-                            <div>
-                                <Button onClick={ () => {navigate(`/member/add`,{ state: { cNo : loginMemberVo.companyNo }})} }>구성원 추가</Button>
-                                <Button variant='danger' onClick={ () => {navigate("/member/delete")} }>구성원 수정</Button>
-                            </div>
-                        </>
-                }
-                <br/>
-                    <Button size='lg' onClick={handleMemberEdit}>개인정보 수정</Button>
-                    <EditMember memberNo={loginMemberNo} openModal={openModal} handleCloseModal={handleCloseModal} />
-            </StyledInfoDiv>
-            <StyledAnnualDiv>
-                <div>
-                    사용 연차일 : {totalDays} 일
-                </div>
-                <div>
-                    남은 연차일 : {loginMemberVo.annual} 일
-                </div>
-            </StyledAnnualDiv>
-        </UserInfoDiv>
+        <Card>
+            <Profile>
+                <Avatar $size={72}>{loginMemberVo.name?.charAt(0)}</Avatar>
+                <strong>{loginMemberVo.name}</strong>
+                <span>{loginMemberVo.companyName}</span>
+                <span>{[loginMemberVo.departName, loginMemberVo.positionName].filter(Boolean).join(' · ')}</span>
+            </Profile>
 
+            <Clock>{time}</Clock>
+
+            <Stats>
+                <div><small>사용 연차</small><b>{totalDays ?? 0}</b>일</div>
+                <div><small>남은 연차</small><b>{loginMemberVo.annual ?? 0}</b>일</div>
+            </Stats>
+
+            <Actions>
+                <Button variant="outline-primary" onClick={handleMemberEdit}>개인정보 수정</Button>
+            </Actions>
+            <EditMember memberNo={loginMemberNo} openModal={openModal} handleCloseModal={handleCloseModal} />
+        </Card>
     );
 };
 

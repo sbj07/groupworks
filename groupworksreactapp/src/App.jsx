@@ -1,10 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import './App.css';
 import Layout from './component/Layout';
 import Login from './component/authentication/login/Login';
 import SignUp from './component/authentication/signup/SignUp';
-import 'bootstrap/dist/css/bootstrap.min.css';
 
 function App() {
   const [loggedInUser, setLoggedInUser] = useState(null);

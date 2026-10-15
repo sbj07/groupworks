@@ -20,69 +20,39 @@ function groupByDepartName(list) {
 
 
 const StyledOrganListDiv = styled.div`
-    width: 100vh;
-    height: 100%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    flex-direction: column;
-    overflow: hidden;
-    padding: 20px;
-    margin-left: 50%; // 중앙 정렬 보정
-    box-sizing: border-box;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(420px, 1fr));
+    gap: 16px;
+    align-items: start;
 
-    & > table {
-        max-width: 100%; // 테이블 최대 너비 제한
-        max-height: 90%; // 테이블 최대 높이 제한
-        border-radius: 10px;
-        box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
-    }
-    & > button {
-        margin-top: 20px;
-        width: 20%;
-        font-size: 1.5rem;
-        background-color: #ffefd5; // 버튼 색상 변경
-        border: none;
-        border-radius: 20px; // 둥근 모서리
-        padding: 10px 20px;
-        cursor: pointer;
-        transition: background-color 0.3s ease, transform 0.2s ease;
-        box-shadow: 0 2px 4px rgba(0,0,0,0.1); // 그림자 효과 추가
-    }
-    & > button:hover {
-        background-color: #f0e68c; // 호버 색상 변경
-        transform: translateY(-2px); // 클릭 효과
+    & > h1 {
+        display: none; /* 제목은 상단바에 표시 */
     }
 `;
 
-
 const StyledTable = styled.table`
-    width: 90%;
-    margin-top: 20px;
-    border-collapse: collapse;
-    background-color: #ffffff;
-    border-radius: 15px; // 모서리 둥글게
-    overflow: hidden; // 스크롤바 스타일링을 위한 설정
-    box-shadow: 0 5px 15px rgba(0,0,0,0.1); // 그림자 변경
+    width: 100%;
+    margin: 0;
+    border: 1px solid var(--gw-border);
+    border-radius: var(--gw-radius);
+    overflow: hidden;
+    border-collapse: separate !important;
 
-    & th, & td {
-        border-bottom: 1px solid #eee; // Softer border color
-        padding: 15px; // Increased padding for a more spacious look
+    & .depart-header th {
+        background: var(--gw-surface) !important;
+        color: var(--gw-text) !important;
+        font-size: 15px !important;
+        font-weight: 700;
+        text-align: left;
+        padding: 14px 16px !important;
+    }
+
+    & td {
         text-align: center;
     }
 
-    & .depart-header {
-        background-color: #e6e6fa; 
-        font-size: 1.2em;
-        color: #333;
-    }
-
-    & th, & td {
-        transition: background-color 0.3s ease;
-    }
-
-    & th:hover, & td:hover {
-        background-color: #fafad2; // 셀 호버 배경색 변경
+    & tbody tr {
+        cursor: pointer;
     }
 `;
 

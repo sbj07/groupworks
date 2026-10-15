@@ -9,32 +9,30 @@ import BookMain from './book/BookMain';
 import AddMember from './member/AddMember';
 import DeleteMember from './member/DeleteMember';
 import EditMember from './member/EditMember';
+import Card from './common/Card';
 
-
-const StyledMainDiv = styled.div`
-    width: 100%;
-    height: 100%;
-    display: grid;
-    grid-template-columns: 6fr 4fr; 
-    grid-template-rows: 1fr 1fr;
-    place-items: center center;
-    grid-gap: 1%;
+const StyledMain = styled.main`
+    flex: 1;
+    padding: 24px 28px 40px;
 `;
+
+// 홈을 제외한 화면은 하나의 큰 카드 안에 그린다.
+const Page = ({ children }) => <Card className="gw-page">{children}</Card>;
 
 const Main = () => {
     return (
-        <StyledMainDiv>
+        <StyledMain>
             <Routes>
                 <Route path='/' element={<Home />}></Route>
-                <Route path='/notice/*' element={<NoticeMain />}></Route>
-                <Route path='/document/*' element={<DocumentMain />}></Route>
-                <Route path='/organ/*' element={<OrganMain />}></Route>
-                <Route path='/book/*' element={<BookMain />}></Route>
-                <Route path='/member/add/*' element={<AddMember />}></Route>
-                <Route path='/member/delete/*' element={<DeleteMember />}></Route>
-                <Route path='/member/edit/*' element={<EditMember />}></Route>
+                <Route path='/notice/*' element={<Page><NoticeMain /></Page>}></Route>
+                <Route path='/document/*' element={<Page><DocumentMain /></Page>}></Route>
+                <Route path='/organ/*' element={<Page><OrganMain /></Page>}></Route>
+                <Route path='/book/*' element={<Page><BookMain /></Page>}></Route>
+                <Route path='/member/add/*' element={<Page><AddMember /></Page>}></Route>
+                <Route path='/member/delete/*' element={<Page><DeleteMember /></Page>}></Route>
+                <Route path='/member/edit/*' element={<Page><EditMember /></Page>}></Route>
             </Routes>
-        </StyledMainDiv>
+        </StyledMain>
     );
 };
 

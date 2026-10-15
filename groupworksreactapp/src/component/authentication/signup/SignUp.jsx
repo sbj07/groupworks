@@ -1,27 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import { Button, Form } from 'react-bootstrap';
-import { useNavigate } from 'react-router-dom';
-import styled from 'styled-components';
-
-const StyledSignUpDiv = styled.div`
-    height: 100vh;
-    background-color: #61dafb;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-`;
-
-const StyledSignUpForm = styled.div`
-    display: flex;
-    flex-direction: column;
-    width: 30vw;
-    height: 90vh;
-    align-items: center;
-    justify-content: center;
-    background-color: #effcff;
-    border: 1px solid transparents;
-    border-radius: 15%;
-`;
+import { Button, Col, Form, InputGroup, Row } from 'react-bootstrap';
+import { Link, useNavigate } from 'react-router-dom';
+import AuthLayout, { AuthCard } from '../AuthLayout';
 
 const SignUp = () => {
     const navigate = useNavigate();
@@ -164,59 +144,76 @@ const SignUp = () => {
     };
 
     return (
-        <StyledSignUpDiv>
-            <StyledSignUpForm>
-                <h1>회원가입</h1>
+        <AuthLayout>
+            <AuthCard className="gw-card" $wide>
+                <h1>회사 등록</h1>
+                <p className="sub">관리자 계정을 만들고 회사를 등록합니다.</p>
+
                 <Form onSubmit={handleJoinSubmit}>
                     <Form.Group className="mb-3">
-                        <Form.Label>이름</Form.Label>
-                        <Form.Control size='sm' type="text" placeholder="이름" name='name' onChange={handleInputChange} />
-
-                    <Form.Group>
-                            <Form.Label>ID</Form.Label>
-                            <Form.Control size='sm' type="text" placeholder="ID" name='id'onChange={handleInputChange} />
-                            <Form.Text className="text-muted">
-                                4글자 이상의 아이디를 입력후, 중복체크를 해주세요.
-                            </Form.Text>
-                            <Button size='sm' variant="primary" onClick={handleIdCheck}>
-                                중복체크
-                            </Button>
-                    </Form.Group>
-
-                        <Form.Label>Password</Form.Label>
-                        <Form.Control size='sm' type="password" placeholder="Password" name='pwd' onChange={handleInputChange} />
-
-                        <Form.Label>Email</Form.Label>
-                        <Form.Control size='sm' type="email" placeholder="Email" name='email' onChange={handleInputChange}/>
-
-                        <Form.Label>연락처</Form.Label>
-                        <Form.Control size='sm' type="text" placeholder="연락처" name='tel' onChange={handleInputChange} />
-
-                        <Form.Label>주소</Form.Label>
-                        <Form.Control size='sm' type="text" placeholder="주소" name='address' onChange={handleInputChange} />
-
-                    <Form.Group>
-
                         <Form.Label>회사명</Form.Label>
-                        <Form.Control size='sm' type="text" placeholder="회사명을 입력해주세요." name='name' onChange={handleInputCompany} />
-                        <Button size='sm' variant="primary" onClick={handleCompanyAdd}>
-                            회사 등록
-                        </Button>
+                        <InputGroup>
+                            <Form.Control type="text" placeholder="회사명을 입력해주세요." name='name' onChange={handleInputCompany} />
+                            <Button variant="outline-primary" onClick={handleCompanyAdd}>회사 등록</Button>
+                        </InputGroup>
                     </Form.Group>
 
-                        <Form.Label>부서</Form.Label>
-                        <ListSelectBox prop="depart" list={departList} />
-
-                        <Form.Label>직책</Form.Label>
-                        <ListSelectBox prop="position" list={positionList} />
+                    <Form.Group className="mb-3">
+                        <Form.Label>아이디</Form.Label>
+                        <InputGroup>
+                            <Form.Control type="text" placeholder="4글자 이상" name='id' onChange={handleInputChange} />
+                            <Button variant="outline-primary" onClick={handleIdCheck}>중복체크</Button>
+                        </InputGroup>
                     </Form.Group>
-        
+
+                    <Row className="mb-3">
+                        <Col>
+                            <Form.Label>이름</Form.Label>
+                            <Form.Control type="text" placeholder="이름" name='name' onChange={handleInputChange} />
+                        </Col>
+                        <Col>
+                            <Form.Label>비밀번호</Form.Label>
+                            <Form.Control type="password" placeholder="비밀번호" name='pwd' onChange={handleInputChange} />
+                        </Col>
+                    </Row>
+
+                    <Row className="mb-3">
+                        <Col>
+                            <Form.Label>이메일</Form.Label>
+                            <Form.Control type="email" placeholder="name@company.com" name='email' onChange={handleInputChange}/>
+                        </Col>
+                        <Col>
+                            <Form.Label>연락처</Form.Label>
+                            <Form.Control type="text" placeholder="01012345678" name='tel' onChange={handleInputChange} />
+                        </Col>
+                    </Row>
+
+                    <Form.Group className="mb-3">
+                        <Form.Label>주소</Form.Label>
+                        <Form.Control type="text" placeholder="주소" name='address' onChange={handleInputChange} />
+                    </Form.Group>
+
+                    <Row className="mb-4">
+                        <Col>
+                            <Form.Label>부서</Form.Label>
+                            <ListSelectBox prop="depart" list={departList} />
+                        </Col>
+                        <Col>
+                            <Form.Label>직책</Form.Label>
+                            <ListSelectBox prop="position" list={positionList} />
+                        </Col>
+                    </Row>
+
                     <Button variant="primary" type="submit">
                         가입하기
                     </Button>
                 </Form>
-            </StyledSignUpForm>
-        </StyledSignUpDiv>
+
+                <div className="foot">
+                    이미 계정이 있나요? <Link to="/login">로그인</Link>
+                </div>
+            </AuthCard>
+        </AuthLayout>
     );
 };
 

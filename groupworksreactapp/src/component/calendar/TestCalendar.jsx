@@ -113,7 +113,7 @@ const TestCalendar = ({ refresh }) => {
           // defaultView="dayGridMonth"
           plugins={[dayGridPlugin]}
           aspectRatio="2.5"
-          contentHeight={600}
+          contentHeight={480}
           events={eventList}
           eventClick={handleEventClick}
           />  

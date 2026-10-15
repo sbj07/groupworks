@@ -4,28 +4,23 @@ import { useLocation } from 'react-router-dom';
 import styled from 'styled-components';
 
 const StyledSignUpDiv = styled.div`
-    height: 100vh;
-    /* background-color: #61dafb; */
     display: flex;
     justify-content: center;
-    align-items: center;
 `;
 
 const StyledSignUpForm = styled.div`
-    display: flex;
-    flex-direction: column;
-    width: 30vw;
-    height: 90vh;
-    align-items: center;
-    justify-content: center;
-    background-color: #effcff;
-    border: 3px solid #61dafb;
-    border-radius: 15%;
+    width: 100%;
+    max-width: 560px;
+    padding: 8px 0;
+
+    & > h1 {
+        margin-bottom: 20px;
+    }
 `;
 
 const AddMember = () => {
     const location = useLocation();
-    const cNo = location.state.cNo;
+    const cNo = location.state?.cNo;
     const [departList, setDepartList] = useState([]);
     const [positionList, setPositionList] = useState([]);
 

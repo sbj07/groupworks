@@ -50,14 +50,14 @@ const SubmitButton = styled.button`
     padding: 10px 20px;
     border: none;
     border-radius: 3px;
-    background-color: #007bff;
+    background-color: var(--gw-primary);
     color: white;
     font-size: 1rem;
     cursor: pointer;
     transition: background-color 0.2s;
 
     &:hover {
-        background-color: #0056b3;
+        background-color: var(--gw-primary-hover);
     }
 `;
 

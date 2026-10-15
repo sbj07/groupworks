@@ -1,35 +1,9 @@
 import React, { useState } from 'react';
-import { Button, Form } from 'react-bootstrap';
+import { Alert, Button, Form } from 'react-bootstrap';
 import { Link, useNavigate } from 'react-router-dom';
-import styled from 'styled-components';
+import AuthLayout, { AuthCard } from '../AuthLayout';
+import { API_BASE } from '../../../api/config';
 
-const StyledLoginDiv = styled.div`
-    height: 100vh;
-    background-color: #61dafb;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-`;
-
-const StyeldLoginForm = styled.div`
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
-
-    width: 30%;
-    height: 50%;
-    background-color: #effcff;
-    border: 1px solid white;
-    border-radius: 10%;
-    color: #2c5e6c;
-    font-size: 2rem;
-    & > label {
-        color: black;
-        font-size: 1rem;
-    }
-`;
 const Login = () => {
 
     const navigate = useNavigate();
@@ -37,10 +11,12 @@ const Login = () => {
         id : "" ,
         pwd : ""
     });
+    const [error, setError] = useState('');
+    const [loading, setLoading] = useState(false);
 
     const handleInputChange = (event) => {
         const {name, value} = event.target;
-        
+
         setMemberVo( {
             ...memberVo ,
             [name] : value
@@ -49,47 +25,57 @@ const Login = () => {
 
     // API 호출
     const handleLoginSubmit = (event) => {
-    event.preventDefault();
+        event.preventDefault();
+        setError('');
+        setLoading(true);
 
-    fetch("http://127.0.0.1:8888/app/api/member", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify(memberVo)
-    })
-    .then( resp => resp.json() )
-    .then( data => {
-      if(data.msg === 'okay') {
-        sessionStorage.setItem("loginMemberNo", data.loginMemberNo);
-        navigate("/");
-      }else if(data.errorMsg === 'NoData'){
-        alert("로그인 실패, 조회결과가 없습니다.");
-      }
-    } )
-  };
+        fetch(`${API_BASE}/api/member`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(memberVo)
+        })
+        .then( resp => resp.ok ? resp.json() : { msg: 'nope' } )
+        .then( data => {
+            if(data.msg === 'okay') {
+                sessionStorage.setItem("loginMemberNo", data.loginMemberNo);
+                navigate("/");
+            } else {
+                setError("아이디 또는 비밀번호를 확인해주세요.");
+            }
+        } )
+        .catch( () => setError("서버에 연결할 수 없습니다. 백엔드가 실행 중인지 확인해주세요.") )
+        .finally( () => setLoading(false) );
+    };
 
     return (
-        <StyledLoginDiv>
-            <StyeldLoginForm>
+        <AuthLayout>
+            <AuthCard className="gw-card">
                 <h1>로그인</h1>
-                    <Form onSubmit={handleLoginSubmit}>
-                         <Form.Group className="mb-3" controlId="formBasicEmail">
-                         <Form.Label>아이디</Form.Label>
-                         <Form.Control type="text" placeholder="ID" name='id' onChange={handleInputChange} />
-                        
-                         <Form.Label>패스워드</Form.Label>
-                         <Form.Control  type="password" placeholder="PassWord" name='pwd' onChange={handleInputChange} />
-                     </Form.Group>
-                     <Button variant="primary" type="submit">
-                        LOGIN
-                    </Button>
-                    </Form>
+                <p className="sub">GroupWorks 계정으로 로그인하세요.</p>
 
-                <label>신규 서비스 이용자시면, 아래에 회사등록을 이용하시길 바랍니다.</label>
-                <Link to="/sign-up">이동하기</Link>
-            </StyeldLoginForm>
-        </StyledLoginDiv>
+                {error && <Alert variant="danger" className="py-2">{error}</Alert>}
+
+                <Form onSubmit={handleLoginSubmit}>
+                    <Form.Group className="mb-3" controlId="loginId">
+                        <Form.Label>아이디</Form.Label>
+                        <Form.Control type="text" placeholder="아이디를 입력하세요" name='id' autoComplete="username" onChange={handleInputChange} />
+                    </Form.Group>
+                    <Form.Group className="mb-4" controlId="loginPwd">
+                        <Form.Label>비밀번호</Form.Label>
+                        <Form.Control type="password" placeholder="비밀번호를 입력하세요" name='pwd' autoComplete="current-password" onChange={handleInputChange} />
+                    </Form.Group>
+                    <Button variant="primary" type="submit" disabled={loading}>
+                        {loading ? '로그인 중...' : '로그인'}
+                    </Button>
+                </Form>
+
+                <div className="foot">
+                    처음 이용하시나요? <Link to="/sign-up">회사 등록하기</Link>
+                </div>
+            </AuthCard>
+        </AuthLayout>
     );
 };
 

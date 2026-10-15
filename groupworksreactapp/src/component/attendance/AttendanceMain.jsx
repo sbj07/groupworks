@@ -1,64 +1,63 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
-import { Button } from 'react-bootstrap';
 import AttendanceAdd from './AttendanceAdd';
 import UserInfoMain from './UserInfoMain';
+import Card from '../common/Card';
 
-const StyeldAttendDiv = styled.div`
-    width: 90%;
-    height: 100%;
+const StyledAttend = styled.div`
     display: grid;
-    grid-template-columns: 1fr 1fr; // 두 개의 열로 구성
-    gap: 10px; // 그리드 간격
+    gap: 20px;
 `;
 
-const StyledAttendInputDiv = styled.div`
+const Tabs = styled.div`
     display: grid;
-    grid-template-rows: 1fr 1fr 6fr;
-    border: 2px solid black;
-    border-radius: 5%;
-    & > div {
-        display: flex;
-        align-items: center;
-        justify-content: center;
+    grid-template-columns: 1fr 1fr;
+    gap: 6px;
+    padding: 4px;
+    margin-bottom: 14px;
+    border-radius: 10px;
+    background: var(--gw-surface-2);
+
+    & > button {
+        padding: 8px 0;
+        border: none;
+        border-radius: 8px;
+        background: transparent;
+        color: var(--gw-text-muted);
+        font-weight: 600;
+        font-size: 13px;
+    }
+
+    & > button.active {
+        background: var(--gw-surface);
+        color: var(--gw-primary);
+        box-shadow: var(--gw-shadow-sm);
     }
 `;
 
-const StyledSelectType = styled.div`
-    display: grid;
-    grid-template-columns: 1fr 1fr;
+const Empty = styled.p`
+    margin: 0;
+    color: var(--gw-text-muted);
+    font-size: 13px;
+    text-align: center;
 `;
 
-const AttendanceMain = ( ) => {
-    const [workEvent , setWorkEvent] = useState('');
+const AttendanceMain = () => {
+    const [workEvent, setWorkEvent] = useState('');
 
-    
     return (
-        <StyeldAttendDiv>
+        <StyledAttend>
             <UserInfoMain />
-            <StyledAttendInputDiv>
-                <div>
-                    <h3>일정등록</h3>
-                </div>
-                <StyledSelectType>
-                    <div>
-                        <Button variant='primary' onClick={() => setWorkEvent('outwork')}>출장/외근</Button>
-                    </div>
-                    <div>
-                        <Button variant='primary'onClick={() => setWorkEvent('vacation')}>휴가</Button>
-                    </div>
-                </StyledSelectType>
-                <div>
-
-                {
-                    workEvent === 'outwork' && <AttendanceAdd type={"outwork"} />
-                }
-                {
-                    workEvent === 'vacation' && <AttendanceAdd type={"vacation"} />
-                }                
-                </div>
-            </StyledAttendInputDiv>
-        </StyeldAttendDiv>
+            <Card title="일정 등록">
+                <Tabs>
+                    <button type="button" className={`gw-reset ${workEvent === 'outwork' ? 'active' : ''}`} onClick={() => setWorkEvent('outwork')}>출장 / 외근</button>
+                    <button type="button" className={`gw-reset ${workEvent === 'vacation' ? 'active' : ''}`} onClick={() => setWorkEvent('vacation')}>휴가</button>
+                </Tabs>
+                {workEvent === '' && <Empty>등록할 일정 종류를 선택하세요.</Empty>}
+                {workEvent === 'outwork' && <AttendanceAdd type={"outwork"} />}
+                {workEvent === 'vacation' && <AttendanceAdd type={"vacation"} />}
+            </Card>
+        </StyledAttend>
     );
 };
 

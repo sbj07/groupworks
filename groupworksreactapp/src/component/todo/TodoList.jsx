@@ -25,8 +25,8 @@ const StyledTodoDiv = styled.div`
     }
     th {
       border: none;
-      min-width: 160px;
-      background-color: #6e8efb; // 테이블 헤더 배경색 조정
+      white-space: nowrap;
+      background-color: var(--gw-primary); // 테이블 헤더 배경색 조정
       color: white; 
     }
 
@@ -35,32 +35,32 @@ const StyledTodoDiv = styled.div`
     }
     
     tr:nth-child(odd) {
-      background-color: #fafafa; 
+      background-color: var(--gw-surface-2); 
     }
     tr:hover {
-      background-color: #f1f1f1; 
+      background-color: var(--gw-row-hover); 
     }
     .delete-btn {
-    background-color: #6e8efb;
+    background-color: var(--gw-primary);
     }
   }
   button {
     padding: 8px 16px;
     margin: 0 5px; 
     border: none;
-    border-radius: 20px; 
+    border-radius: 8px; 
     color: white;
     font-weight: bold;
     cursor: pointer;
     transition: background-color 0.3s; 
     &:hover {
-      background-color: #6e8efb; 
+      background-color: var(--gw-primary); 
     }
   }
   & > button {
     width: auto; 
     font-size: 1rem; 
-    background-color: #6e8efb; 
+    background-color: var(--gw-primary); 
     margin-top: 20px; 
   }
 `;
@@ -195,7 +195,7 @@ const TodoList = () => {
                     borderRadius: '5px',
                     border: 'none',
                     color: 'white',
-                    background: '#6e8efb', // 버튼 배경색을 파란색 계열로 설정
+                    background: 'var(--gw-primary)', // 버튼 배경색을 파란색 계열로 설정
                     boxShadow: '0 2px 4px rgba(0, 0, 0, 0.2)', // 버튼에 그림자 효과 추가
                     cursor: 'pointer',
                     transition: 'all 0.2s ease-in-out' // 부드러운 상태 변화를 위한 전환 효과 추가

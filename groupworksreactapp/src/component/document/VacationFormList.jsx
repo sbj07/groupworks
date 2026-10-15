@@ -22,7 +22,7 @@ const StyledVacationFormListDiv = styled.div`
     th, td {
       border: none;
       padding: 15px; // 셀 패딩 조정
-      border: 1px solid #e1e1e1; // 셀 경계선 색상 조정
+      border: 1px solid var(--gw-border); // 셀 경계선 색상 조정
       text-align: center; // 텍스트 왼쪽 정렬
       border-radius: 8px;
     }
@@ -30,7 +30,7 @@ const StyledVacationFormListDiv = styled.div`
     th {
       border: none;
       min-width: 160px;
-      background-color: #5a7bda; // 테이블 헤더 배경색 조정
+      background-color: var(--gw-primary); // 테이블 헤더 배경색 조정
       color: white; // 테이블 헤더 글자색 조정
     }
 
@@ -38,25 +38,25 @@ const StyledVacationFormListDiv = styled.div`
         border: none;
     }
     tr:nth-child(odd) {
-      background-color: #fafafa; // 홀수 줄 배경색 조정
+      background-color: var(--gw-surface-2); // 홀수 줄 배경색 조정
     }
 
     tr:hover {
-      background-color: #f1f1f1; // 마우스 오버 시 배경색 변경
+      background-color: var(--gw-row-hover); // 마우스 오버 시 배경색 변경
     }
 
     button {
       padding: 8px 16px; // 버튼 패딩 조정
       border: none;
-      border-radius: 20px; // 버튼 모서리 둥글게 조정
+      border-radius: 8px; // 버튼 모서리 둥글게 조정
       color: white;
       font-weight: bold;
       cursor: pointer;
       transition: background-color 0.3s; // 배경색 변경 애니메이션 추가
-      background-color: #6e8efb; // 버튼 배경색 변경
+      background-color: var(--gw-primary); // 버튼 배경색 변경
 
       &:hover {
-        background-color: #5a7bda; // 호버 시 버튼 배경색 변경
+        background-color: var(--gw-primary); // 호버 시 버튼 배경색 변경
       }
       
     }  
@@ -227,7 +227,7 @@ const VacationFormList = ({}) => {
                 fontWeight: 'bold',
                 cursor: 'pointer',
                 transition: 'all 0.2s ease',
-                backgroundColor: '#ffc107',
+                backgroundColor: 'var(--gw-warning)',
                 color: 'white'
             }}>반려</button>
             <button onClick={closeRejectionModal}
@@ -436,7 +436,7 @@ const VacationFormList = ({}) => {
                                     borderRadius: '5px',
                                     border: 'none',
                                     color: 'white',
-                                    background: '#d9534f',
+                                    background: 'var(--gw-danger)',
                                     boxShadow: '0 2px 4px rgba(0, 0, 0, 0.2)',
                                     cursor: 'pointer',
                                     transition: 'all 0.2s ease-in-out'
@@ -494,7 +494,7 @@ const VacationFormList = ({}) => {
                                     borderRadius: '5px',
                                     border: 'none',
                                     color: 'white',
-                                    background: '#28a745', // 승인 버튼을 초록색으로 설정
+                                    background: 'var(--gw-success)', // 승인 버튼을 초록색으로 설정
                                     boxShadow: '0 2px 4px rgba(0, 0, 0, 0.2)',
                                     cursor: 'pointer',
                                     transition: 'all 0.2s ease-in-out'
@@ -506,7 +506,7 @@ const VacationFormList = ({}) => {
                                     borderRadius: '5px',
                                     border: 'none',
                                     color: 'white',
-                                    background: '#ffc107', // 반려 버튼을 진한 노란색으로 설정
+                                    background: 'var(--gw-warning)', // 반려 버튼을 진한 노란색으로 설정
                                     boxShadow: '0 2px 4px rgba(0, 0, 0, 0.2)',
                                     cursor: 'pointer',
                                     transition: 'all 0.2s ease-in-out'

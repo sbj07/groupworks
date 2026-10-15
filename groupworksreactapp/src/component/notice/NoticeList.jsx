@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import NoticeModal from './NoticeModal';
+import { API_BASE } from '../../api/config';
 import {FaFileDownload} from 'react-icons/fa';
 
 const StyledTableHeader = styled.th`
@@ -49,22 +50,22 @@ const CenteredButtons = styled.div`
 `;
 
 const LeftAlignedButton = styled.button`
-    background-color: rgba(53, 122, 189, 0.8);
+    background-color: var(--gw-primary);
     color: white;
     border: none;
     padding: 15px 20px;
     cursor: pointer;
-    border-radius: 20px;
+    border-radius: 8px;
     box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
 `;
 
 const RightAlignedButton = styled.button`
-    background-color: rgba(53, 122, 189, 0.8);
+    background-color: var(--gw-primary);
     color: white;
     border: none;
     padding: 10px 15px;
     cursor: pointer;
-    border-radius: 20px;
+    border-radius: 8px;
     box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
     margin-left: auto; // 오른쪽 정렬
 `;
@@ -88,9 +89,8 @@ const StyledNoticeListDiv = styled.div`
     text-align: center;
     /* margin-left: 15%; */
     color: #333; // 텍스트 색상 변경
-    font-family: 'Arial', sans-serif; // 글꼴 변경
     & > table {
-        width: 80%; // 테이블 너비 유지
+        width: 100%;
         border-collapse: separate; // 테이블 테두리 분리
         border-spacing: 0 10px; // 셀 간격 조정
         box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1); // 테이블 그림자 추가
@@ -103,19 +103,19 @@ const StyledNoticeListDiv = styled.div`
         font-size: 14px;
     }
     & > table th {
-        min-width: 120px; // 헤더 최소 너비 설정
-        background-color: rgba(53, 122, 189, 0.8); // 헤더 배경 투명도 조정
+        white-space: nowrap;
+        background-color: var(--gw-primary); // 헤더 배경 투명도 조정
         color: white;
         font-size: 14px; // 글꼴 크기 변경
     }
     & > button {
         width: 10%; // 버튼 너비 조정
-        background-color: rgba(53, 122, 189, 0.8); // 버튼 배경 투명도 조정
+        background-color: var(--gw-primary); // 버튼 배경 투명도 조정
         color: white;
         border: none;
         cursor: pointer;
         margin-top: 20px;
-        border-radius: 20px; // 버튼 둥근 모서리 추가
+        border-radius: 8px; // 버튼 둥근 모서리 추가
         box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2); // 버튼 그림자 추가
     }
     & > h1 {
@@ -124,7 +124,7 @@ const StyledNoticeListDiv = styled.div`
         color: #333; // 헤더 색상 변경
     }
     & th:hover, & td:hover {
-        background-color: #fafad2; // 셀 호버 배경색 변경
+        background-color: var(--gw-row-hover); // 셀 호버 배경색 변경
     }
 
 `;
@@ -180,7 +180,7 @@ const NoticeList = ({ showTopFive, showWriteButton, showPagination, showEditAndD
         // 파일 이름만 추출
         const fileName = filePath.split('/').pop();
         // 서버에서 설정된 정적 파일 경로를 사용
-        const downloadURL = `http://127.0.0.1:8888/resources/upload/notice/img/${fileName}`;
+        const downloadURL = `${API_BASE}${filePath}`;
     
         // a 태그를 생성하여 프로그래매틱하게 클릭 이벤트를 발생시킵니다.
         const link = document.createElement('a');

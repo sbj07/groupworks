@@ -5,44 +5,39 @@ import { useNavigate } from 'react-router-dom';
 
 const StyledBookListDiv = styled.div`
     width: 100%;
-    height: 100%;
-    display: flex;
-    align-items: center;
-    flex-direction: column;
-    text-align: center;
-    margin-left: 50%;
-    color: #333; // 텍스트 색상 변경
-    font-family: 'Open Sans', sans-serif;
-    border-radius: 5px;
-    & > table {
-        width: 80%; // 테이블 너비 유지
-        box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.1); // 테이블 그림자 추가
-    }
-    & > table th, td {
-        padding: 8px; // 패딩 증가
-        background-color: rgba(255, 255, 255, 0.9); // 셀 배경 투명도 조정
-        font-size: 14px;
-    }
-    & > table th {
-        min-width: 120px; // 헤더 최소 너비 설정
-        background-color: rgba(135, 182, 229, 0.8);
-        color: white;
-        font-size: 14px; 
-        border-radius: 5px;
-    }
-    & > button {
-        width: 10%; // 버튼 너비 조정
-        background-color: rgba(135, 182, 229, 0.8); // 버튼 배경 투명도 조정
-        color: white;
-        border: none;
-        cursor: pointer;
-        margin-top: 20px;
-        box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1); // 버튼 그림자 추가
-    }
+
     & > h1 {
-        font-size: 28px; // 헤더 글꼴 크기 변경
-        margin-bottom: 15px; // 여백 조정
-        color: #333; // 헤더 색상 변경
+        display: none; /* 제목은 상단바에 표시 */
+    }
+`;
+
+const Toolbar = styled.div`
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    gap: 12px;
+    margin-bottom: 18px;
+
+    & label {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+        font-size: 12px;
+        font-weight: 600;
+        color: var(--gw-text-muted);
+    }
+
+    & input {
+        min-width: 160px;
+        padding: 8px 10px;
+        border: 1px solid var(--gw-border);
+        border-radius: var(--gw-radius-sm);
+        font-size: 14px;
+        color: var(--gw-text);
+    }
+
+    & > .btn {
+        margin-left: auto;
     }
 `;
 
@@ -71,7 +66,7 @@ const StyledTable = styled.table`
     border-spacing: 0; // 셀 사이의 간격 제거
 
     & th, & td {
-        border-bottom: 1px solid black; // 아래쪽 테두리 추가
+        border-bottom: 1px solid var(--gw-border); // 아래쪽 테두리 추가
         padding: 8px;
         text-align: center;
     }
@@ -172,28 +167,22 @@ const BookList = () => {
     return (
         <StyledBookListDiv>
             <h1>예약 조회</h1>
-            <button onClick={handleBookWrite}>예약 신청</button>
             {showModal && <BookModal closeModal={handleBookWrite} userName={loginMemberName}/>}
-            {/* <div>
+            <Toolbar>
                 <label>
-                    예약자명:
-                    <input type="text" value={searchName} onChange={handleSearchNameChange} />
-                </label>
-            </div> */}
-            <div>
-                <label>
-                    시작 날짜:
+                    시작 날짜
                     <input type="date" name="startDate" value={startDate} onChange={handleDateChange} />
                 </label>
                 <label>
-                    종료 날짜:
+                    종료 날짜
                     <input type="date" name="endDate" value={endDate} onChange={handleDateChange} />
                 </label>
                 <label>
-                    예약자명:
-                    <input type="text" value={searchName} onChange={handleSearchNameChange} />
+                    예약자명
+                    <input type="text" value={searchName} onChange={handleSearchNameChange} placeholder="이름으로 검색" />
                 </label>
-            </div>
+                <button type="button" className="btn btn-primary" onClick={handleBookWrite}>예약 신청</button>
+            </Toolbar>
             <StyledTable>
                 <thead>
                     <tr>
