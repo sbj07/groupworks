@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import BookModal from './BookModal';
 import SearchBox, { SearchField } from '../common/SearchBox';
 import ListLayout from '../common/ListLayout';
-import { API_BASE } from '../../api/config';
+import { api } from '../../api/http';
 import { notify } from '../common/Toast';
 
 import { useNavigate } from 'react-router-dom';
@@ -19,23 +19,6 @@ const StyledBookListDiv = styled.div`
 `;
 
 
-const Button = styled.button`
-    width: 10%; // 버튼 너비 조정
-    background-color: rgba(135, 182, 229, 0.8); // 버튼 배경 투명도 조정
-    color: white;
-    border: none;
-    cursor: pointer;
-    margin-top: 20px;
-    box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1); // 버튼 그림자 추가
-    border-radius: 5px; // 버튼 둥근 모서리 추가
-    padding: 10px 0; // 패딩 추가
-    font-family: 'Open Sans', sans-serif; // 폰트 스타일 추가
-    transition: background-color 0.2s ease-in-out; // 부드러운 색상 변경 효과
-
-    &:hover {
-        background-color: rgba(105, 152, 209, 0.9); // 호버 시 배경 색상 변경
-    }
-`;
 
 const StyledTable = styled.table`
     width: 100%;
@@ -62,31 +45,16 @@ const BookList = () => {
     const [search, setSearch] = useState(EMPTY_SEARCH);
     const [appliedSearch, setAppliedSearch] = useState(EMPTY_SEARCH);
     const [loaded, setLoaded] = useState(false);
-    const [showModal, setShowModal] = useState(false);
     const navigate = useNavigate();
-    const loginMemberName = sessionStorage.getItem("loginMemberName");
 
     const loadBookVoList = async (condition) => {
-        try {
-            const params = new URLSearchParams();
-            Object.entries(condition).forEach(([key, value]) => {
-                if (value) params.append(key, value);
-            });
-            const response = await fetch(`${API_BASE}/book/list?${params}`);
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
-            const data = await response.json();
-            if (data.voList && Array.isArray(data.voList)) {
-                setBookVoList(data.voList);
-            } else {
-                console.error('Data is not an array:', data);
-            }
-        } catch (error) {
-            console.error('Fetch error:', error);
-        } finally {
-            setLoaded(true);
-        }
+        const params = new URLSearchParams();
+        Object.entries(condition).forEach(([key, value]) => {
+            if (value) params.append(key, value);
+        });
+        const result = await api.get(`/book/list?${params}`);
+        setBookVoList(result.ok ? result.voList ?? [] : []);
+        setLoaded(true);
     };
 
     useEffect(() => {

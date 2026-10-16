@@ -1,9 +1,9 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { FiTrash2 } from 'react-icons/fi';
 import TodoWrite from './TodoWrite';
 import EmptyState from '../common/EmptyState';
-import { API_BASE } from '../../api/config';
+import { api } from '../../api/http';
 
 const MAX_TODO = 5;
 
@@ -71,42 +71,18 @@ const StyledTodo = styled.div`
 `;
 
 const TodoList = () => {
-    const memberNo = sessionStorage.getItem('loginMemberNo');
     const [todoVoList, setTodoVoList] = useState([]);
 
-    const loadTodoVoList = () => {
-        fetch(`${API_BASE}/api/todo/list?memberNo=${memberNo}`)
-        .then( resp => resp.json() )
-        .then(data => {
-            if(data.msg === "good"){
-                setTodoVoList(data.todoList ?? []);
-            }else {
-                console.log("목록 가져오기 실패");
-            }
-        });
-    };
+    const loadTodoVoList = useCallback(async () => {
+        const result = await api.get('/api/todo');
+        if (result.ok) setTodoVoList(result.todoList ?? []);
+    }, []);
 
-    useEffect( () => {
-        loadTodoVoList();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [memberNo] );
+    useEffect(() => { loadTodoVoList(); }, [loadTodoVoList]);
 
-    const handleDelete = (todoNo) => {
-        fetch(`${API_BASE}/api/todo/delete`,{
-            method: 'POST',
-            headers: {
-                'Content-Type' : 'application/json',
-            },
-            body: JSON.stringify({no: todoNo, memberNo: memberNo}),
-        })
-        .then( (resp) => resp.json() )
-        .then( (data) => {
-            if(data.msg === 'good'){
-                loadTodoVoList();
-            }else{
-                alert('할 일 삭제에 실패했습니다.');
-            }
-        } );
+    const handleDelete = async (todoNo) => {
+        const result = await api.delete(`/api/todo/${todoNo}`);
+        if (result.ok) loadTodoVoList();
     };
 
     return (

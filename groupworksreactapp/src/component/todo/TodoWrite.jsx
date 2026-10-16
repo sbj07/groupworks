@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
 import { FiPlus } from 'react-icons/fi';
-import { API_BASE } from '../../api/config';
+import { api } from '../../api/http';
+import { notify } from '../common/Toast';
 
 const StyledTodoWrite = styled.form`
     display: flex;
@@ -23,37 +24,20 @@ const StyledTodoWrite = styled.form`
 
 // 할 일 한 줄 입력
 const TodoWrite = ({ loadTodoVoList, disabled }) => {
-    const memberNo = sessionStorage.getItem("loginMemberNo");
     const [content, setContent] = useState('');
 
-    const handleSubmit = (event) => {
+    const handleSubmit = async (event) => {
         event.preventDefault();
         if (!content.trim()) return;
         if (disabled) {
-            alert('할 일은 최대 5개까지 등록할 수 있습니다. 기존 항목을 정리해주세요.');
+            notify('할 일은 최대 5개까지 등록할 수 있습니다. 기존 항목을 정리해주세요.', 'error');
             return;
         }
-
-        fetch(`${API_BASE}/api/todo/write`, {
-            method: "POST",
-            headers: {
-                "Content-Type" : "application/json",
-            },
-            body: JSON.stringify({
-                writerNo: memberNo,
-                memberNo: memberNo,
-                content: content.trim(),
-            }),
-        })
-        .then( (resp) => resp.json() )
-        .then( (data) => {
-            if(data.msg === "good"){
-                setContent('');
-                loadTodoVoList();
-            }else{
-                alert("할 일 등록에 실패했습니다.");
-            }
-        } );
+        const result = await api.post('/api/todo', { content: content.trim() });
+        if (result.ok) {
+            setContent('');
+            loadTodoVoList();
+        }
     };
 
     return (

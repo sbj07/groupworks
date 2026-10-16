@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import OrganModal from './OrganModal';
 import SearchBox, { SearchField } from '../common/SearchBox';
 import ListLayout from '../common/ListLayout';
-import { API_BASE } from '../../api/config';
+import Badge from '../common/Badge';
+import { api } from '../../api/http';
+import { WORK_STATUS_TONE } from '../attendance/WorkStatus';
 
 const EMPTY_SEARCH = { name: '', departName: '', positionName: '', tel: '' };
 
@@ -17,27 +18,13 @@ const matchSearch = (member, search) => {
         && has(member.tel, search.tel);
 };
 
+// 부서별로 묶기
+const groupByDepartName = (list) => list.reduce((acc, member) => {
+    const departName = member.departName || "부서 없음";
+    (acc[departName] = acc[departName] || []).push(member);
+    return acc;
+}, {});
 
-function groupByDepartName(list) {
-
-    return list.reduce((acc, member) => {
-        // 여기서 member.departName은 부서 이름을 나타냅니다. 실제 필드명에 맞게 조정해야 합니다.
-        const departName = member.departName;
-
-        if (!acc[departName]) {
-            acc[departName] = [];
-        }
-        acc[departName].push(member);
-        return acc;
-    }, {});
-}
-
-
-const StyledOrganListDiv = styled.div`
-    & > h1 {
-        display: none; /* 제목은 상단바에 표시 */
-    }
-`;
 
 const Grid = styled.div`
     display: grid;
@@ -80,15 +67,18 @@ const StyledTable = styled.table`
 `;
 
 const OrganList = () => {
-
-    const loginMemberNo = sessionStorage.getItem("loginMemberNo");
-    const navigate = useNavigate();
-    // const [loginMemberVo, setLoginMemberVo] = useState([]);
-
     const [organVoList, setOrganVoList] = useState([]);
     const [loaded, setLoaded] = useState(false);
     const [search, setSearch] = useState(EMPTY_SEARCH);
     const [appliedSearch, setAppliedSearch] = useState(EMPTY_SEARCH);
+    const [selectedVo, setSelectedVo] = useState(null);
+
+    useEffect(() => {
+        api.get('/organ/list').then(result => {
+            setOrganVoList(result.ok ? result.voList ?? [] : []);
+            setLoaded(true);
+        });
+    }, []);
 
     const handleSearchChange = (e) => {
         const { name, value } = e.target;
@@ -99,91 +89,6 @@ const OrganList = () => {
         setSearch(EMPTY_SEARCH);
         setAppliedSearch(EMPTY_SEARCH);
     };
-
-    const loadOrganVoList = () => {
-        const loginMemberNo = sessionStorage.getItem("loginMemberNo");
-
-        fetch(`${API_BASE}/organ/list?loginMemberNo=${loginMemberNo}`)
-        .then(resp => resp.json())
-        .then(data => {
-            if (data.voList && Array.isArray(data.voList)) {
-                const filteredVoList = data.voList.filter(member => member.delYn !== 'Y');
-                setOrganVoList(data.voList);
-                setLoaded(true);
-            } else {
-                console.error('Data is not an array:', data);
-                setOrganVoList([]);
-                setLoaded(true);
-            }
-        })
-        .catch(error => {
-            console.error('Fetch error:', error);
-            setOrganVoList([]);
-            setLoaded(true);
-        });
-    };
-
-    useEffect(() => {
-        loadOrganVoList();
-    }, []);
-
-    const handleDelete = no => {
-        fetch(`${API_BASE}/organ/delete/${no}`, {
-            method: 'DELETE',
-            headers: {
-                'Content-Type' : 'application/json',
-            },
-        })
-        .then(response => {
-            if(!response.ok){
-                throw new Error('서버 오류 발생')
-            }
-            return response.text();
-        })
-        .then(data => {
-            console.log('삭제 성공:' , data);
-            alert("조직도 삭제 성공");
-            loadOrganVoList();
-        })
-        .catch(error => {
-            console.error('삭제 실패 : ', error);
-            alert("조직도 삭제 실패")
-        });
-    };
-
-
-    useEffect( () => {
-        // console.log("useEffect 호출");
-        loadOrganVoList();
-    }, [] );
-
-    const handleOrganWrite = () => {
-        navigate('/organ/insert');
-    }
-
-
-    const [modalIsOpen, setIsOpen] = useState(false);
-    const [selectedVo, setSelectedVo] = useState(null);
-
-    // const openModal = (vo) => {
-    //     setIsOpen(true);
-    //     setSelectedVo(vo);
-    // }
-    const openModal = (member) => {
-        setIsOpen(true);
-        setSelectedVo(member);
-    }
-    
-
-    const closeModal = () => {
-        setIsOpen(false);
-        setSelectedVo(null);
-    }
-
-    const navigateToEdit = () => {
-        navigate(`/organ/edit`, { state: { selectedVo } });
-        closeModal();
-    }
 
     const departOptions = [...new Set(organVoList.map(m => m.departName).filter(Boolean))];
     const positionOptions = [...new Set(organVoList.map(m => m.positionName).filter(Boolean))];
@@ -212,7 +117,6 @@ const OrganList = () => {
                 </SearchField>
             </SearchBox>
         }>
-        <StyledOrganListDiv>
             {
                 !loaded
                 ? <Empty>불러오는 중...</Empty>
@@ -223,22 +127,22 @@ const OrganList = () => {
                     <StyledTable key={departName}>
                         <thead>
                             <tr className="depart-header">
-                                <th colSpan="4"> {departName} <small>({members.length}명)</small></th>
+                                <th colSpan="4">{departName} <small>({members.length}명)</small></th>
                             </tr>
                             <tr>
                                 <th>이름</th>
                                 <th>직책</th>
+                                <th>근무 상태</th>
                                 <th>전화번호</th>
-                                <th>이메일</th>
                             </tr>
                         </thead>
                         <tbody>
                             {members.map(member => (
-                                <tr key={member.no} onClick={() => openModal(member)}>
+                                <tr key={member.no} onClick={() => setSelectedVo(member)}>
                                     <td>{member.name}</td>
                                     <td>{member.positionName}</td>
+                                    <td>{member.workStatusName ? <Badge $tone={WORK_STATUS_TONE[member.workStatusNo]}>{member.workStatusName}</Badge> : '-'}</td>
                                     <td>{member.tel}</td>
-                                    <td>{member.email}</td>
                                 </tr>
                             ))}
                         </tbody>
@@ -246,18 +150,9 @@ const OrganList = () => {
                     ))}
                   </Grid>
             }
-            <OrganModal
-                modalIsOpen={modalIsOpen}
-                selectedVo={selectedVo}
-                closeModal={closeModal}
-                navigateToEdit={navigateToEdit}
-                onDelete={handleDelete}
-                organ={selectedVo}
-            />
-        </StyledOrganListDiv>
+            <OrganModal selectedVo={selectedVo} closeModal={() => setSelectedVo(null)} />
         </ListLayout>
     );
-
 };
 
 export default OrganList;

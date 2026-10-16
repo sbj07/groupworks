@@ -1,17 +1,13 @@
 import React from 'react';
-import OrganWrite from './OrganWrite';
+import { Navigate, Route, Routes } from 'react-router-dom';
 import OrganList from './OrganList';
-import OrganEdit from './OrganEdit';
-import OrganDelete from './OrganDelete';
-import { Route, Routes } from 'react-router-dom';
 
+// 조직도는 조회만 한다. 구성원 추가/수정/삭제는 인사관리 > 인원관리에서.
 const OrganMain = () => {
     return (
         <Routes>
-            <Route path='insert' element={<OrganWrite/>}/>
             <Route path='list' element={<OrganList/>}/>
-            <Route path='edit' element={<OrganEdit/>}/>
-            <Route path='delete' element={<OrganDelete/>}/>
+            <Route path='*' element={<Navigate to='/organ/list' replace/>}/>
         </Routes>
     );
 };

@@ -4,168 +4,24 @@
   "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="OrganMapper">
 
-<!-- 조직도 생성 -->
-	<insert id="insert">
-		INSERT INTO ORGAN(
-		    ORG_NO
-		    , MEMBER_NO
-		    , NAME
-		    , PROFILE
-		    , ID
-		    , EMAIL
-		    , TEL
-		    , ADDRESS
-		    )
-		VALUES (
-		    SEQ_ORGAN_NO.NEXTVAL
-		    , #{memberNo}
-		    , #{name}
-		    , #{profile}
-		    , #{id}
-		    , #{email}
-		    , #{tel}
-		    , #{address}
-		    )	
-	</insert>
-	
-<!-- 	전체 목록 조회 -->
-<!-- 	<select id="list" resultType="com.groupworks.app.organ.vo.OrganVo"> -->
-<!-- 		SELECT -->
-<!-- 		    ORG_NO -->
-<!-- 		    , MEMBER_NO -->
-<!-- 		    , PROFILE -->
-<!-- 		    , DEPARTMENT -->
-<!-- 		    , POSITION -->
-<!-- 		    , NAME -->
-<!-- 		    , TEL -->
-<!-- 		FROM ORGAN -->
-<!-- 		WHERE DELETE_YN = 'N' -->
-<!-- 		ORDER BY ORG_NO DESC -->
-<!-- 	</select> -->
+	<!-- 조직도: 같은 회사 재직자 (부서 순, 직책 높은 순) -->
 	<select id="list" resultType="com.groupworks.app.organ.vo.OrganVo">
-<!-- 		SELECT -->
-<!-- 		    NO -->
-<!-- 		    , NAME -->
-<!-- 		    , DEPART_NO -->
-<!-- 		    , POSITION_NO -->
-<!-- 		    , TEL -->
-<!-- 		    , EMAIL -->
-<!-- 		FROM MEMBER -->
-<!-- 		WHERE DEL_YN = 'N' -->
-<!-- 		AND DEPART_NO = #{departNo} -->
-<!-- 		AND COMPANY_NO = #{companyNo} -->
-<!-- 		ORDER BY NO DESC -->
-
-<!-- 기존 -->
-<!-- 		SELECT -->
-<!-- 		    ORG_NO -->
-<!-- 		    , MEMBER_NO -->
-<!-- 		    , NAME -->
-<!-- 		    , PROFILE -->
-<!-- 		    , ID -->
-<!-- 		    , EMAIL -->
-<!-- 		    , TEL -->
-<!-- 		    , ADDRESS -->
-<!-- 		    , DEPART_NO -->
-<!-- 		    , COMPANY_NO -->
-<!-- 		    , POSITION_NO -->
-<!-- 		FROM ORGAN -->
-<!-- 		WHERE DELETE_YN = 'N' -->
-<!-- 		AND COMPANY_NO = #{companyNo} -->
-<!-- 		ORDER BY ORG_NO DESC -->
-
-<!-- 	수정 -->
-<!-- 	    SELECT -->
-<!-- 	        M.NO -->
-<!--             , O.PROFILE -->
-<!-- 	        , M.NAME -->
-<!-- 	        , M.TEL -->
-<!-- 	        , D.NAME AS departmentName -->
-<!-- 	        , P.NAME AS positionName -->
-<!-- 	        , M.EMAIL -->
-<!-- 	    FROM MEMBER M -->
-<!--         JOIN ORGAN O ON M.NO = O.ORG_NO -->
-<!-- 	    JOIN DEPARTMENT D ON M.DEPART_NO = D.NO  -->
-<!-- 	    JOIN POSITION P ON M.POSITION_NO = P.NO -->
-<!-- 	    JOIN COMPANY C ON M.COMPANY_NO = C.NO -->
-<!-- 	    WHERE M.COMPANY_NO = #{companyNo} -->
-<!-- 	    AND M.DEL_YN = 'N' -->
-<!-- 	    ORDER BY M.POSITION_NO DESC, M.DEPART_NO -->
-	SELECT
-		    D.NAME as departName
-		    , M.NAME
-		    , P.NAME as positionName
-		    , M.TEL
-		    , M.EMAIL
-		FROM MEMBER M
-		JOIN DEPARTMENT D ON M.DEPART_NO = D.NO
-		JOIN POSITION P ON M.POSITION_NO = P.NO
-		WHERE DEL_YN = 'N'
-		AND M.COMPANY_NO = (
-			                    SELECT 
-			                    	COMPANY_NO
-			                    FROM MEMBER
-			                    WHERE NO = #{loginMemberNo}
-			                    )
-		ORDER BY M.NO DESC
-	</select>
-	
-	<select id="detail" resultType="com.groupworks.app.organ.vo.OrganVo">
 		SELECT
-		    ORG_NO
-		    , MEMBER_NO
-		    , PROFILE
-		    , DEPARTMENT
-		    , POSITION
-		    , NAME
-		    , TEL
-		FROM ORGAN
-		WHERE MEMBER_NO = #{memberNo}
-		AND DELETE_YN = 'N'
+			M.NO
+			, M.NAME
+			, M.TEL
+			, M.EMAIL
+			, D.NAME AS DEPART_NAME
+			, P.NAME AS POSITION_NAME
+			, M.WORK_STATUS_NO
+			, W.STATUS AS WORK_STATUS_NAME
+		FROM MEMBER M
+		LEFT JOIN DEPARTMENT D ON M.DEPART_NO = D.NO
+		LEFT JOIN POSITION P ON M.POSITION_NO = P.NO
+		LEFT JOIN WORK_STATUS W ON M.WORK_STATUS_NO = W.NO
+		WHERE M.DEL_YN = 'N'
+		AND M.COMPANY_NO = #{companyNo}
+		ORDER BY M.DEPART_NO, M.POSITION_NO DESC, M.NAME
 	</select>
-	
-<!-- 	수정 -->
-	<update id="edit">
-		UPDATE MEMBER
-		SET
-		<trim prefixOverrides=",">
-			<if test=" name != null and name != '' ">
-				NAME = #{name}
-			</if>
-			<if test=" departNo != null and departNo != '' ">
-			    , DEPART_NO = #{departNo}
-			</if>
-			<if test=" positionNo != null and positionNo != '' ">
-			    , POSITION_NO = #{positionNo}
-		    </if>
-		    <if test=" tel != null and tel != '' ">
-			    , TEL = #{tel}
-		    </if>
-		    <if test=" email != null and email != '' ">
-			    , EMAIL = #{email}
-		    </if>
-		    <if test=" profile != null and profile != '' ">
-			    , PROFILE = #{profile}
-		    </if>
-	    </trim>
-		WHERE NO = #{no}
-		AND DEL_YN = 'N'
-	</update>
-	
-<!-- 	삭제 -->
-	<update id="delete">
-		UPDATE MEMBER
-		SET DEL_YN = 'Y'
-		WHERE NO = #{no}
-	</update>
+
 </mapper>
-
-
-
-
-
-
-
-
-
-

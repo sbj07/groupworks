@@ -47,8 +47,7 @@ public class BookController {
 									@RequestParam(required = false) String bookPlace,
 									@RequestParam(required = false) String bookPurpose) {
 		List<BookVo> voList = service.listByDateRange(startDate, endDate, memberName, bookPlace, bookPurpose);
-		Map<String, Object> map = new HashMap<>();
-		map.put("msg", "good");
+		Map<String, Object> map = okay(null);
 		map.put("voList", voList);
 		return map;
 	}

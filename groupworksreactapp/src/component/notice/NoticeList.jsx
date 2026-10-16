@@ -1,13 +1,13 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import NoticeModal from './NoticeModal';
 import { API_BASE } from '../../api/config';
+import { api } from '../../api/http';
 import SearchBox, { SearchField } from '../common/SearchBox';
 import Pagination from '../common/Pagination';
 import ListLayout from '../common/ListLayout';
 import Badge from '../common/Badge';
-import { api } from '../../api/http';
 import { notify } from '../common/Toast';
 
 import {FaFileDownload} from 'react-icons/fa';
@@ -44,30 +44,6 @@ const StyledTableHeader = styled.th`
     }
 `;
 
-const ButtonContainer = styled.div`
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-top: 20px;
-    width: 100%;
-    position: relative; // 상대 위치 설정
-`;
-
-const CenteredButtons = styled.div`
-    display: flex;
-    align-items: center;
-`;
-
-const LeftAlignedButton = styled.button`
-    background-color: var(--gw-primary);
-    color: white;
-    border: none;
-    padding: 15px 20px;
-    cursor: pointer;
-    border-radius: 8px;
-    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
-`;
-
 const RightAlignedButton = styled.button`
     background-color: var(--gw-primary);
     color: white;
@@ -79,16 +55,6 @@ const RightAlignedButton = styled.button`
     margin-left: auto; // 오른쪽 정렬
 `;
 
-const MiddlePosition = styled.div`
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    display: flex;
-    justify-content: center; // 수평 가운데 정렬
-    align-items: center; // 수직 가운데 정렬
-`;
 const CompactList = styled.ul`
     margin: 0;
     padding: 0;
@@ -182,33 +148,10 @@ const StyledNoticeListDiv = styled.div`
 
 `;
 
-
-
-
-// 조회수 증가 함수
-const incrementClickCount = async (noticeNo) => {
-    try {
-        const response = await fetch(`${API_BASE}/notice/increase-click/${noticeNo}`, {
-            method: 'POST',
-        });
-
-        if (!response.ok) {
-            throw new Error('서버 오류 발생');
-        }
-
-        return true;
-    } catch (error) {
-        console.error('조회수 증가 요청 실패:', error);
-        return false;
-    }
-};
-
-
-
-
+// 조회수 증가
+const incrementClickCount = async (noticeNo) => (await api.post(`/notice/increase-click/${noticeNo}`)).ok;
 
 const NoticeList = ({ showTopFive, showWriteButton, showPagination, showEditAndDeleteProps }) => {
-    const loginMemberNo = sessionStorage.getItem("loginMemberNo");
     const navigate = useNavigate();
     //
     const [showEditAndDelete, setShowEditAndDelete] = useState(showEditAndDeleteProps);
@@ -227,10 +170,7 @@ const NoticeList = ({ showTopFive, showWriteButton, showPagination, showEditAndD
 
     useEffect(() => {
         if (!showSearch) return;
-        fetch(`${API_BASE}/notice/list/categoryList`)
-            .then(resp => resp.json())
-            .then(data => setCategoryList(data.categories ?? []))
-            .catch(() => setCategoryList([]));
+        api.get('/notice/list/categoryList').then(data => setCategoryList(data.categories ?? []));
     }, [showSearch]);
 
     const handleSearchChange = (e) => {
@@ -252,7 +192,6 @@ const NoticeList = ({ showTopFive, showWriteButton, showPagination, showEditAndD
         setCurrentPage(1);
         setAppliedSearch(EMPTY_SEARCH);
     };
-
 
     // const handleFileDownload = (filePath, e) => {
     //     e.stopPropagation(); // 상위 요소로의 이벤트 전파를 막음
@@ -277,62 +216,24 @@ const NoticeList = ({ showTopFive, showWriteButton, showPagination, showEditAndD
         link.click();
         link.remove();
     };
-    
-    
- 
-    const handlePreviousPage = () => {
-        if (currentPage > 1) {
-            setCurrentPage(currentPage - 1);
-        }
-    };
-
-    const handleNextPage = () => {
-        
-        const maxPage = Math.ceil(totalItems / itemsPerPage);
-    
-        // 현재 페이지가 최대 페이지보다 작을 경우에만 페이지 번호를 증가
-        if (currentPage < maxPage) {
-            setCurrentPage(currentPage + 1);
-        }
-    };
 
     const handleCloseModal = () => {
         setSelectedNotice(null);
     };
-    
 
-    
+    // 공지 목록 (홈에서는 최근 5개만)
+    const loadNoticeVoList = useCallback(async () => {
+        const params = new URLSearchParams({ page: currentPage, limit: itemsPerPage });
+        Object.entries(appliedSearch).forEach(([key, value]) => {
+            if (value) params.append(key, value);
+        });
+        const data = await api.get(`/notice/list?${params}`);
+        const list = data.ok && Array.isArray(data.voList) ? data.voList : [];
+        setTotalItems(data.totalCount ?? 0);
+        setNoticeVoList(showTopFive ? list.slice(0, 5) : list);
+        setLoaded(true);
+    }, [currentPage, appliedSearch, showTopFive]);
 
-
-
-    
-
-
-
-    const loadNoticeVoList = async () => {
-        const loginMemberNo = sessionStorage.getItem("loginMemberNo");
-    
-        if (loginMemberNo) {
-            const params = new URLSearchParams({ page: currentPage, limit: itemsPerPage, memberNo: loginMemberNo });
-            Object.entries(appliedSearch).forEach(([key, value]) => {
-                if (value) params.append(key, value);
-            });
-            const response = await fetch(`${API_BASE}/notice/list?${params}`);
-            const data = await response.json();
-            if (data.voList && Array.isArray(data.voList)) {
-                setTotalItems(data.totalCount); // 총 아이템 수를 설정
-                const listToShow = showTopFive ? data.voList.slice(0, 5) : data.voList;
-                setNoticeVoList(listToShow);
-            } else {
-                console.error('Data is not an array:', data);
-                setNoticeVoList([]);
-            }
-            setLoaded(true);
-        } else {
-            console.error('No user number found');
-            setNoticeVoList([]);
-        }
-    };
 
     const handleNoticeClick = async (notice) => {
         const success = await incrementClickCount(notice.noticeNo);
@@ -365,13 +266,7 @@ const NoticeList = ({ showTopFive, showWriteButton, showPagination, showEditAndD
         }
     };
 
-    
-
-    useEffect( () => {
-        // console.log("useEffect 호출");
-        loadNoticeVoList();
-    }, [showTopFive, currentPage, appliedSearch] );
-
+    useEffect(() => { loadNoticeVoList(); }, [loadNoticeVoList]);
 
     const renderPagination = () => {
         if (!showPagination) {
@@ -382,8 +277,7 @@ const NoticeList = ({ showTopFive, showWriteButton, showPagination, showEditAndD
 
         return <Pagination currentPage={currentPage} totalPages={maxPage} onChange={setCurrentPage} />;
     };
-    
-    
+
     // 홈 화면용 짧은 목록: 제목, 작성자, 날짜만
     if (showTopFive) {
         return (

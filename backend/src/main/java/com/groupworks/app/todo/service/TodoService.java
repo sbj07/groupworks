@@ -23,7 +23,7 @@ public class TodoService {
 	private final SqlSessionTemplate sst;
 
 	//할일 조회
-	public List<TodoVo> list(String memberNo) {
+	public List<TodoVo> list() {
 		return dao.list(sst, CurrentUser.memberNo());
 	}
 

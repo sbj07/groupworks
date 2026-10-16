@@ -1,16 +1,15 @@
 package com.groupworks.app.todo.controller;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.groupworks.app.todo.service.TodoService;
@@ -18,59 +17,48 @@ import com.groupworks.app.todo.vo.TodoVo;
 
 import lombok.RequiredArgsConstructor;
 
+/**
+ * 할 일 (로그인한 본인 것만)
+ */
 @RestController
 @RequestMapping("api/todo")
 @RequiredArgsConstructor
 public class TodoController {
 
 	private final TodoService service;
-	
-	//할일 조회
-	@GetMapping("list")
-	public Map<String, Object> list(@RequestParam String memberNo) {
-		List<TodoVo> todoList = service.list(memberNo);
+
+	private static Map<String, Object> okay(String message) {
 		Map<String, Object> map = new HashMap<>();
-		map.put("msg", "good");
-		map.put("todoList", todoList);
-		if(todoList == null) {
-			map.put("msg", "bad");
-		}
+		map.put("msg", "okay");
+		map.put("message", message);
 		return map;
 	}
-	
-	//할일 작성
-	@PostMapping("write")
-	public Map<String, String> write(@RequestBody TodoVo vo){
-		int result = service.write(vo);
-		Map<String, String> map = new HashMap<String, String>();
-		map.put("msg", "good");
-		if(result != 1) {
-			map.put("msg", "bad");
-		}
+
+	@GetMapping
+	public Map<String, Object> list() {
+		Map<String, Object> map = okay(null);
+		map.put("todoList", service.list());
 		return map;
 	}
-	
-	//할일 수정
-	@PostMapping("edit")
-	public Map<String, String> edit(TodoVo vo) {
-		int result = service.edit(vo);
-		Map<String, String> map = new HashMap<String, String>();
-		map.put("msg", "good");
-		if(result != 1) {
-			map.put("msg", "bad");
-		}
-		return map;
+
+	@PostMapping
+	public Map<String, Object> write(@RequestBody TodoVo vo) {
+		service.write(vo);
+		return okay("할 일을 등록했습니다.");
 	}
-	
-	//할일 삭제
-	@PostMapping("delete")
-	public Map<String, Object> delete(@RequestBody TodoVo vo) {
-		int result = service.delete(vo);
-		Map<String, Object> map = new HashMap<>();
-		map.put("msg", "good");
-		if(result != 1) {
-			map.put("msg", "bad");
-		}
-		return map;
+
+	@PutMapping("{no}")
+	public Map<String, Object> edit(@PathVariable String no, @RequestBody TodoVo vo) {
+		vo.setNo(no);
+		service.edit(vo);
+		return okay("할 일을 수정했습니다.");
+	}
+
+	@DeleteMapping("{no}")
+	public Map<String, Object> delete(@PathVariable String no) {
+		TodoVo vo = new TodoVo();
+		vo.setNo(no);
+		service.delete(vo);
+		return okay("할 일을 삭제했습니다.");
 	}
 }

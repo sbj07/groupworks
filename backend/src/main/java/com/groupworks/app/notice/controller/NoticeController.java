@@ -72,8 +72,7 @@ public class NoticeController {
 		PageVo pageVo = new PageVo(listCount, Math.max(currentPage, 1), 10, Math.min(Math.max(boardLimit, 1), 100));
 		List<NoticeVo> voList = service.listPaged(pageVo, search);
 
-		Map<String, Object> map = new HashMap<>();
-		map.put("msg", "good");
+		Map<String, Object> map = okay(null);
 		map.put("voList", voList);
 		map.put("pageInfo", pageVo);
 		map.put("totalCount", listCount);
