@@ -6,6 +6,7 @@ import NoticeList from './notice/NoticeList';
 import AttendanceMain from './attendance/AttendanceMain';
 import TestCalendar from './calendar/TestCalendar';
 import Card from './common/Card';
+import ApprovalSummaryCard from './approval/ApprovalSummaryCard';
 
 const StyledHome = styled.div`
     display: grid;
@@ -44,11 +45,12 @@ const More = styled(Link)`
     }
 `;
 
-const Home = () => {
+const Home = ({ summary }) => {
     return (
         <StyledHome>
             <AttendanceMain />
             <RightColumn>
+                {summary && <ApprovalSummaryCard summary={summary} />}
                 <Card title="일정">
                     <TestCalendar />
                 </Card>

@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import BookModal from './BookModal';
 import SearchBox, { SearchField } from '../common/SearchBox';
 import { API_BASE } from '../../api/config';
+import { notify } from '../common/Toast';
 
 import { useNavigate } from 'react-router-dom';
 
@@ -98,7 +99,7 @@ const BookList = () => {
 
     const handleSearch = () => {
         if (search.startDate && search.endDate && search.startDate > search.endDate) {
-            alert('시작일이 종료일보다 늦습니다.');
+            notify('종료일이 시작일보다 빠를 수 없습니다.', 'error');
             return;
         }
         setAppliedSearch({ ...search });

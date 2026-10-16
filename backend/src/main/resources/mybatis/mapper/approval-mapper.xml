@@ -1,0 +1,231 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--
+    휴가신청서(VACATION_FORM), 출장신청서(BUSINESS_TRIP_FORM) 공통 결재 SQL.
+    ${type.table} / ${type.sequence} 는 DocType enum 값이라 사용자 입력이 들어가지 않는다.
+    상태: 문서 CATEGORY_NO 1 진행중 2 승인 3 반려 / 승인자 *_STATUS 1 대기 2 승인 3 반려
+-->
+<mapper namespace="ApprovalMapper">
+
+    <!-- 두 문서를 한 목록처럼 다루기 위한 합집합 -->
+    <sql id="allDocs">
+        SELECT 'VACATION' AS DOC_TYPE, NO, WRITER_NO, FIRST_APPLY_NO, MID_APPLY_NO, LAST_APPLY_NO,
+               FIRST_STATUS, MID_STATUS, LAST_STATUS, CATEGORY_NO, VACATION_NO,
+               START_TIME, FINISH_TIME, CONTENT, WRITE_DATE, DOCUMENT_DATE, REJECTION, DEL_YN
+        FROM VACATION_FORM
+        UNION ALL
+        SELECT 'BUSINESS' AS DOC_TYPE, NO, WRITER_NO, FIRST_APPLY_NO, MID_APPLY_NO, LAST_APPLY_NO,
+               FIRST_STATUS, MID_STATUS, LAST_STATUS, CATEGORY_NO, NULL AS VACATION_NO,
+               START_TIME, FINISH_TIME, CONTENT, WRITE_DATE, DOCUMENT_DATE, REJECTION, DEL_YN
+        FROM BUSINESS_TRIP_FORM
+    </sql>
+
+    <!-- 작성자, 승인자 이름과 문서 상태 이름을 붙인 컬럼 -->
+    <sql id="docColumns">
+        A.DOC_TYPE
+        , A.NO
+        , A.WRITER_NO
+        , W.NAME AS WRITER_NAME
+        , WD.NAME AS WRITER_DEPART_NAME
+        , WP.NAME AS WRITER_POSITION_NAME
+        , A.FIRST_APPLY_NO
+        , F.NAME AS FIRST_APPLY_NAME
+        , A.FIRST_STATUS
+        , A.MID_APPLY_NO
+        , M.NAME AS MID_APPLY_NAME
+        , A.MID_STATUS
+        , A.LAST_APPLY_NO
+        , L.NAME AS LAST_APPLY_NAME
+        , A.LAST_STATUS
+        , A.CATEGORY_NO
+        , C.CATEGORY
+        , A.VACATION_NO
+        , TO_CHAR(A.START_TIME, 'YYYY-MM-DD') AS START_TIME
+        , TO_CHAR(A.FINISH_TIME, 'YYYY-MM-DD') AS FINISH_TIME
+        , A.CONTENT
+        , TO_CHAR(A.WRITE_DATE, 'YYYY-MM-DD') AS WRITE_DATE
+        , TO_CHAR(A.DOCUMENT_DATE, 'YYYY-MM-DD') AS DOCUMENT_DATE
+        , A.REJECTION
+    </sql>
+
+    <sql id="docJoins">
+        JOIN MEMBER W ON W.NO = A.WRITER_NO
+        LEFT JOIN DEPARTMENT WD ON WD.NO = W.DEPART_NO
+        LEFT JOIN POSITION WP ON WP.NO = W.POSITION_NO
+        LEFT JOIN MEMBER F ON F.NO = A.FIRST_APPLY_NO
+        LEFT JOIN MEMBER M ON M.NO = A.MID_APPLY_NO
+        LEFT JOIN MEMBER L ON L.NO = A.LAST_APPLY_NO
+        LEFT JOIN DOCUMENT_CATEGORY C ON C.NO = A.CATEGORY_NO
+    </sql>
+
+    <!-- 내가 승인할 차례인 문서: 진행중이고, 내 칸이 아직 대기 -->
+    <sql id="pendingForMe">
+        A.DEL_YN = 'N'
+        AND A.CATEGORY_NO = 1
+        AND (
+            (A.FIRST_APPLY_NO = #{memberNo} AND A.FIRST_STATUS = 1)
+            OR (A.MID_APPLY_NO = #{memberNo} AND A.MID_STATUS = 1)
+            OR (A.LAST_APPLY_NO = #{memberNo} AND A.LAST_STATUS = 1)
+        )
+    </sql>
+
+    <sql id="filters">
+        <if test="docType != null and docType != ''">
+            AND A.DOC_TYPE = #{docType}
+        </if>
+        <if test="categoryNo != null and categoryNo != ''">
+            AND A.CATEGORY_NO = #{categoryNo}
+        </if>
+    </sql>
+
+    <!-- 승인자로 고를 수 있는 같은 회사 사람 (일반사용자 권한 제외, 본인 제외) -->
+    <select id="approvers" resultType="com.groupworks.app.member.vo.MemberVo">
+        SELECT
+            M.NO
+            , M.NAME
+            , M.AUTH_NO
+            , M.COMPANY_NO
+            , D.NAME AS DEPART_NAME
+            , P.NAME AS POSITION_NAME
+        FROM MEMBER M
+        LEFT JOIN DEPARTMENT D ON D.NO = M.DEPART_NO
+        LEFT JOIN POSITION P ON P.NO = M.POSITION_NO
+        WHERE M.COMPANY_NO = #{companyNo}
+        AND M.AUTH_NO != 3
+        AND M.DEL_YN = 'N'
+        AND M.NO != #{memberNo}
+        ORDER BY M.DEPART_NO, M.POSITION_NO DESC, M.NAME
+    </select>
+
+    <!-- 작성 -->
+    <insert id="insert">
+        INSERT INTO ${type.table}
+        (
+            NO
+            <if test="type.name() == 'VACATION'">, VACATION_NO</if>
+            , WRITER_NO
+            , FIRST_APPLY_NO
+            , MID_APPLY_NO
+            , LAST_APPLY_NO
+            , START_TIME
+            , FINISH_TIME
+            , CONTENT
+            , WRITE_DATE
+        )
+        VALUES
+        (
+            ${type.sequence}.NEXTVAL
+            <if test="type.name() == 'VACATION'">, #{doc.vacationNo}</if>
+            , #{doc.writerNo}
+            , #{doc.firstApplyNo}
+            , #{doc.midApplyNo}
+            , #{doc.lastApplyNo}
+            , TO_DATE(#{doc.startTime}, 'YYYY-MM-DD')
+            , TO_DATE(#{doc.finishTime}, 'YYYY-MM-DD')
+            , #{doc.content}
+            , SYSDATE
+        )
+    </insert>
+
+    <!-- 문서 한 건 -->
+    <select id="detail" resultType="com.groupworks.app.approval.ApprovalDocVo">
+        SELECT <include refid="docColumns"/>
+        FROM (<include refid="allDocs"/>) A
+        <include refid="docJoins"/>
+        WHERE A.DOC_TYPE = #{docType}
+        AND A.NO = #{no}
+        AND A.DEL_YN = 'N'
+    </select>
+
+    <!-- 내가 작성한 문서 -->
+    <select id="countMine" resultType="int">
+        SELECT COUNT(*)
+        FROM (<include refid="allDocs"/>) A
+        WHERE A.DEL_YN = 'N'
+        AND A.WRITER_NO = #{memberNo}
+        <include refid="filters"/>
+    </select>
+
+    <select id="listMine" resultType="com.groupworks.app.approval.ApprovalDocVo">
+        SELECT * FROM (
+            SELECT ROW_NUMBER() OVER (ORDER BY A.WRITE_DATE DESC, A.NO DESC) AS RNUM,
+                <include refid="docColumns"/>
+            FROM (<include refid="allDocs"/>) A
+            <include refid="docJoins"/>
+            WHERE A.DEL_YN = 'N'
+            AND A.WRITER_NO = #{memberNo}
+            <include refid="filters"/>
+        )
+        WHERE RNUM BETWEEN #{startRow} AND #{lastRow}
+    </select>
+
+    <!-- 내가 승인할 문서 -->
+    <select id="countPending" resultType="int">
+        SELECT COUNT(*)
+        FROM (<include refid="allDocs"/>) A
+        WHERE <include refid="pendingForMe"/>
+        <include refid="filters"/>
+    </select>
+
+    <select id="listPending" resultType="com.groupworks.app.approval.ApprovalDocVo">
+        SELECT * FROM (
+            SELECT ROW_NUMBER() OVER (ORDER BY A.WRITE_DATE ASC, A.NO ASC) AS RNUM,
+                <include refid="docColumns"/>
+            FROM (<include refid="allDocs"/>) A
+            <include refid="docJoins"/>
+            WHERE <include refid="pendingForMe"/>
+            <include refid="filters"/>
+        )
+        WHERE RNUM BETWEEN #{startRow} AND #{lastRow}
+    </select>
+
+    <!-- 내 문서 상태별 건수 (대시보드) -->
+    <select id="countMineByCategory" resultType="map">
+        SELECT A.CATEGORY_NO AS "categoryNo", COUNT(*) AS "count"
+        FROM (<include refid="allDocs"/>) A
+        WHERE A.DEL_YN = 'N'
+        AND A.WRITER_NO = #{memberNo}
+        GROUP BY A.CATEGORY_NO
+    </select>
+
+    <!-- 내 칸의 상태 바꾸기 (대기인 칸만). status: 2 승인, 3 반려 -->
+    <update id="updateMyStatus">
+        UPDATE ${type.table}
+        SET
+            FIRST_STATUS = CASE WHEN FIRST_APPLY_NO = #{memberNo} AND FIRST_STATUS = 1 THEN #{status} ELSE FIRST_STATUS END
+            , MID_STATUS = CASE WHEN MID_APPLY_NO = #{memberNo} AND MID_STATUS = 1 THEN #{status} ELSE MID_STATUS END
+            , LAST_STATUS = CASE WHEN LAST_APPLY_NO = #{memberNo} AND LAST_STATUS = 1 THEN #{status} ELSE LAST_STATUS END
+        WHERE NO = #{no}
+        AND CATEGORY_NO = 1
+        AND DEL_YN = 'N'
+    </update>
+
+    <!-- 세 명 모두 승인했으면 문서 승인 완료 -->
+    <update id="completeIfAllApproved">
+        UPDATE ${type.table}
+        SET CATEGORY_NO = 2, DOCUMENT_DATE = SYSDATE
+        WHERE NO = #{no}
+        AND CATEGORY_NO = 1
+        AND FIRST_STATUS = 2 AND MID_STATUS = 2 AND LAST_STATUS = 2
+    </update>
+
+    <!-- 반려 -->
+    <update id="reject">
+        UPDATE ${type.table}
+        SET CATEGORY_NO = 3, DOCUMENT_DATE = SYSDATE, REJECTION = #{rejection}
+        WHERE NO = #{no}
+        AND CATEGORY_NO = 1
+    </update>
+
+    <!-- 삭제 (작성자만) -->
+    <update id="delete">
+        UPDATE ${type.table}
+        SET DEL_YN = 'Y'
+        WHERE NO = #{no}
+        AND WRITER_NO = #{memberNo}
+        AND DEL_YN = 'N'
+    </update>
+
+</mapper>

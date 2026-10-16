@@ -5,6 +5,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.util.List;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Value;
@@ -12,11 +13,17 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.groupworks.app.common.exception.BusinessException;
+
 /**
  * 업로드 파일을 app.upload-dir 아래에 저장하고, 웹에서 접근할 경로(/resources/upload/...)를 돌려준다.
  */
 @Service
 public class FileStorageService {
+
+	// 문서, 이미지, 압축 파일만 받는다 (스크립트/실행 파일 차단)
+	private static final List<String> ALLOWED_EXTENSIONS = List.of(
+			"jpg", "jpeg", "png", "gif", "pdf", "txt", "hwp", "doc", "docx", "xls", "xlsx", "ppt", "pptx", "zip");
 
 	private final Path root;
 
@@ -34,6 +41,10 @@ public class FileStorageService {
 			return null;
 		}
 		String originName = StringUtils.getFilename(StringUtils.cleanPath(file.getOriginalFilename()));
+		String ext = StringUtils.getFilenameExtension(originName);
+		if (ext == null || !ALLOWED_EXTENSIONS.contains(ext.toLowerCase())) {
+			throw new BusinessException("첨부할 수 없는 파일 형식입니다. (" + String.join(", ", ALLOWED_EXTENSIONS) + ")");
+		}
 		String storedName = UUID.randomUUID() + "_" + originName;
 
 		Path dir = root.resolve(subDir).normalize();

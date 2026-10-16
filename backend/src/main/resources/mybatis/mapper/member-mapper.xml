@@ -172,7 +172,7 @@
     <select id="getWorkStatList" resultType="WorkStatVo">
         SELECT
         NO
-        , STATUS
+        , STATUS AS NAME
         FROM WORK_STATUS
     </select>
 

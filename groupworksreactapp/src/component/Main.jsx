@@ -4,7 +4,8 @@ import { Route, Routes } from 'react-router-dom';
 import Home from './Home';
 import NoticeMain from './notice/NoticeMain';
 import OrganMain from './organ/OrganMain';
-import DocumentMain from './document/DocumentMain';
+import { Navigate } from 'react-router-dom';
+import ApprovalMain from './approval/ApprovalMain';
 import BookMain from './book/BookMain';
 import AddMember from './member/AddMember';
 import DeleteMember from './member/DeleteMember';
@@ -19,13 +20,14 @@ const StyledMain = styled.main`
 // 홈을 제외한 화면은 하나의 큰 카드 안에 그린다.
 const Page = ({ children }) => <Card className="gw-page">{children}</Card>;
 
-const Main = () => {
+const Main = ({ summary }) => {
     return (
         <StyledMain>
             <Routes>
-                <Route path='/' element={<Home />}></Route>
+                <Route path='/' element={<Home summary={summary} />}></Route>
                 <Route path='/notice/*' element={<Page><NoticeMain /></Page>}></Route>
-                <Route path='/document/*' element={<Page><DocumentMain /></Page>}></Route>
+                <Route path='/approval/*' element={<Page><ApprovalMain /></Page>}></Route>
+                <Route path='/document/*' element={<Navigate to='/approval/my' replace />}></Route>
                 <Route path='/organ/*' element={<Page><OrganMain /></Page>}></Route>
                 <Route path='/book/*' element={<Page><BookMain /></Page>}></Route>
                 <Route path='/member/add/*' element={<Page><AddMember /></Page>}></Route>

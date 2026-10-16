@@ -1,5 +1,8 @@
 package com.groupworks.app.member.vo;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import lombok.Data;
 
 @Data
@@ -7,6 +10,8 @@ public class MemberVo {
     private String no;
     private String name;
     private String id;
+    // 받기만 하고 응답에는 내보내지 않는다
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String pwd;
     private String email;
     private String tel;
@@ -22,9 +27,6 @@ public class MemberVo {
     private String workStatusNo;
     private String delYn;
 
+    @JsonIgnore
     private String refreshToken;
-
-    public void updateRefreshToken(String refreshToken){
-        this.refreshToken = refreshToken;
-    }
 }

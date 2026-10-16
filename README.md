@@ -22,6 +22,8 @@ cd backend
 mvn spring-boot:run
 ```
 
+로그인은 JWT 토큰 방식입니다. 토큰 유효 시간은 기본 8시간(`app.jwt.access-token-hours`)이고, 로그인/회원가입 외 모든 API 는 토큰이 있어야 합니다.
+
 환경변수로도 설정할 수 있습니다: `DB_URL`, `DB_USERNAME`, `DB_PASSWORD`, `JWT_SECRET`, `UPLOAD_DIR`(기본 `./uploads`), `CORS_ALLOWED_ORIGINS`.
 
 **프론트** (http://localhost:3000)

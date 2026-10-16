@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import com.groupworks.app.member.vo.MemberVo;
 import com.groupworks.app.organ.dao.OrganDao;
 import com.groupworks.app.organ.vo.OrganVo;
+import com.groupworks.app.security.CurrentUser;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -22,6 +23,7 @@ public class OrganService {
 	
 	//생성
 	public int insert(OrganVo vo) {
+		CurrentUser.requireAdmin();
 		
 		return dao.insert(sst, vo);
 	}
@@ -43,6 +45,7 @@ public class OrganService {
 	
 	//수정
 	public int edit(OrganVo vo) {
+		CurrentUser.requireAdmin();
 		if(vo == null) {
 			throw new IllegalStateException("vo가 없어서 업데이트 불가능");
 		}
@@ -58,6 +61,7 @@ public class OrganService {
 //	}
 
 	public int delete(String no) {
+		CurrentUser.requireAdmin();
 	    return dao.delete(sst, no);
 	}
 

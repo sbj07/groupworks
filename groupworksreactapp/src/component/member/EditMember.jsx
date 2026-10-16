@@ -2,6 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { Form } from 'react-bootstrap';
 import AppModal from '../common/AppModal';
 import { API_BASE } from '../../api/config';
+import { notify } from '../common/Toast';
+import { email, firstError, maxLength, memberId, password, required, tel } from '../../utils/validate';
 
 const FIELDS = [
     { name: 'name', label: '이름', type: 'text' },
@@ -35,6 +37,18 @@ const EditMember = ( {memberNo , openModal, handleCloseModal} ) => {
             handleCloseModal();
             return;
         }
+        const error = firstError([
+            'name' in editVo ? required(editVo.name, '이름') || maxLength(editVo.name, 30, '이름') : null,
+            'id' in editVo ? memberId(editVo.id) : null,
+            editVo.pwd ? password(editVo.pwd, '새 비밀번호') : null,
+            email(editVo.email),
+            tel(editVo.tel),
+            'annual' in editVo && !/^\d{1,3}$/.test(String(editVo.annual)) ? '연차는 0~999 사이 숫자로 입력해주세요.' : null,
+        ]);
+        if (error) {
+            notify(error, 'error');
+            return;
+        }
         fetch(`${API_BASE}/api/member/`, {
             method: "PUT" ,
             headers: {
@@ -45,10 +59,8 @@ const EditMember = ( {memberNo , openModal, handleCloseModal} ) => {
         .then( resp => resp.json() )
         .then( data => {
             if(data.msg === 'okay'){
-                alert("회원정보를 수정했습니다.");
-                window.location.reload();
-            } else {
-                alert("회원정보 수정에 실패했습니다. 다시 시도해주세요.");
+                notify("회원정보를 수정했습니다.", "success");
+                setTimeout(() => window.location.reload(), 600);
             }
         })
     };
@@ -76,7 +88,7 @@ const EditMember = ( {memberNo , openModal, handleCloseModal} ) => {
             </>}
         >
             <Form onSubmit={handleSubmit}>
-                {FIELDS.map(f => (
+                {FIELDS.filter(f => f.name !== 'annual' || loginVo.authNo === '1').map(f => (
                     <Form.Group className="mb-3" controlId={`edit-${f.name}`} key={f.name}>
                         <Form.Label>{f.label}</Form.Label>
                         <Form.Control type={f.type} name={f.name} value={valueOf(f.name)} placeholder={f.placeholder} onChange={handleInputChange} autoComplete={f.type === 'password' ? 'new-password' : undefined} />

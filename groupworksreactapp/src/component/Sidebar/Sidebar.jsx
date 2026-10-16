@@ -1,7 +1,8 @@
 import React from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
-import { FiHome, FiBell, FiFileText, FiUsers, FiCalendar, FiUserPlus, FiUserCheck, FiLogOut } from 'react-icons/fi';
+import { auth } from '../../api/http';
+import { FiHome, FiBell, FiUsers, FiCalendar, FiUserPlus, FiUserCheck, FiLogOut, FiSun, FiBriefcase, FiFileText, FiInbox } from 'react-icons/fi';
 
 const StyledSidebar = styled.aside`
     position: fixed;
@@ -111,12 +112,28 @@ const Logout = styled.button`
     }
 `;
 
-const Sidebar = ({ member }) => {
+const Count = styled.span`
+    margin-left: auto;
+    min-width: 20px;
+    padding: 1px 7px;
+    border-radius: 999px;
+    background: #ff6b6b;
+    color: #fff;
+    font-size: 11px;
+    font-weight: 700;
+    text-align: center;
+
+    @media (max-width: 900px) {
+        display: none;
+    }
+`;
+
+const Sidebar = ({ member, pendingCount = 0 }) => {
     const navigate = useNavigate();
     const isAdmin = member?.authNo === '1';
 
     const handleLogout = () => {
-        sessionStorage.removeItem('loginMemberNo');
+        auth.logout();
         navigate('/login');
     };
 
@@ -126,9 +143,17 @@ const Sidebar = ({ member }) => {
 
             <Item to="/" end><FiHome /><span className="label">홈</span></Item>
             <Item to="/notice/list"><FiBell /><span className="label">공지사항</span></Item>
-            <Item to="/document/list"><FiFileText /><span className="label">전자결재</span></Item>
             <Item to="/organ/list"><FiUsers /><span className="label">조직도</span></Item>
             <Item to="/book/list"><FiCalendar /><span className="label">회의실 예약</span></Item>
+
+            <Section className="section">전자결재</Section>
+            <Item to="/approval/write/vacation"><FiSun /><span className="label">휴가신청서</span></Item>
+            <Item to="/approval/write/business"><FiBriefcase /><span className="label">출장신청서</span></Item>
+            <Item to="/approval/my"><FiFileText /><span className="label">결재내역</span></Item>
+            <Item to="/approval/pending">
+                <FiInbox /><span className="label">승인대기</span>
+                {pendingCount > 0 && <Count>{pendingCount}</Count>}
+            </Item>
 
             {isAdmin && (
                 <>

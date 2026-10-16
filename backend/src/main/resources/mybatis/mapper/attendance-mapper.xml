@@ -3,6 +3,8 @@
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="AttendanceMapper">
+    <!-- 날짜는 'YYYY-MM-DD', 외근 시간은 'YYYY-MM-DD HH24:MI' 문자열로 받는다 (서비스에서 형식 확인) -->
+    <!-- 수정/삭제는 모두 본인(MEMBER_NO) 일정만 -->
 
     <!-- 출장 등록 -->
     <insert id="insertBusinessTrip">
@@ -18,8 +20,8 @@
         (
             SEQ_BUSINESS_TRIP_NO.NEXTVAL
             , #{memberNo}
-            , #{startDate}
-            , #{endDate}
+            , TO_DATE(#{startDate}, 'YYYY-MM-DD')
+            , TO_DATE(#{endDate}, 'YYYY-MM-DD')
             , #{memo}
         )
     </insert>
@@ -27,16 +29,13 @@
     <!-- 출장 수정 -->
     <update id="editBusinessTrip">
         UPDATE BUSINESS_TRIP
-        <set>
-            <if test="startDate != null">
-                START_DATE = #{startDate} ,
-                END_DATE = #{endDate},
-            </if>
-            <if test="memo != null">
-                MEMO = #{memo}
-            </if>
-        </set>
+        SET
+            START_DATE = TO_DATE(#{startDate}, 'YYYY-MM-DD')
+            , END_DATE = TO_DATE(#{endDate}, 'YYYY-MM-DD')
+            , MEMO = #{memo}
         WHERE NO = #{no}
+        AND MEMBER_NO = #{memberNo}
+        AND DEL_YN = 'N'
     </update>
 
     <!-- 출장 삭제 -->
@@ -45,6 +44,7 @@
         SET
         DEL_YN = 'Y'
         WHERE NO = #{no}
+        AND MEMBER_NO = #{memberNo}
     </update>
 
     <!-- 외근 등록 -->
@@ -55,44 +55,31 @@
         , MEMBER_NO
         , START_TIME
         , END_TIME
-            <if test=" onsiteStart != null and onsiteStart != '' ">
-                , ONSITE_START
-            </if>
-            <if test=" onsiteEnd != null and onsiteEnd != '' ">
-                , ONSITE_END
-            </if>
+        , ONSITE_START
+        , ONSITE_END
         )
         VALUES
         (
         SEQ_OUTSIDE_WORK_NO.NEXTVAL
         , #{memberNo}
-        , #{startTime}
-        , #{endTime}
-            <if test=" onsiteStart != null and onsiteStart != '' ">
-                , #{onsiteStart}
-            </if>
-            <if test=" onsiteEnd != null and onsiteEnd != '' ">
-                , #{onsiteEnd}
-            </if>
+        , TO_TIMESTAMP(#{startTime}, 'YYYY-MM-DD HH24:MI')
+        , TO_TIMESTAMP(#{endTime}, 'YYYY-MM-DD HH24:MI')
+        , NVL(#{onsiteStart, jdbcType=VARCHAR}, 'N')
+        , NVL(#{onsiteEnd, jdbcType=VARCHAR}, 'N')
         )
     </insert>
 
     <!-- 외근 수정 -->
     <update id="editOutsideWork">
         UPDATE OUTSIDE_WORK
-        <set>
-            <if test="startTime != null">
-                START_TIME = #{startTime},
-                END_TIME = #{endTime},
-            </if>
-            <if test=" onsiteStart != null and onsiteStart != '' ">
-                ONSITE_START = #{onsiteStart},
-            </if>
-            <if test=" onsiteEnd != null and onsiteEnd != '' ">
-                ONSITE_END = #{onsiteEnd}
-            </if>
-        </set>
+        SET
+            START_TIME = TO_TIMESTAMP(#{startTime}, 'YYYY-MM-DD HH24:MI')
+            , END_TIME = TO_TIMESTAMP(#{endTime}, 'YYYY-MM-DD HH24:MI')
+            , ONSITE_START = NVL(#{onsiteStart, jdbcType=VARCHAR}, 'N')
+            , ONSITE_END = NVL(#{onsiteEnd, jdbcType=VARCHAR}, 'N')
         WHERE NO = #{no}
+        AND MEMBER_NO = #{memberNo}
+        AND DEL_YN = 'N'
     </update>
 
     <!-- 외근 삭제 -->
@@ -101,6 +88,7 @@
         SET
         DEL_YN = 'Y'
         WHERE NO = #{no}
+        AND MEMBER_NO = #{memberNo}
     </update>
 
     <!-- 휴가 등록 -->
@@ -118,14 +106,14 @@
         (
         SEQ_VACATION_NO.NEXTVAL
         , #{memberNo}
-        , #{startDate}
-        , #{endDate}
+        , TO_DATE(#{startDate}, 'YYYY-MM-DD')
+        , TO_DATE(#{endDate}, 'YYYY-MM-DD')
         , #{usedDays}
         , #{halfDayType}
         )
     </insert>
 
-     <!-- 연차일수 삭감 -->
+    <!-- 연차일수 차감 (음수를 넣으면 복구) -->
     <update id="cutAnnual" >
         UPDATE MEMBER
         SET
@@ -133,18 +121,32 @@
         WHERE NO = #{memberNo}
     </update>
 
+    <!-- 휴가 한 건 (본인) -->
+    <select id="getVacation" resultType="VacationVo">
+        SELECT
+        NO
+        , MEMBER_NO
+        , TO_CHAR(START_DATE, 'YYYY-MM-DD') AS START_DATE
+        , TO_CHAR(END_DATE, 'YYYY-MM-DD') AS END_DATE
+        , USED_DAYS
+        , HALF_DAY_TYPE
+        FROM VACATION
+        WHERE NO = #{no}
+        AND MEMBER_NO = #{memberNo}
+        AND DEL_YN = 'N'
+    </select>
+
     <!-- 휴가 수정 -->
     <update id="editVacation">
         UPDATE VACATION
-        <set>
-            START_DATE = #{startDate},
-            END_DATE = #{endDate},
-            USED_DAYS = #{usedDays}
-            <if test=" halfDayType != null and halfDayType != '' ">
-                HALF_DAY_TYPE = #{halfDayType}
-            </if>
-        </set>
+        SET
+            START_DATE = TO_DATE(#{startDate}, 'YYYY-MM-DD')
+            , END_DATE = TO_DATE(#{endDate}, 'YYYY-MM-DD')
+            , USED_DAYS = #{usedDays}
+            , HALF_DAY_TYPE = #{halfDayType}
         WHERE NO = #{no}
+        AND MEMBER_NO = #{memberNo}
+        AND DEL_YN = 'N'
     </update>
 
     <!-- 휴가 삭제 -->
@@ -153,6 +155,7 @@
         SET
             DEL_YN = 'Y'
         WHERE NO = #{no}
+        AND MEMBER_NO = #{memberNo}
     </update>
 
     <!-- 출장 리스트 -->
@@ -198,8 +201,9 @@
 
     <select id="getUsedAnnualDays" resultType="VacationVo">
         SELECT
-            SUM(USED_DAYS) AS USED_DAYS
+            NVL(SUM(USED_DAYS), 0) AS USED_DAYS
         FROM VACATION
         WHERE MEMBER_NO = #{no}
+        AND DEL_YN = 'N'
     </select>
 </mapper>

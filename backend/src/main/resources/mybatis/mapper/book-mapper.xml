@@ -4,7 +4,20 @@
   "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="BookMapper">
 
-<!-- 예약 -->
+	<sql id="bookColumns">
+		B.BOOK_NO
+		, B.MEMBER_NO
+		, M.NAME AS memberName
+		, B.BOOK_PLACE
+		, TO_CHAR(B.START_DATE, 'YYYY-MM-DD HH24:MI') AS START_DATE
+		, TO_CHAR(B.END_DATE, 'YYYY-MM-DD HH24:MI') AS END_DATE
+		, B.BOOK_PURPOSE
+		, TO_CHAR(B.BOOK_DATE, 'YYYY-MM-DD HH24:MI') AS BOOK_DATE
+		, TO_CHAR(B.UPDATE_DATE, 'YYYY-MM-DD HH24:MI') AS UPDATE_DATE
+		, TO_CHAR(B.CANCEL_DATE, 'YYYY-MM-DD HH24:MI') AS CANCEL_DATE
+	</sql>
+
+	<!-- 예약 (날짜는 'YYYY-MM-DD HH24:MI' 문자열로 받는다) -->
 	<insert id="insert">
 		INSERT INTO BOOK(
 		    BOOK_NO
@@ -18,129 +31,93 @@
 		    SEQ_BOOK_NO.NEXTVAL
 		    , #{memberNo}
 		    , #{bookPlace}
-		    , #{startDate}
-		    , #{endDate}
+		    , TO_DATE(#{startDate}, 'YYYY-MM-DD HH24:MI')
+		    , TO_DATE(#{endDate}, 'YYYY-MM-DD HH24:MI')
 		    , #{bookPurpose}
 			)
 	</insert>
-	
-<!-- 	전체 조회 	//처음 페이지 렌더링 시 모든 데이터 조회	 -->
-	<select id="list" resultType="com.groupworks.app.book.vo.BookVo">
-		SELECT
-		    B.BOOK_NO
-		    , B.MEMBER_NO
-            , M.NAME as memberName
-		    , B.BOOK_PLACE
-		    , TO_CHAR(B.START_DATE, 'YYYY-MM-DD HH24:MI') AS START_DATE
-		    , TO_CHAR(B.END_DATE, 'YYYY-MM-DD HH24:MI') AS END_DATE
-		    , B.BOOK_PURPOSE
-		    , TO_CHAR(B.BOOK_DATE, 'YYYY-MM-DD HH24:MI') AS BOOK_DATE
-		    , TO_CHAR(B.UPDATE_DATE, 'YYYY-MM-DD HH24:MI') AS UPDATE_DATE
-		    , TO_CHAR(B.CANCEL_DATE, 'YYYY-MM-DD HH24:MI') AS CANCEL_DATE
-		FROM BOOK B
-        JOIN MEMBER M ON B.MEMBER_NO = M.NO
-		WHERE CANCEL_DATE IS NULL
-		ORDER BY BOOK_NO DESC
-	</select>
-	
-<!-- 	조회조건(기간, 예약자, 장소, 사용목적)에 맞는 예약 목록. 조건은 모두 선택 사항 -->
-<select id="listByDateRange" resultType="com.groupworks.app.book.vo.BookVo">
-    SELECT
-        B.BOOK_NO
-        , B.MEMBER_NO
-        , M.NAME as memberName
-        , B.BOOK_PLACE
-        , TO_CHAR(B.START_DATE, 'YYYY-MM-DD HH24:MI') AS START_DATE
-        , TO_CHAR(B.END_DATE, 'YYYY-MM-DD HH24:MI') AS END_DATE
-        , B.BOOK_PURPOSE
-        , TO_CHAR(B.BOOK_DATE, 'YYYY-MM-DD HH24:MI') AS BOOK_DATE
-        , TO_CHAR(B.UPDATE_DATE, 'YYYY-MM-DD HH24:MI') AS UPDATE_DATE
-        , TO_CHAR(B.CANCEL_DATE, 'YYYY-MM-DD HH24:MI') AS CANCEL_DATE
-    FROM BOOK B
-    JOIN MEMBER M ON B.MEMBER_NO = M.NO
-    WHERE B.CANCEL_DATE IS NULL
-    <!-- 기간과 겹치는 예약 -->
-    <if test="startDate != null and startDate != ''">
-        AND B.END_DATE &gt;= TO_DATE(#{startDate}, 'YYYY-MM-DD')
-    </if>
-    <if test="endDate != null and endDate != ''">
-        AND B.START_DATE &lt; TO_DATE(#{endDate}, 'YYYY-MM-DD') + 1
-    </if>
-    <if test="memberName != null and memberName != ''">
-        AND M.NAME LIKE '%' || #{memberName} || '%'
-    </if>
-    <if test="bookPlace != null and bookPlace != ''">
-        AND B.BOOK_PLACE LIKE '%' || #{bookPlace} || '%'
-    </if>
-    <if test="bookPurpose != null and bookPurpose != ''">
-        AND B.BOOK_PURPOSE LIKE '%' || #{bookPurpose} || '%'
-    </if>
-    ORDER BY B.BOOK_NO DESC
-</select>
 
-<!-- 상세 조회 -->
+	<!-- 조회조건(기간, 예약자, 장소, 사용목적)에 맞는 우리 회사 예약 목록. 조건은 모두 선택 사항 -->
+	<select id="listByDateRange" resultType="com.groupworks.app.book.vo.BookVo">
+	    SELECT
+	        <include refid="bookColumns"/>
+	    FROM BOOK B
+	    JOIN MEMBER M ON B.MEMBER_NO = M.NO
+	    WHERE B.CANCEL_DATE IS NULL
+	    AND M.COMPANY_NO = #{companyNo}
+	    <!-- 기간과 겹치는 예약 -->
+	    <if test="startDate != null and startDate != ''">
+	        AND B.END_DATE &gt;= TO_DATE(#{startDate}, 'YYYY-MM-DD')
+	    </if>
+	    <if test="endDate != null and endDate != ''">
+	        AND B.START_DATE &lt; TO_DATE(#{endDate}, 'YYYY-MM-DD') + 1
+	    </if>
+	    <if test="memberName != null and memberName != ''">
+	        AND M.NAME LIKE '%' || #{memberName} || '%'
+	    </if>
+	    <if test="bookPlace != null and bookPlace != ''">
+	        AND B.BOOK_PLACE LIKE '%' || #{bookPlace} || '%'
+	    </if>
+	    <if test="bookPurpose != null and bookPurpose != ''">
+	        AND B.BOOK_PURPOSE LIKE '%' || #{bookPurpose} || '%'
+	    </if>
+	    ORDER BY B.BOOK_NO DESC
+	</select>
+
+	<!-- 상세 (취소되지 않은 예약, 회사 확인용 COMPANY 포함) -->
 	<select id="detail" resultType="com.groupworks.app.book.vo.BookVo">
 		SELECT
-		    BOOK_NO
-		    , MEMBER_NO
-		    , BOOK_PLACE
-		    , START_DATE
-		    , END_DATE
-		    , BOOK_PURPOSE
-		    , BOOK_DATE
-		    , UPDATE_DATE
-		    , CANCEL_DATE
-		FROM BOOK
-		WHERE BOOK_NO = #{bookNo}
+		    <include refid="bookColumns"/>
+		FROM BOOK B
+		JOIN MEMBER M ON B.MEMBER_NO = M.NO
+		WHERE B.BOOK_NO = #{bookNo}
+		AND B.CANCEL_DATE IS NULL
 	</select>
 
-<!-- 수정 -->
+	<select id="companyOfBook" resultType="String">
+		SELECT M.COMPANY_NO
+		FROM BOOK B
+		JOIN MEMBER M ON B.MEMBER_NO = M.NO
+		WHERE B.BOOK_NO = #{bookNo}
+	</select>
+
+	<!-- 같은 회사, 같은 장소에서 시간이 겹치는 예약 수 (수정할 때는 자기 예약 제외) -->
+	<select id="countOverlap" resultType="int">
+		SELECT COUNT(*)
+		FROM BOOK B
+		JOIN MEMBER M ON B.MEMBER_NO = M.NO
+		WHERE B.CANCEL_DATE IS NULL
+		AND M.COMPANY_NO = #{companyNo}
+		AND B.BOOK_PLACE = #{bookPlace}
+		AND B.START_DATE &lt; TO_DATE(#{endDate}, 'YYYY-MM-DD HH24:MI')
+		AND B.END_DATE &gt; TO_DATE(#{startDate}, 'YYYY-MM-DD HH24:MI')
+		<if test="bookNo != null and bookNo != ''">
+			AND B.BOOK_NO != #{bookNo}
+		</if>
+	</select>
+
+	<!-- 수정 (본인 예약만) -->
 	<update id="edit">
 	    UPDATE BOOK
 	        SET
-	        <trim prefixOverrides=",">
-            <if test="bookPlace != null and bookPlace != ''">
-                BOOK_PLACE = #{bookPlace},
-            </if>
-            <if test="startDate != null">
-                START_DATE = #{startDate, jdbcType=TIMESTAMP},
-            </if>
-            <if test="endDate != null">
-                END_DATE = #{endDate, jdbcType=TIMESTAMP},
-            </if>
-            <if test="bookPurpose != null and bookPurpose != ''">
-                BOOK_PURPOSE = #{bookPurpose}
-            </if>
-	        </trim>
-        , UPDATE_DATE = SYSDATE
+	            BOOK_PLACE = #{bookPlace}
+	            , START_DATE = TO_DATE(#{startDate}, 'YYYY-MM-DD HH24:MI')
+	            , END_DATE = TO_DATE(#{endDate}, 'YYYY-MM-DD HH24:MI')
+	            , BOOK_PURPOSE = #{bookPurpose}
+	            , UPDATE_DATE = SYSDATE
 	    WHERE BOOK_NO = #{bookNo}
+	    AND MEMBER_NO = #{memberNo}
+	    AND CANCEL_DATE IS NULL
 	</update>
 
-
-
-<!-- 삭제 -->
+	<!-- 취소 (본인 예약만) -->
 	<update id="delete">
 		UPDATE BOOK
 		    SET
 		        CANCEL_DATE = SYSDATE
 		WHERE BOOK_NO = #{bookNo}
+		AND MEMBER_NO = #{memberNo}
+		AND CANCEL_DATE IS NULL
 	</update>
-	
+
 </mapper>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

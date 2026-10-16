@@ -257,3 +257,7 @@ table {
 .gw-card button:not([class]):disabled {
   opacity: 0.45;
 }
+
+.gw-card table.clickable tbody tr {
+  cursor: pointer;
+}

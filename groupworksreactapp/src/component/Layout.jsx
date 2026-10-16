@@ -5,6 +5,8 @@ import Main from './Main';
 import Sidebar from './sidebar/Sidebar';
 import Topbar from './Topbar';
 import useLoginMember from '../hooks/useLoginMember';
+import { auth } from '../api/http';
+import useApprovalSummary from '../hooks/useApprovalSummary';
 
 // 사이드바는 화면 높이에 고정되고, 오른쪽 본문만 스크롤된다.
 const StyledLayout = styled.div`
@@ -20,24 +22,26 @@ const Content = styled.div`
 `;
 
 const Layout = () => {
-    const loginMemberNo = sessionStorage.getItem('loginMemberNo');
+    const loggedIn = auth.isLoggedIn();
     const navigate = useNavigate();
     const member = useLoginMember();
+    const summary = useApprovalSummary();
 
     useEffect(() => {
-        if (loginMemberNo === null) {
+        if (!loggedIn) {
+            auth.logout();
             navigate('/login');
         }
-    }, [loginMemberNo, navigate]);
+    }, [loggedIn, navigate]);
 
-    if (loginMemberNo === null) return null;
+    if (!loggedIn) return null;
 
     return (
         <StyledLayout>
-            <Sidebar member={member} />
+            <Sidebar member={member} pendingCount={summary.pendingForMe} />
             <Content>
                 <Topbar member={member} />
-                <Main />
+                <Main summary={summary} />
             </Content>
         </StyledLayout>
     );

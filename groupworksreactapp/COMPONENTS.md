@@ -3,14 +3,32 @@
 화면을 새로 만들거나 고칠 때 아래 공통 컴포넌트를 먼저 쓰면 디자인이 저절로 맞습니다.
 색, 글꼴, 간격은 `src/styles/theme.css` 의 `--gw-*` 변수로 관리합니다.
 
-## API 주소
+## API 호출과 로그인
 
 ```js
-import { API_BASE } from '../../api/config';
-fetch(`${API_BASE}/api/member/${no}`);
+import { api } from '../../api/http';
+
+const result = await api.get('/api/approval/summary');   // { ok, ...응답 }
+if (result.ok) { ... }
+await api.post('/book/insert', body);                   // FormData 도 그대로 넘기면 된다
 ```
 
-기본값은 `http://127.0.0.1:8888/app` 이고, `.env` 에 `REACT_APP_API_URL` 을 두면 바뀝니다 (`.env.example` 참고).
+- 로그인하면 `auth.login(token, memberNo)` 로 토큰을 저장하고, 모든 요청에 `Authorization: Bearer` 가 자동으로 붙는다.
+- 401 이면 로그인 화면으로 보내고, 그 밖의 오류는 서버가 준 `message` 를 토스트로 띄운다. (기존 `fetch` 호출도 같은 처리를 받는다)
+- 주소는 `API_BASE` (기본 `http://127.0.0.1:8888/app`, `.env` 의 `REACT_APP_API_URL` 로 변경)
+
+## 안내 메시지와 입력값 검사
+
+```js
+import { notify } from '../common/Toast';
+import { firstError, required, maxLength, dateOrder } from '../../utils/validate';
+
+const error = firstError([required(form.title, '제목'), maxLength(form.title, 100, '제목')]);
+if (error) { notify(error, 'error'); return; }
+notify('저장했습니다.', 'success');
+```
+
+`utils/validate.js` 의 규칙은 서버 `common/validation/Check.java` 와 같다. (아이디, 비밀번호, 이메일, 연락처, 날짜 순서, 첨부파일)
 
 ## 레이아웃
 
@@ -63,9 +81,12 @@ import { Form, Label, Input, TextArea, Select, SubmitButton } from '../common/Fo
 
 읽기 전용 값은 `<span className="readonly">` 로 감쌉니다.
 
-## 전자결재 문서
+## 전자결재
 
-`document/ApprovalDoc.jsx`
+화면: `approval/` (양식별 작성 `ApprovalWrite`, 결재내역/승인대기 `ApprovalList`, 문서 보기·승인·반려 `ApprovalDetailModal`, 홈 `ApprovalSummaryCard`)
+API: `/api/approval/...` (휴가·출장 공통, `{type}` 은 vacation / business)
+
+`approval/ApprovalDoc.jsx`
 
 - `DocSheet`, `DocHeader`, `DocTable`, `DocFooter`, `DocActions`: 결재 문서 한 장의 틀
 - `ApprovalLine`: 최초/중간/최종 결재란 (`onPick` 을 주면 칸을 눌러 승인자 지정)

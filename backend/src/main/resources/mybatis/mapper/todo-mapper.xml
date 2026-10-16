@@ -44,7 +44,7 @@
 		    , MODIFY_DATE = SYSDATE 
 	    WHERE NO = #{no} 
 	    AND DEL_YN = 'N'
-<!-- 	    AND MEMBER_NO = #{memberNo}; -->
+	    AND MEMBER_NO = #{memberNo}
  	</update>
 
  	<!-- 할일삭제 -->

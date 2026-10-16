@@ -5,33 +5,17 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.servlet.config.annotation.CorsRegistry;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
-import com.groupworks.app.company.vo.CompanyVo;
 import com.groupworks.app.file.FileStorageService;
-import com.groupworks.app.member.service.MemberService;
-import com.groupworks.app.member.vo.DepartVo;
-import com.groupworks.app.member.vo.MemberVo;
 import com.groupworks.app.notice.service.NoticeService;
-import com.groupworks.app.notice.vo.CategoryVo;
 import com.groupworks.app.notice.vo.NoticeSearchVo;
 import com.groupworks.app.notice.vo.NoticeVo;
 import com.groupworks.app.page.vo.PageVo;
@@ -48,165 +32,93 @@ public class NoticeController {
 	private final NoticeService service;
 	private final FileStorageService fileStorageService;
 
-	// 작성(파일 업로드 추가)
+	private static Map<String, Object> okay(String message) {
+		Map<String, Object> map = new HashMap<>();
+		map.put("msg", "okay");
+		map.put("message", message);
+		return map;
+	}
+
+	// 작성 (파일 첨부 선택)
 	@PostMapping("insert")
-	public ResponseEntity<Map<String, String>> insert(
-			@RequestParam(value = "file", required = false) MultipartFile file, @RequestParam("title") String title,
-			@RequestParam("content") String content, @RequestParam("memberNo") String memberNo,
-			@RequestParam("category") String category, @RequestParam("openDepart") String openDepart) {
-		Map<String, String> response = new HashMap<>();
-		try {
-			String filePath = null;
-			if (file != null && !file.isEmpty()) {
-				filePath = saveFile(file);
-			}
-
-			NoticeVo vo = new NoticeVo();
-			vo.setTitle(title);
-			vo.setContent(content);
-			vo.setMemberNo(memberNo);
-			vo.setFilePath(filePath);
-			vo.setCategory(category);
-			vo.setOpenDepart(openDepart);
-
-			int result = service.insert(vo);
-			response.put("msg", result == 1 ? "공지사항 추가 성공" : "공지사항 추가 실패");
-			return new ResponseEntity<>(response, HttpStatus.OK);
-		} catch (Exception e) {
-			response.put("msg", "서버 오류: " + e.getMessage());
-			return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
-		}
+	public Map<String, Object> insert(@RequestParam(value = "file", required = false) MultipartFile file,
+			NoticeVo vo) throws IOException {
+		vo.setFilePath(fileStorageService.store(file, "notice/img"));
+		service.insert(vo);
+		return okay("공지사항을 등록했습니다.");
 	}
 
-	private String saveFile(MultipartFile file) throws IOException {
-		return fileStorageService.store(file, "notice/img");
-	}
-
-	// 공지사항 카테고리 데이터 가져오는 api
+	// 공지사항 카테고리
 	@GetMapping("list/categoryList")
 	public Map<String, Object> getCategoryList() {
-		List<CategoryVo> categoryList = service.getCategoryList();
-		Map<String, Object> map = new HashMap<>();
-		map.put("msg", "okay");
-		map.put("categories", categoryList);
-		if (categoryList == null) {
-			map.put("msg", "nope");
-		}
+		Map<String, Object> map = okay(null);
+		map.put("categories", service.getCategoryList());
 		return map;
 	}
 
-	// 부서 데이터 가져오는 api
+	// 부서
 	@GetMapping("list/departList")
 	public Map<String, Object> getDepartList() {
-		List<DepartVo> departList = service.getDepartList();
-		Map<String, Object> map = new HashMap<>();
-		map.put("msg", "okay");
-		map.put("list", departList);
-		if (departList == null) {
-			map.put("msg", "nope");
-		}
+		Map<String, Object> map = okay(null);
+		map.put("list", service.getDepartList());
 		return map;
 	}
 
-	@GetMapping("list") // 조회조건 + 페이징처리
+	// 조회조건 + 페이징 (로그인한 회사 공지만)
+	@GetMapping("list")
 	public Map<String, Object> list(@RequestParam(value = "page", defaultValue = "1") int currentPage,
-			@RequestParam(value = "limit", defaultValue = "10") int boardLimit, @RequestParam String memberNo,
-			NoticeSearchVo search) {
-
-		search.setLoginMemberNo(memberNo);
-		int listCount = service.getListCount(search); // 조회조건에 맞는 공지사항 수
-		PageVo pageVo = new PageVo(listCount, currentPage, 10, boardLimit); // 페이지 정보 생성
-		pageVo.setLoginMemberNo(memberNo);
-
-		List<NoticeVo> voList = service.listPaged(pageVo, search); // 페이징 처리된 목록 조회
+			@RequestParam(value = "limit", defaultValue = "10") int boardLimit, NoticeSearchVo search) {
+		int listCount = service.getListCount(search);
+		PageVo pageVo = new PageVo(listCount, Math.max(currentPage, 1), 10, Math.min(Math.max(boardLimit, 1), 100));
+		List<NoticeVo> voList = service.listPaged(pageVo, search);
 
 		Map<String, Object> map = new HashMap<>();
 		map.put("msg", "good");
 		map.put("voList", voList);
-		map.put("pageInfo", pageVo); // 페이지 정보도 같이 반환
+		map.put("pageInfo", pageVo);
 		map.put("totalCount", listCount);
-
-		log.info("{}", map);
 		return map;
 	}
 
-	// 상세 조회(번호)
-	@GetMapping("detail")
-	public String detail(NoticeVo vo, Model model) {
-		System.out.println(vo);
-		NoticeVo noticeVo = service.detail(vo);
-		model.addAttribute("noticeVo", noticeVo);
-
-		System.out.println("noticeVo : " + noticeVo);
-		return "notice/detail";
-	}// detail
+	// 상세 조회
+	@GetMapping("detail/{noticeNo}")
+	public Map<String, Object> detail(@PathVariable String noticeNo) {
+		NoticeVo key = new NoticeVo();
+		key.setNoticeNo(noticeNo);
+		Map<String, Object> map = okay(null);
+		map.put("noticeVo", service.detail(key));
+		return map;
+	}
 
 	// 조회수 증가
 	@PostMapping("/increase-click/{noticeNo}")
-	public ResponseEntity<?> increaseClickCount(@PathVariable("noticeNo") String noticeNo) {
-		try {
-			// noticeNo를 사용하여 NoticeVo 객체 생성
-			NoticeVo vo = new NoticeVo();
-			vo.setNoticeNo(noticeNo);
-
-			// 서비스 레이어를 호출하여 조회수 증가 로직 수행
-			NoticeVo updatedVo = service.clickNo(vo);
-			log.info("{}" + updatedVo);
-			if (updatedVo == null) {
-				return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("message", "조회수 증가 처리 실패, 확인 필요"));
-			}
-			return ResponseEntity.ok().body(Map.of("message", "조회수 증가 성공", "updatedVo", updatedVo));
-
-		} catch (Exception e) {
-//	    	e.printStackTrace();
-			// 오류 발생 시
-			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-					.body(Map.of("error", "서버 오류 발생: " + e.getMessage()));
-		}
+	public Map<String, Object> increaseClickCount(@PathVariable("noticeNo") String noticeNo) {
+		NoticeVo vo = new NoticeVo();
+		vo.setNoticeNo(noticeNo);
+		Map<String, Object> map = okay("조회수 증가 성공");
+		map.put("updatedVo", service.clickNo(vo));
+		return map;
 	}
 
-	// 수정(지피티) / json형태 응답 반환
+	// 수정 (작성자만, 파일을 새로 올리면 교체)
 	@PostMapping("edit")
-	public ResponseEntity<?> edit(NoticeVo vo) {
-		try {
-			log.info("{}", vo);
-			int result = service.edit(vo);
-			if (result != 1) {
-				throw new Exception("공지사항 수정 실패");
-			}
-			System.out.println("수정 요청된 NoticeVo : " + vo);
-			return ResponseEntity.ok().body(Map.of("message", "공지사항 수정 성공"));
-		} catch (Exception e) {
-			System.out.println("수정 중 오류 발생 : " + e.getMessage());
-			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of("message", "공지사항 수정 실패"));
+	public Map<String, Object> edit(@RequestParam(value = "file", required = false) MultipartFile file, NoticeVo vo)
+			throws IOException {
+		String filePath = fileStorageService.store(file, "notice/img");
+		if (filePath != null) {
+			vo.setFilePath(filePath);
 		}
-	}// edit
+		service.edit(vo);
+		return okay("공지사항을 수정했습니다.");
+	}
 
-	// 삭제(gpt)
+	// 삭제 (작성자 또는 관리자)
 	@DeleteMapping("delete/{noticeNo}")
-	public ResponseEntity<?> delete(NoticeVo vo, @RequestParam(value = "page", defaultValue = "1") int currentPage,
-			@RequestParam(value = "limit", defaultValue = "10") int boardLimit, @RequestParam String memberNo) {
-		try {
-			int result = service.delete(vo);
-			if (result != 1) {
-				throw new Exception("삭제 실패");
-			}
-
-			NoticeSearchVo search = new NoticeSearchVo();
-			search.setLoginMemberNo(memberNo);
-			int listCount = service.getListCount(search); // 전체 공지사항 수를 다시 가져옵니다.
-			PageVo pageVo = new PageVo(listCount, currentPage, 10, boardLimit); // 페이지 정보를 재생성합니다.
-			List<NoticeVo> voList = service.listPaged(pageVo, search); // 새로운 목록 조회
-
-			Map<String, Object> response = new HashMap<>();
-			response.put("message", "공지사항 삭제 성공");
-			response.put("voList", voList); // 새로운 목록
-			response.put("pageInfo", pageVo); // 새로운 페이지 정보
-
-			return ResponseEntity.ok().body(Map.of("message", "공지사항 삭제 성공"));
-		} catch (Exception e) {
-			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of("message", "공지사항 삭제 실패"));
-		}
+	public Map<String, Object> delete(@PathVariable String noticeNo) {
+		NoticeVo vo = new NoticeVo();
+		vo.setNoticeNo(noticeNo);
+		service.delete(vo);
+		return okay("공지사항을 삭제했습니다.");
 	}
 
 }// class

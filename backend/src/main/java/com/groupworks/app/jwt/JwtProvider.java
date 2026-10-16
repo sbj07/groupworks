@@ -1,10 +1,14 @@
 package com.groupworks.app.jwt;
 
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+
+import com.groupworks.app.member.vo.MemberVo;
+import com.groupworks.app.security.LoginUser;
 
 import javax.crypto.SecretKey;
 import java.nio.charset.StandardCharsets;
@@ -15,27 +19,37 @@ import java.util.Map;
 @Component
 public class JwtProvider {
     private final SecretKey key;
+    private final long accessTokenMillis;
 
-    public JwtProvider(@Value("${app.jwt.secret}") String secret) {
+    public JwtProvider(@Value("${app.jwt.secret}") String secret,
+                       @Value("${app.jwt.access-token-hours:8}") long accessTokenHours) {
         this.key = Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8));
+        this.accessTokenMillis = accessTokenHours * 60 * 60 * 1000;
     }
 
-    public Jwt createJwt(Map<String, Object> claims) {
-        String accessToken = createToken(claims, getExpireDateAccessToken());
-        String refreshToken = createToken(new HashMap<>(), getExpireDateRefreshToken());
-        return Jwt.builder()
-                .accessToken(accessToken)
-                .refreshToken(refreshToken)
-                .build();
-    }
-
-    // 토큰 생성
-    public String createToken(Map<String, Object> claims, Date expiteDate) {
+    // 로그인한 회원으로 액세스 토큰 발급
+    public String createAccessToken(MemberVo member) {
+        Map<String, Object> claims = new HashMap<>();
+        claims.put("companyNo", member.getCompanyNo());
+        claims.put("authNo", member.getAuthNo());
+        claims.put("name", member.getName());
         return Jwts.builder()
+                .subject(member.getNo())
                 .claims(claims)
-                .expiration(expiteDate)
+                .issuedAt(new Date())
+                .expiration(new Date(System.currentTimeMillis() + accessTokenMillis))
                 .signWith(key)
                 .compact();
+    }
+
+    // 토큰 검증 후 로그인 사용자 정보. 잘못되었거나 만료되면 JwtException
+    public LoginUser parse(String token) throws JwtException {
+        Claims claims = getClaims(token);
+        return new LoginUser(
+                claims.getSubject(),
+                claims.get("companyNo", String.class),
+                claims.get("authNo", String.class),
+                claims.get("name", String.class));
     }
 
     // 클레임
@@ -47,15 +61,7 @@ public class JwtProvider {
                 .getPayload();
     }
 
-    // 만료기한
-    public Date getExpireDateAccessToken() {
-        long expireTimeMils = 1000 * 60 * 60;
-        return new Date(System.currentTimeMillis() + expireTimeMils);
-    }
-
-    // 리프레쉬 토큰
-    public Date getExpireDateRefreshToken() {
-        long expireTimeMils = 1000L * 60 * 60 * 24 * 60;
-        return new Date(System.currentTimeMillis() + expireTimeMils);
+    public long getAccessTokenMillis() {
+        return accessTokenMillis;
     }
 }

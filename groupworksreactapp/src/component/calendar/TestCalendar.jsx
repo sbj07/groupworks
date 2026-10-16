@@ -8,6 +8,8 @@ import BusinessTripEventFrom from "../attendance/BusinessTripEventFrom";
 import OutworkEventForm from "../attendance/OutworkEventForm";
 import VacationEventForm from "../attendance/VacationEventForm";
 import { API_BASE } from '../../api/config';
+import { api } from '../../api/http';
+import { notify } from '../common/Toast';
 
 // 일정 종류별 색 (범례와 이벤트에 같이 쓴다)
 const EVENT_TYPES = {
@@ -108,21 +110,13 @@ const TestCalendar = ({ refresh }) => {
     setModalVisible(false);
   };
 
-  const handleDeleteEvent = ( ) => {
-    fetch(`${API_BASE}/api/attendance/${selectedEvent}/${selectedNo}`,{
-      method: "DELETE",
-    })
-    .then(resp => resp.json())
-    .then(data => {
-      if(data.msg === 'okay'){
-        alert("삭제완료 !");
-        window.location.reload();
-      }
-      else{
-        alert("삭제 실패");
-        window.location.reload();
-      }
-    })
+  const handleDeleteEvent = async () => {
+    if (!window.confirm("이 일정을 삭제하시겠습니까?")) return;
+    const result = await api.delete(`/api/attendance/${selectedEvent}/${selectedNo}`);
+    if (result.ok) {
+      notify("일정을 삭제했습니다.", "success");
+      setTimeout(() => window.location.reload(), 600);
+    }
   };
 
   const typeInfo = EVENT_TYPES[selectedEvent];

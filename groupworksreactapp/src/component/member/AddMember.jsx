@@ -1,6 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { Button, Col, Form, InputGroup, Row } from 'react-bootstrap';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { api } from '../../api/http';
+import { notify } from '../common/Toast';
+import { firstError, maxLength, memberId, password, required, selected } from '../../utils/validate';
 import styled from 'styled-components';
 import { API_BASE } from '../../api/config';
 
@@ -63,49 +66,54 @@ const AddMember = () => {
     });
 
 
-    // 멤버 데이터 저장
+    const [idChecked, setIdChecked] = useState(false);
+    const navigate = useNavigate();
+
+    // 멤버 데이터 저장 (아이디를 바꾸면 중복체크를 다시 해야 한다)
     const handleInputChange = (event) => {
         const {name , value} = event.target;
-    
-        setMemberVo({
-        ...memberVo ,
-        [name] : value
-        });
+        if (name === 'id') setIdChecked(false);
+        setMemberVo({ ...memberVo, [name] : value });
     };
 
     // id 중복확인
-    const handleIdCheck = () => {
-        let idStr = memberVo.id;
-        fetch(`${API_BASE}/api/member/check-id?id=${idStr}`)
-        .then( resp => resp.json() )
-        .then( data => {
-        if(data.msg === 'nope'){
-            alert("사용가능한 아이디 입니다.");
-        }else if(data.msg === 'okay') {
-            alert("중복된 아이디입니다. 다른 아이디를 입력해주세요.");
+    const handleIdCheck = async () => {
+        const error = memberId(memberVo.id);
+        if (error) {
+            notify(error, 'error');
+            return;
         }
-        });
-    }
+        const result = await api.get(`/api/member/check-id?id=${encodeURIComponent(memberVo.id)}`);
+        if (result.msg === 'nope') {
+            setIdChecked(true);
+            notify('사용할 수 있는 아이디입니다.', 'success');
+        } else if (result.msg === 'okay') {
+            setIdChecked(false);
+            notify('이미 사용 중인 아이디입니다.', 'error');
+        }
+    };
 
-    //Add Api 호출
-    const handleJoinSubmit = (event) => {
+    //Add Api 호출 (회사는 서버에서 관리자 회사로 정한다)
+    const handleJoinSubmit = async (event) => {
         event.preventDefault();
-        fetch(`${API_BASE}/api/member/add`, {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json"
-        },
-        body: JSON.stringify(memberVo)
-        })
-        .then( resp => resp.json())
-        .then( data => {
-        if(data.msg === 'okay'){
-            alert("구성원추가 완료!");
-            window.location.reload();
-        }else{
-            alert('구성원 추기 실패');
+        const error = firstError([
+            required(memberVo.name, '이름'),
+            maxLength(memberVo.name, 30, '이름'),
+            memberId(memberVo.id),
+            idChecked ? null : '아이디 중복체크를 해주세요.',
+            password(memberVo.pwd, '초기 비밀번호'),
+            selected(memberVo.departNo, '부서'),
+            selected(memberVo.positionNo, '직책'),
+        ]);
+        if (error) {
+            notify(error, 'error');
+            return;
         }
-        })
+        const result = await api.post('/api/member/add', memberVo);
+        if (result.ok) {
+            notify(`${memberVo.name}님을 구성원으로 추가했습니다.`, 'success');
+            navigate('/member/delete');
+        }
     };
 
     return (
@@ -122,8 +130,8 @@ const AddMember = () => {
                     <Form.Group className="mb-3" controlId="addId">
                         <Form.Label>아이디</Form.Label>
                         <InputGroup>
-                            <Form.Control type="text" placeholder="4글자 이상" name='id' onChange={handleInputChange} />
-                            <Button variant="outline-primary" onClick={handleIdCheck}>중복체크</Button>
+                            <Form.Control type="text" placeholder="영문, 숫자 4~20자" name='id' maxLength={20} onChange={handleInputChange} />
+                            <Button variant={idChecked ? 'success' : 'outline-primary'} onClick={handleIdCheck}>{idChecked ? '확인됨' : '중복체크'}</Button>
                         </InputGroup>
                     </Form.Group>
 

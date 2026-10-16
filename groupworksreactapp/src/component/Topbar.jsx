@@ -58,7 +58,10 @@ export const Avatar = styled.span`
 
 const TITLES = [
     ['/notice', '공지사항'],
-    ['/document', '전자결재'],
+    ['/approval/write/vacation', '휴가신청서 작성'],
+    ['/approval/write/business', '출장신청서 작성'],
+    ['/approval/my', '결재내역'],
+    ['/approval/pending', '승인대기'],
     ['/organ', '조직도'],
     ['/book', '회의실 예약'],
     ['/member/add', '구성원 추가'],

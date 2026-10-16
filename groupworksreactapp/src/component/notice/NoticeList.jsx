@@ -6,6 +6,8 @@ import { API_BASE } from '../../api/config';
 import SearchBox, { SearchField } from '../common/SearchBox';
 import Pagination from '../common/Pagination';
 import Badge from '../common/Badge';
+import { api } from '../../api/http';
+import { notify } from '../common/Toast';
 
 import {FaFileDownload} from 'react-icons/fa';
 
@@ -236,6 +238,10 @@ const NoticeList = ({ showTopFive, showWriteButton, showPagination, showEditAndD
     };
 
     const handleSearch = () => {
+        if (search.startDate && search.endDate && search.endDate < search.startDate) {
+            notify('작성일 종료일이 시작일보다 빠를 수 없습니다.', 'error');
+            return;
+        }
         setCurrentPage(1);
         setAppliedSearch({ ...search });
     };
@@ -298,31 +304,6 @@ const NoticeList = ({ showTopFive, showWriteButton, showPagination, showEditAndD
 
 
 
-    const handleSave = (editedNotice) => {
-        // API 호출 URL 설정
-        const apiUrl = `${API_BASE}/notice/edit`;
-        fetch(apiUrl, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(editedNotice),
-        })
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('서버 오류 발생');
-            }
-            return response.json();
-        })
-        .then(data => {
-            console.log('수정 성공:', data);
-            alert("공지사항 수정 성공");
-        })
-        .catch(error => {
-            console.error('수정 실패:', error);
-            alert("공지사항 수정 실패");
-        });
-    };
     
 
 
@@ -374,32 +355,13 @@ const NoticeList = ({ showTopFive, showWriteButton, showPagination, showEditAndD
         }
     };
 
-    const handleDelete = noticeNo => {
-        const loginMemberNo = sessionStorage.getItem("loginMemberNo");
-        fetch(`${API_BASE}/notice/delete/${noticeNo}?memberNo=${loginMemberNo}`, {
-            method: 'DELETE',
-            method: 'DELETE',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-        })
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('서버 오류 발생');
-            }
-            return response.text(); // 이 경우, 서버 응답이 JSON이 아닐 수 있으므로 text() 사용
-        })
-        .then(data => {
-            console.log('삭제 성공:', data);
-            alert("공지사항 삭제 성공");
+    const handleDelete = async (noticeNo) => {
+        const result = await api.delete(`/notice/delete/${noticeNo}`);
+        if (result.ok) {
+            notify(result.message, 'success');
             handleCloseModal();
             loadNoticeVoList();
-            // setNoticeVoList(noticeVoList.filter(notice => notice.noticeNo !== noticeNo));
-        })
-        .catch(error => {
-            console.error('삭제 실패:', error);
-            alert("공지사항 삭제 실패");
-        });
+        }
     };
 
     
@@ -535,7 +497,7 @@ const NoticeList = ({ showTopFive, showWriteButton, showPagination, showEditAndD
                 <NoticeModal 
                 notice={selectedNotice} 
                 onClose={handleCloseModal} 
-                onSave={handleSave}
+                
                 onDelete={handleDelete}
                 showEditAndDelete={showEditAndDelete}
                 />

@@ -3,6 +3,7 @@ import { Alert, Button, Form } from 'react-bootstrap';
 import { Link, useNavigate } from 'react-router-dom';
 import AuthLayout, { AuthCard } from '../AuthLayout';
 import { API_BASE } from '../../../api/config';
+import { auth } from '../../../api/http';
 
 const Login = () => {
 
@@ -27,6 +28,10 @@ const Login = () => {
     const handleLoginSubmit = (event) => {
         event.preventDefault();
         setError('');
+        if (!memberVo.id.trim() || !memberVo.pwd) {
+            setError('아이디와 비밀번호를 입력해주세요.');
+            return;
+        }
         setLoading(true);
 
         fetch(`${API_BASE}/api/member`, {
@@ -36,13 +41,13 @@ const Login = () => {
             },
             body: JSON.stringify(memberVo)
         })
-        .then( resp => resp.ok ? resp.json() : { msg: 'nope' } )
+        .then( resp => resp.json().catch(() => ({ msg: 'nope' })) )
         .then( data => {
             if(data.msg === 'okay') {
-                sessionStorage.setItem("loginMemberNo", data.loginMemberNo);
+                auth.login(data.accessToken, data.loginMemberNo);
                 navigate("/");
             } else {
-                setError("아이디 또는 비밀번호를 확인해주세요.");
+                setError(data.message || "아이디 또는 비밀번호를 확인해주세요.");
             }
         } )
         .catch( () => setError("서버에 연결할 수 없습니다. 백엔드가 실행 중인지 확인해주세요.") )

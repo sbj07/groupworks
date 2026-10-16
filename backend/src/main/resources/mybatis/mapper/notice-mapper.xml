@@ -13,7 +13,8 @@
         CONTENT,
         CATEGORY,
         OPEN_DEPART,
-        FILE_PATH
+        FILE_PATH,
+        EMERGENCY_YN
     )
     VALUES (
         SEQ_NOTICE_NO.NEXTVAL,
@@ -22,7 +23,8 @@
         #{content},
         #{category},
         #{openDepart},
-        #{filePath}
+        #{filePath},
+        NVL(#{emergencyYn, jdbcType=VARCHAR}, 'N')
     )
 </insert>
 
@@ -117,6 +119,9 @@
         <if test=" openDepart != null and openDepart != '' ">
 	        OPEN_DEPART = #{openDepart},
         </if>
+        <if test=" emergencyYn != null and emergencyYn != '' ">
+	        EMERGENCY_YN = #{emergencyYn},
+        </if>
 	    </trim>
 		UPDATE_DATE = SYSDATE
 		WHERE NOTICE_NO = #{noticeNo}
@@ -193,6 +198,8 @@
             , N.CLICK_NO
             , N.FILE_PATH
             , C.CATEGORY_CON
+            , N.CATEGORY
+            , N.OPEN_DEPART
             , D.NAME AS DEPART_NAME
             , N.EMERGENCY_YN
             , TO_CHAR(N.ENROLL_DATE, 'YYYY-MM-DD HH24:MI') AS ENROLL_DATE

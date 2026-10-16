@@ -2,6 +2,9 @@ import React, { useEffect, useState } from 'react';
 import { Button, Col, Form, InputGroup, Row } from 'react-bootstrap';
 import { Link, useNavigate } from 'react-router-dom';
 import AuthLayout, { AuthCard } from '../AuthLayout';
+import { api } from '../../../api/http';
+import { notify } from '../../common/Toast';
+import { email, firstError, maxLength, memberId, password, required, selected, tel } from '../../../utils/validate';
 import { API_BASE } from '../../../api/config';
 
 const SignUp = () => {
@@ -65,83 +68,78 @@ const SignUp = () => {
     };
     
 
+    const [companyDone, setCompanyDone] = useState(false);
+    const [idChecked, setIdChecked] = useState(false);
+
     const handleInputCompany = (event) => {
         const {name , value} = event.target;
-        
-        setCompanyVo({
-          ...companyVo ,
-          [name] : value
-        });
+        setCompanyVo({ ...companyVo, [name] : value });
     }
 
-    // 멤버 데이터 저장
+    // 멤버 데이터 저장 (아이디를 바꾸면 중복체크를 다시 해야 한다)
     const handleInputChange = (event) => {
         const {name , value} = event.target;
-    
-        setMemberVo({
-        ...memberVo ,
-        [name] : value
-        });
+        if (name === 'id') setIdChecked(false);
+        setMemberVo({ ...memberVo, [name] : value });
     };
 
     // 회사 등록
-    const handleCompanyAdd = () => {
-        fetch(`${API_BASE}/api/company`,{
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json"
-          },
-          body: JSON.stringify(companyVo)
-        })
-        .then( resp => resp.json() )
-        .then( data => {
-            if(data.msg === 'okay') {
-                const cNo = data.companyNo;
-                setMemberVo({
-                    ...memberVo ,
-                    companyNo : cNo
-                })
-              alert("회사명 추가 완료 !");
-            } else{
-            alert("회사명 추가 실패");
-            }
-          })
+    const handleCompanyAdd = async () => {
+        const error = firstError([required(companyVo.name, '회사명'), maxLength(companyVo.name, 50, '회사명')]);
+        if (error) {
+            notify(error, 'error');
+            return;
+        }
+        const result = await api.post('/api/company', { name: companyVo.name.trim() });
+        if (result.ok && result.companyNo) {
+            setMemberVo({ ...memberVo, companyNo: result.companyNo });
+            setCompanyDone(true);
+            notify('회사를 등록했습니다. 관리자 정보를 입력해주세요.', 'success');
+        }
     };
 
     // id 중복확인
-    const handleIdCheck = () => {
-        let idStr = memberVo.id;
-        fetch(`${API_BASE}/api/member/check-id?id=${idStr}`)
-        .then( resp => resp.json() )
-        .then( data => {
-        if(data.msg === 'nope'){
-            alert("사용가능한 아이디 입니다.");
-        }else if(data.msg === 'okay') {
-            alert("중복된 아이디입니다. 다른 아이디를 입력해주세요.");
+    const handleIdCheck = async () => {
+        const error = memberId(memberVo.id);
+        if (error) {
+            notify(error, 'error');
+            return;
         }
-        });
-    }
+        const result = await api.get(`/api/member/check-id?id=${encodeURIComponent(memberVo.id)}`);
+        if (result.msg === 'nope') {
+            setIdChecked(true);
+            notify('사용할 수 있는 아이디입니다.', 'success');
+        } else if (result.msg === 'okay') {
+            setIdChecked(false);
+            notify('이미 사용 중인 아이디입니다. 다른 아이디를 입력해주세요.', 'error');
+        }
+    };
 
     //Join Api 호출
-    const handleJoinSubmit = (event) => {
+    const handleJoinSubmit = async (event) => {
         event.preventDefault();
-
-        fetch(`${API_BASE}/api/member/sign-up`, {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json"
-        },
-        body: JSON.stringify(memberVo)
-        })
-        .then( resp => resp.json())
-        .then( data => {
-        if(data.msg === 'okay'){
-            alert("회원가입 완료!");
-            navigate("/login");
-        }else{
-            alert('회원가입 실패');
+        const error = firstError([
+            companyDone ? null : '회사명을 입력하고 회사 등록을 먼저 눌러주세요.',
+            memberId(memberVo.id),
+            idChecked ? null : '아이디 중복체크를 해주세요.',
+            required(memberVo.name, '이름'),
+            maxLength(memberVo.name, 30, '이름'),
+            password(memberVo.pwd),
+            email(memberVo.email),
+            tel(memberVo.tel),
+            maxLength(memberVo.address, 200, '주소'),
+            selected(memberVo.departNo, '부서'),
+            selected(memberVo.positionNo, '직책'),
+        ]);
+        if (error) {
+            notify(error, 'error');
+            return;
         }
-        })
+        const result = await api.post('/api/member/sign-up', memberVo);
+        if (result.ok) {
+            notify('회원가입을 완료했습니다. 로그인해주세요.', 'success');
+            navigate('/login');
+        }
     };
 
     return (
@@ -154,16 +152,16 @@ const SignUp = () => {
                     <Form.Group className="mb-3">
                         <Form.Label>회사명</Form.Label>
                         <InputGroup>
-                            <Form.Control type="text" placeholder="회사명을 입력해주세요." name='name' onChange={handleInputCompany} />
-                            <Button variant="outline-primary" onClick={handleCompanyAdd}>회사 등록</Button>
+                            <Form.Control type="text" placeholder="회사명을 입력해주세요." name='name' maxLength={50} onChange={handleInputCompany} disabled={companyDone} />
+                            <Button variant={companyDone ? 'success' : 'outline-primary'} onClick={handleCompanyAdd} disabled={companyDone}>{companyDone ? '등록됨' : '회사 등록'}</Button>
                         </InputGroup>
                     </Form.Group>
 
                     <Form.Group className="mb-3">
                         <Form.Label>아이디</Form.Label>
                         <InputGroup>
-                            <Form.Control type="text" placeholder="4글자 이상" name='id' onChange={handleInputChange} />
-                            <Button variant="outline-primary" onClick={handleIdCheck}>중복체크</Button>
+                            <Form.Control type="text" placeholder="영문, 숫자 4~20자" name='id' maxLength={20} onChange={handleInputChange} />
+                            <Button variant={idChecked ? 'success' : 'outline-primary'} onClick={handleIdCheck}>{idChecked ? '확인됨' : '중복체크'}</Button>
                         </InputGroup>
                     </Form.Group>
 
