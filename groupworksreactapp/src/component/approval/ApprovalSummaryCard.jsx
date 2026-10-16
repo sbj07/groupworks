@@ -8,15 +8,16 @@ import Card from '../common/Card';
 const Tiles = styled.div`
     flex: 1;
     display: grid;
-    align-content: start;
-    gap: 8px;
+    /* 카드 높이에 맞춰 다섯 칸이 고르게 나눠 가진다 */
+    grid-auto-rows: minmax(56px, 1fr);
+    gap: 10px;
 `;
 
 const Tile = styled(Link)`
     display: flex;
     align-items: center;
-    gap: 12px;
-    padding: 10px 12px;
+    gap: 14px;
+    padding: 0 16px;
     border: 1px solid var(--gw-border);
     border-radius: 12px;
     background: var(--gw-surface);
@@ -29,9 +30,9 @@ const Tile = styled(Link)`
 
     & > svg {
         flex-shrink: 0;
-        width: 34px;
-        height: 34px;
-        padding: 8px;
+        width: 42px;
+        height: 42px;
+        padding: 10px;
         border-radius: 10px;
         background: ${({ $bg }) => $bg};
         color: ${({ $color }) => $color};
@@ -40,12 +41,12 @@ const Tile = styled(Link)`
     & > span {
         flex: 1;
         color: var(--gw-text-muted);
-        font-size: 13px;
+        font-size: 14px;
         font-weight: 600;
     }
 
     & > b {
-        font-size: 18px;
+        font-size: 22px;
         color: var(--gw-text);
     }
 
