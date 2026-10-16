@@ -15,7 +15,7 @@ const KINDS = {
     vacation: { title: '휴가', dateType: 'date', start: 'startDate', end: 'endDate', startLabel: '시작일', endLabel: '종료일' },
 };
 
-const EventForm = ({ kind, type, putId }) => {
+const EventForm = ({ kind, type, putId, hideTitle }) => {
     const conf = KINDS[kind];
     const isPut = type === 'put';
     const [form, setForm] = useState({ start: '', end: '', memo: '', onsiteStart: false, onsiteEnd: false, half: false });
@@ -60,7 +60,7 @@ const EventForm = ({ kind, type, putId }) => {
 
     return (
         <Form onSubmit={handleSubmit} noValidate>
-            {!isPut && <h3 style={{ fontSize: 15, marginBottom: 12 }}>{conf.title} 등록</h3>}
+            {!isPut && !hideTitle && <h3 style={{ fontSize: 15, marginBottom: 12 }}>{conf.title} 등록</h3>}
             <Form.Group className="mb-2" controlId={`${kind}-start`}>
                 <Form.Label>{conf.startLabel}</Form.Label>
                 <Form.Control type={conf.dateType} name="start" value={form.start} onChange={handleChange} />

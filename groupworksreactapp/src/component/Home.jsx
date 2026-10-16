@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components';
 import { Link } from 'react-router-dom';
 import TodoList from './todo/TodoList';
@@ -6,7 +6,8 @@ import NoticeList from './notice/NoticeList';
 import AttendanceMain from './attendance/AttendanceMain';
 import TestCalendar from './calendar/TestCalendar';
 import Card from './common/Card';
-import ApprovalSummaryCard from './approval/ApprovalSummaryCard';
+import ScheduleModal from './attendance/ScheduleModal';
+import { FiPlus } from 'react-icons/fi';
 
 const StyledHome = styled.div`
     display: grid;
@@ -46,12 +47,17 @@ const More = styled(Link)`
 `;
 
 const Home = ({ summary }) => {
+    const [scheduleOpen, setScheduleOpen] = useState(false);
+
     return (
         <StyledHome>
-            <AttendanceMain />
+            <AttendanceMain summary={summary} />
             <RightColumn>
-                {summary && <ApprovalSummaryCard summary={summary} />}
-                <Card title="일정">
+                <Card title="일정" action={
+                    <button type="button" className="btn btn-primary btn-sm d-inline-flex align-items-center gap-1" onClick={() => setScheduleOpen(true)}>
+                        <FiPlus />일정 등록
+                    </button>
+                }>
                     <TestCalendar />
                 </Card>
                 <Row>
@@ -63,6 +69,7 @@ const Home = ({ summary }) => {
                     </Card>
                 </Row>
             </RightColumn>
+            <ScheduleModal isOpen={scheduleOpen} onClose={() => setScheduleOpen(false)} />
         </StyledHome>
     );
 };

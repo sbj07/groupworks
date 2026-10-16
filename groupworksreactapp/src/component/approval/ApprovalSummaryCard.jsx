@@ -4,21 +4,17 @@ import styled from 'styled-components';
 import { FiFileText, FiClock, FiCheckCircle, FiXCircle, FiInbox } from 'react-icons/fi';
 import Card from '../common/Card';
 
+// 세로 목록: 아이콘 · 이름 ········ 건수
 const Tiles = styled.div`
     display: grid;
-    grid-template-columns: repeat(5, minmax(0, 1fr));
-    gap: 12px;
-
-    @media (max-width: 1100px) {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-    }
+    gap: 8px;
 `;
 
 const Tile = styled(Link)`
     display: flex;
     align-items: center;
     gap: 12px;
-    padding: 14px 16px;
+    padding: 10px 12px;
     border: 1px solid var(--gw-border);
     border-radius: 12px;
     background: var(--gw-surface);
@@ -31,29 +27,29 @@ const Tile = styled(Link)`
 
     & > svg {
         flex-shrink: 0;
-        width: 38px;
-        height: 38px;
-        padding: 9px;
+        width: 34px;
+        height: 34px;
+        padding: 8px;
         border-radius: 10px;
         background: ${({ $bg }) => $bg};
         color: ${({ $color }) => $color};
     }
 
-    small {
-        display: block;
+    & > span {
+        flex: 1;
         color: var(--gw-text-muted);
-        font-size: 12px;
+        font-size: 13px;
         font-weight: 600;
     }
 
-    b {
-        font-size: 22px;
+    & > b {
+        font-size: 18px;
         color: var(--gw-text);
     }
 
-    b > span {
+    & > b > small {
         margin-left: 2px;
-        font-size: 13px;
+        font-size: 12px;
         font-weight: 600;
         color: var(--gw-text-muted);
     }
@@ -70,15 +66,13 @@ const ApprovalSummaryCard = ({ summary }) => {
     ];
 
     return (
-        <Card title="결재 현황" action={<Link to="/approval/my" style={{ fontSize: 12, fontWeight: 600, color: 'var(--gw-text-muted)' }}>결재내역 ›</Link>}>
+        <Card title="결재 현황" action={<Link to="/approval/my" style={{ fontSize: 12, fontWeight: 600, color: 'var(--gw-text-muted)' }}>전체보기 ›</Link>}>
             <Tiles>
                 {items.map(item => (
                     <Tile key={item.label} to={item.to} $bg={item.bg} $color={item.color}>
                         {item.icon}
-                        <div>
-                            <small>{item.label}</small>
-                            <b>{item.value ?? 0}<span>건</span></b>
-                        </div>
+                        <span>{item.label}</span>
+                        <b>{item.value ?? 0}<small>건</small></b>
                     </Tile>
                 ))}
             </Tiles>
