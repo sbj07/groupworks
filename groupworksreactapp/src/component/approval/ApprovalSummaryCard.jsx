@@ -6,7 +6,9 @@ import Card from '../common/Card';
 
 // 세로 목록: 아이콘 · 이름 ········ 건수
 const Tiles = styled.div`
+    flex: 1;
     display: grid;
+    align-content: start;
     gap: 8px;
 `;
 
@@ -56,7 +58,7 @@ const Tile = styled(Link)`
 `;
 
 // 홈 대시보드: 내가 올린 결재 건수와 승인 대기 건수
-const ApprovalSummaryCard = ({ summary }) => {
+const ApprovalSummaryCard = ({ summary, className }) => {
     const items = [
         { label: '올린 결재', value: summary.myTotal, to: '/approval/my', icon: <FiFileText />, bg: 'var(--gw-primary-soft)', color: 'var(--gw-primary)' },
         { label: '진행중', value: summary.myInProgress, to: '/approval/my', icon: <FiClock />, bg: '#fff4dd', color: '#b7791f' },
@@ -66,7 +68,7 @@ const ApprovalSummaryCard = ({ summary }) => {
     ];
 
     return (
-        <Card title="결재 현황" action={<Link to="/approval/my" style={{ fontSize: 12, fontWeight: 600, color: 'var(--gw-text-muted)' }}>전체보기 ›</Link>}>
+        <Card className={className} title="결재 현황" action={<Link to="/approval/my" style={{ fontSize: 12, fontWeight: 600, color: 'var(--gw-text-muted)' }}>전체보기 ›</Link>}>
             <Tiles>
                 {items.map(item => (
                     <Tile key={item.label} to={item.to} $bg={item.bg} $color={item.color}>

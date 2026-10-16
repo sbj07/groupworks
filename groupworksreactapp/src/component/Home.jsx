@@ -13,7 +13,7 @@ const StyledHome = styled.div`
     display: grid;
     grid-template-columns: 320px minmax(0, 1fr);
     gap: 20px;
-    align-items: start;
+    align-items: stretch;
 
     @media (max-width: 1200px) {
         grid-template-columns: minmax(0, 1fr);
