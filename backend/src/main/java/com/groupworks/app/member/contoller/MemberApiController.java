@@ -79,6 +79,15 @@ public class MemberApiController {
         return okay();
     }
 
+    // 인원관리: 부서/직책/권한 한 번에 변경 (관리자)
+    @PutMapping("{memberNo}/hr")
+    public Map<String, Object> updateHr(@PathVariable String memberNo, @RequestBody MemberVo vo) {
+        service.updateHr(memberNo, vo);
+        Map<String, Object> map = okay();
+        map.put("message", "구성원 정보를 변경했습니다.");
+        return map;
+    }
+
     // 회원 탈퇴/삭제 (본인 또는 관리자)
     @DeleteMapping("{memberNo}")
     public Map<String, Object> deleteMember(@PathVariable String memberNo){

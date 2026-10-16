@@ -172,6 +172,24 @@ public class MemberService {
         return dao.getWorkStatList(sessionTemplate);
     }
 
+    // 인원관리: 부서, 직책, 권한을 UPDATE 한 번으로 변경 (관리자, 같은 회사)
+    public int updateHr(String no, MemberVo vo) {
+        CurrentUser.requireAdmin();
+        MemberVo target = requireSameCompanyMember(no);
+        Check.required(vo.getDepartNo(), "부서");
+        Check.required(vo.getPositionNo(), "직책");
+        Check.required(vo.getAuthNo(), "권한");
+        Check.that(vo.getAuthNo().matches("[123]"), "권한 값이 올바르지 않습니다.");
+        if (Objects.equals(no, CurrentUser.memberNo())) {
+            Check.that(Objects.equals(vo.getAuthNo(), target.getAuthNo()), "본인 권한은 바꿀 수 없습니다. 다른 관리자에게 요청해주세요.");
+        }
+        vo.setNo(no);
+        vo.setCompanyNo(CurrentUser.companyNo());
+        int result = dao.updateHr(sessionTemplate, vo);
+        Check.affected(result, "변경할 구성원을 찾을 수 없습니다.");
+        return result;
+    }
+
     // 권한 변경 (관리자, 같은 회사)
     public int editAuth(MemberVo vo){
         CurrentUser.requireAdmin();

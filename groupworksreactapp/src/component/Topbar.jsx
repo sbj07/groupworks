@@ -64,8 +64,7 @@ const TITLES = [
     ['/approval/pending', '승인대기'],
     ['/organ', '조직도'],
     ['/book', '회의실 예약'],
-    ['/member/add', '구성원 추가'],
-    ['/member/delete', '구성원 관리'],
+    ['/hr/members', '인원관리'],
     ['/member/edit', '개인정보 수정'],
 ];
 

@@ -18,6 +18,7 @@ public class MemberVo {
     private String address;
     private String annual;
     private String authNo;
+    private String authName;
     private String departNo;
     private String departName;
     private String positionNo;

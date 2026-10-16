@@ -22,7 +22,8 @@ const StyledSignUpForm = styled.div`
     }
 `;
 
-const AddMember = () => {
+// onDone 을 주면 인원관리의 '인원추가' 모달 안에서 쓰고, 끝나면 onDone 을 부른다
+const AddMember = ({ onDone, onCancel }) => {
     const location = useLocation();
     const cNo = location.state?.cNo;
     const [departList, setDepartList] = useState([]);
@@ -112,16 +113,13 @@ const AddMember = () => {
         const result = await api.post('/api/member/add', memberVo);
         if (result.ok) {
             notify(`${memberVo.name}님을 구성원으로 추가했습니다.`, 'success');
-            navigate('/member/delete');
+            if (onDone) onDone();
+            else navigate('/hr/members');
         }
     };
 
-    return (
-        <StyledSignUpDiv>
-            <StyledSignUpForm>
-                <h1>구성원 추가</h1>
-                <p className="text-muted mb-4">새 구성원의 계정을 만들고 부서와 직책을 지정합니다.</p>
-                <Form onSubmit={handleJoinSubmit}>
+    const form = (
+                <Form onSubmit={handleJoinSubmit} noValidate>
                     <Form.Group className="mb-3" controlId="addName">
                         <Form.Label>이름</Form.Label>
                         <Form.Control type="text" placeholder="이름" name='name' onChange={handleInputChange} />
@@ -152,10 +150,20 @@ const AddMember = () => {
                     </Row>
 
                     <div className="d-flex justify-content-end gap-2">
-                        <Button variant="outline-secondary" onClick={() => window.history.back()}>취소</Button>
+                        <Button variant="outline-secondary" onClick={() => (onCancel ? onCancel() : window.history.back())}>취소</Button>
                         <Button variant="primary" type="submit">추가</Button>
                     </div>
                 </Form>
+    );
+
+    if (onDone) return form;
+
+    return (
+        <StyledSignUpDiv>
+            <StyledSignUpForm>
+                <h1>구성원 추가</h1>
+                <p className="text-muted mb-4">새 구성원의 계정을 만들고 부서와 직책을 지정합니다.</p>
+                {form}
             </StyledSignUpForm>
         </StyledSignUpDiv>
     );

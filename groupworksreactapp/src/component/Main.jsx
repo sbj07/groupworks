@@ -7,8 +7,7 @@ import OrganMain from './organ/OrganMain';
 import { Navigate } from 'react-router-dom';
 import ApprovalMain from './approval/ApprovalMain';
 import BookMain from './book/BookMain';
-import AddMember from './member/AddMember';
-import DeleteMember from './member/DeleteMember';
+import MemberManage from './member/MemberManage';
 import EditMember from './member/EditMember';
 import Card from './common/Card';
 
@@ -30,8 +29,9 @@ const Main = ({ summary }) => {
                 <Route path='/document/*' element={<Navigate to='/approval/my' replace />}></Route>
                 <Route path='/organ/*' element={<Page><OrganMain /></Page>}></Route>
                 <Route path='/book/*' element={<Page><BookMain /></Page>}></Route>
-                <Route path='/member/add/*' element={<Page><AddMember /></Page>}></Route>
-                <Route path='/member/delete/*' element={<Page><DeleteMember /></Page>}></Route>
+                <Route path='/hr/members' element={<Page><MemberManage /></Page>}></Route>
+                <Route path='/member/add/*' element={<Navigate to='/hr/members' replace />}></Route>
+                <Route path='/member/delete/*' element={<Navigate to='/hr/members' replace />}></Route>
                 <Route path='/member/edit/*' element={<Page><EditMember /></Page>}></Route>
             </Routes>
         </StyledMain>

@@ -72,6 +72,11 @@ public class MemberDao {
         return sessionTemplate.selectList("MemberMapper.getWorkStatList");
     }
 
+    // 부서, 직책, 권한 한 번에 변경
+    public int updateHr(SqlSessionTemplate sessionTemplate, MemberVo vo){
+        return sessionTemplate.update("MemberMapper.updateHr", vo);
+    }
+
     // 권한 변경
     public int editAuth(SqlSessionTemplate sessionTemplate, MemberVo vo){
         return sessionTemplate.update("MemberMapper.editAuth", vo);
