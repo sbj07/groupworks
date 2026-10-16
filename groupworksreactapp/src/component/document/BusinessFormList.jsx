@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import Modal from 'react-modal';
+import { DocHeader, DocTable } from './ApprovalDoc';
 
 const StyledBusinessTripFormListDiv = styled.div`
   width: 100%;
@@ -257,49 +258,46 @@ const BusinessTripFormList = ({}) => {
             <Modal
                 isOpen={isDetailModalOpen}
                 onRequestClose={() => setIsDetailModalOpen(false)}
-                contentLabel="결재 정보"
+                contentLabel="결재 문서"
                 style={{
-                    overlay: {
-                        backgroundColor: 'rgba(0, 0, 0, 0.75)', // 반투명 검정색 배경
-                        display: 'flex',
-                        justifyContent: 'center',
-                        alignItems: 'center'
-                      },
-                      content: {
-                        position: 'relative',
-                        inset: 'auto',
-                        border: '1px solid #ccc', // 모달 테두리 스타일
-                        borderRadius: '10px', // 모달 모서리 둥글게
-                        padding: '20px', // 모달 내부 패딩
-                        backgroundColor: 'white', // 모달 배경색
-                        boxShadow: '0 4px 10px rgba(0, 0, 0, 0.25)', // 모달 그림자
-                        maxWidth: '500px', // 모달 최대 너비
-                        width: '300px', // 모달 너비 자동 조정
-                        maxHeight: 'calc(100% - 40px)', // 모달 최대 높이, 화면과의 간격을 위해 계산
-                        overflow: 'auto' // 내용이 많을 경우 스크롤 가능
-                      }
-                  }}
+                    overlay: { backgroundColor: 'rgba(15, 23, 42, 0.45)', zIndex: 100 },
+                    content: {
+                        top: '50%',
+                        left: '50%',
+                        right: 'auto',
+                        bottom: 'auto',
+                        transform: 'translate(-50%, -50%)',
+                        width: 'min(720px, calc(100vw - 32px))',
+                        maxHeight: 'calc(100vh - 40px)',
+                        padding: '32px',
+                        overflow: 'auto',
+                    },
+                }}
             >
-                <h2>결재 정보</h2>
-                <p>작성자: {loginMember?.name}</p>
-                <p>부서: {loginMember?.departName}</p>
-                <p>직급: {loginMember?.positionName}</p>
-                <p>내용: {selectedItem?.content}</p>
-                <p>시작일: {selectedItem?.startTime}</p>
-                <p>종료일: {selectedItem?.finishTime}</p>
-                <div style={{ textAlign: 'center' }}>
-                <button onClick={() => setIsDetailModalOpen(false)}
-                style={{
-                    padding: '10px 20px',
-                    fontSize: '1rem',
-                    borderRadius: '5px',
-                    border: 'none',
-                    color: 'white',
-                    background: '#555', // 버튼 배경색을 파란색 계열로 설정
-                    boxShadow: '0 2px 4px rgba(0, 0, 0, 0.2)', // 버튼에 그림자 효과 추가
-                    cursor: 'pointer',
-                    transition: 'all 0.2s ease-in-out' // 부드러운 상태 변화를 위한 전환 효과 추가
-                  }}>닫기</button>
+                <DocHeader>
+                    <div>
+                        <h1>출장신청서</h1>
+                        <div className="doc-meta">문서번호 {selectedItem?.no} · 작성일 {selectedItem?.writeDate}</div>
+                    </div>
+                </DocHeader>
+                <DocTable>
+                    <div className="label">작성자</div>
+                    <div className="value">{loginMember?.name}</div>
+                    <div className="label">부서 / 직급</div>
+                    <div className="value">{[loginMember?.departName, loginMember?.positionName].filter(Boolean).join(' / ')}</div>
+                    <div className="label">기간</div>
+                    <div className="value">{selectedItem?.startTime} ~ {selectedItem?.finishTime}</div>
+                    <div className="label">문서 종류</div>
+                    <div className="value">{selectedItem?.category ?? '출장신청서'}</div>
+                    <div className="label">세부사항</div>
+                    <div className="value full" style={{ whiteSpace: 'pre-wrap', alignItems: 'flex-start', minHeight: '160px' }}>{selectedItem?.content}</div>
+                    {selectedItem?.rejection && <>
+                        <div className="label">반려 사유</div>
+                        <div className="value full" style={{ color: 'var(--gw-danger)' }}>{selectedItem.rejection}</div>
+                    </>}
+                </DocTable>
+                <div style={{ textAlign: 'center', marginTop: '24px' }}>
+                    <button type="button" className="btn btn-outline-secondary" onClick={() => setIsDetailModalOpen(false)}>닫기</button>
                 </div>
             </Modal>
         );
