@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Button, Col, Form, InputGroup, Row } from 'react-bootstrap';
 import { Link, useNavigate } from 'react-router-dom';
 import AuthLayout, { AuthCard } from '../AuthLayout';
+import { API_BASE } from '../../../api/config';
 
 const SignUp = () => {
     const navigate = useNavigate();
@@ -26,7 +27,7 @@ const SignUp = () => {
 
     useEffect( () => {
        
-        fetch("http://127.0.0.1:8888/app/api/member/list/depart")
+        fetch(`${API_BASE}/api/member/list/depart`)
         .then( resp => resp.json() )
         .then( data => {
             if(data.msg === 'okay') {
@@ -37,7 +38,7 @@ const SignUp = () => {
             }
         });
 
-        fetch("http://127.0.0.1:8888/app/api/member/list/position")
+        fetch(`${API_BASE}/api/member/list/position`)
         .then( resp => resp.json() )
         .then( data => {
             if(data.msg === 'okay') {
@@ -85,7 +86,7 @@ const SignUp = () => {
 
     // 회사 등록
     const handleCompanyAdd = () => {
-        fetch(`http://127.0.0.1:8888/app/api/company`,{
+        fetch(`${API_BASE}/api/company`,{
           method: "POST",
           headers: {
             "Content-Type": "application/json"
@@ -110,7 +111,7 @@ const SignUp = () => {
     // id 중복확인
     const handleIdCheck = () => {
         let idStr = memberVo.id;
-        fetch(`http://127.0.0.1:8888/app/api/member/check-id?id=${idStr}`)
+        fetch(`${API_BASE}/api/member/check-id?id=${idStr}`)
         .then( resp => resp.json() )
         .then( data => {
         if(data.msg === 'nope'){
@@ -125,7 +126,7 @@ const SignUp = () => {
     const handleJoinSubmit = (event) => {
         event.preventDefault();
 
-        fetch("http://127.0.0.1:8888/app/api/member/sign-up", {
+        fetch(`${API_BASE}/api/member/sign-up`, {
         method: "POST",
         headers: {
             "Content-Type": "application/json"

@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import OrganModal from './OrganModal';
 import SearchBox, { SearchField } from '../common/SearchBox';
+import { API_BASE } from '../../api/config';
 
 const EMPTY_SEARCH = { name: '', departName: '', positionName: '', tel: '' };
 
@@ -101,7 +102,7 @@ const OrganList = () => {
     const loadOrganVoList = () => {
         const loginMemberNo = sessionStorage.getItem("loginMemberNo");
 
-        fetch(`http://127.0.0.1:8888/app/organ/list?loginMemberNo=${loginMemberNo}`)
+        fetch(`${API_BASE}/organ/list?loginMemberNo=${loginMemberNo}`)
         .then(resp => resp.json())
         .then(data => {
             if (data.voList && Array.isArray(data.voList)) {
@@ -126,7 +127,7 @@ const OrganList = () => {
     }, []);
 
     const handleDelete = no => {
-        fetch(`http://127.0.0.1:8888/app/organ/delete/${no}`, {
+        fetch(`${API_BASE}/organ/delete/${no}`, {
             method: 'DELETE',
             headers: {
                 'Content-Type' : 'application/json',

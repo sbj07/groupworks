@@ -3,64 +3,51 @@ import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import Modal from 'react-modal';
 import { DocHeader, DocTable } from './ApprovalDoc';
+import AppModal from '../common/AppModal';
+import Pagination from '../common/Pagination';
+import Badge from '../common/Badge';
+import EmptyState from '../common/EmptyState';
+import { API_BASE } from '../../api/config';
 
 const StyledVacationFormListDiv = styled.div`
   width: 100%;
-  height: 120%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  flex-direction: column;
-  margin-top: 20px;
 
-  table {
-    width: 80%; // 테이블의 너비를 조정
-    border-collapse: separate; // 테이블 사이의 간격 없애기
-    border-spacing: 0 10px;
-    margin: 20px 0; // 테이블 상하 여백 추가
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); // 테이블에 그림자 효과 추가
+  .toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    margin-bottom: 14px;
+  }
 
-    th, td {
-      border: none;
-      padding: 15px; // 셀 패딩 조정
-      border: 1px solid var(--gw-border); // 셀 경계선 색상 조정
-      text-align: center; // 텍스트 왼쪽 정렬
-      border-radius: 8px;
-    }
-    
-    th {
-      border: none;
-      min-width: 160px;
-      background-color: var(--gw-primary); // 테이블 헤더 배경색 조정
-      color: white; // 테이블 헤더 글자색 조정
-    }
+  .tabs {
+    display: inline-flex;
+    gap: 4px;
+    padding: 4px;
+    border-radius: 10px;
+    background: var(--gw-surface-2);
+  }
 
-    td {
-        border: none;
-    }
-    tr:nth-child(odd) {
-      background-color: var(--gw-surface-2); // 홀수 줄 배경색 조정
-    }
+  .tabs > button {
+    padding: 7px 14px;
+    border: none;
+    border-radius: 8px;
+    background: transparent;
+    color: var(--gw-text-muted);
+    font-size: 13px;
+    font-weight: 600;
+  }
 
-    tr:hover {
-      background-color: var(--gw-row-hover); // 마우스 오버 시 배경색 변경
-    }
+  .tabs > button.active {
+    background: var(--gw-surface);
+    color: var(--gw-primary);
+    box-shadow: var(--gw-shadow-sm);
+  }
 
-    button {
-      padding: 8px 16px; // 버튼 패딩 조정
-      border: none;
-      border-radius: 8px; // 버튼 모서리 둥글게 조정
-      color: white;
-      font-weight: bold;
-      cursor: pointer;
-      transition: background-color 0.3s; // 배경색 변경 애니메이션 추가
-      background-color: var(--gw-primary); // 버튼 배경색 변경
-
-      &:hover {
-        background-color: var(--gw-primary); // 호버 시 버튼 배경색 변경
-      }
-      
-    }  
+  td .btn {
+    padding: 4px 10px;
+    font-size: 12px;
   }
 `;
 
@@ -91,7 +78,7 @@ const VacationFormList = ({}) => {
     };
 
     useEffect( () => {
-        fetch(`http://127.0.0.1:8888/app/api/vacation-form/list?writerNo=${loginMemberNo}&page=${currentPage}&limit=${limit}`)
+        fetch(`${API_BASE}/api/vacation-form/list?writerNo=${loginMemberNo}&page=${currentPage}&limit=${limit}`)
         .then( resp => resp.json() )
         .then( data => {
             if(data.msg === 'good'){
@@ -104,7 +91,7 @@ const VacationFormList = ({}) => {
     } , [loginMemberNo, currentPage]);
 
     const loadApplyList = () => {
-        fetch(`http://127.0.0.1:8888/app/api/vacation-form/apply-list?loginMemberNo=${loginMemberNo}&page=${applyCurrentPage}&limit=${limit}`)
+        fetch(`${API_BASE}/api/vacation-form/apply-list?loginMemberNo=${loginMemberNo}&page=${applyCurrentPage}&limit=${limit}`)
         .then( resp => resp.json() )
         .then( data => {
             if(data.msg === 'good'){
@@ -118,7 +105,7 @@ const VacationFormList = ({}) => {
     };
 
     const handleDelete =(vacationNo) => {
-        fetch(`http://127.0.0.1:8888/app/api/vacation-form/delete`, {
+        fetch(`${API_BASE}/api/vacation-form/delete`, {
             method:'POST',
             headers: {
                 'Content-Type' : 'application/json',
@@ -177,84 +164,30 @@ const VacationFormList = ({}) => {
 
     const renderRejectionModal = () => {
         return (
-          <Modal 
+          <AppModal
             isOpen={isRejectionModalOpen}
-            onRequestClose={closeRejectionModal}
-            contentLabel="반려 사유 입력"
-            style={{
-                overlay: {
-                  backgroundColor: 'rgba(0, 0, 0, 0.75)',
-                  display: 'flex',
-                  justifyContent: 'center',
-                  alignItems: 'center'
-                },
-                content: {
-                  position: 'relative',
-                  inset: 'auto',
-                  margin: 'auto',
-                  border: '1px solid #ccc',
-                  background: '#fff',
-                  overflow: 'auto',
-                  borderRadius: '10px',
-                  outline: 'none',
-                  padding: '40px',
-                  width: '40%',
-                  minWidth: '300px',
-                  maxHeight: 'calc(100% - 40px)', // 화면의 높이에서 40px 뺀 만큼
-                }
-              }}
+            onClose={closeRejectionModal}
+            title="반려 사유 입력"
+            subtitle="작성자에게 전달될 반려 사유를 적어주세요."
+            footer={<>
+                <button type="button" className="btn btn-outline-secondary" onClick={closeRejectionModal}>취소</button>
+                <button type="button" className="btn btn-danger" onClick={handleRejectionClick} disabled={!rejection.trim()}>반려</button>
+            </>}
           >
-            <h2>반려 사유 입력</h2>
-            <textarea 
+            <textarea
+              className="form-control"
+              rows={5}
               value={rejection}
               onChange={(e) => setRejection(e.target.value)}
-              style={{
-                width: '100%',
-                height: '150px',
-                marginBottom: '20px',
-                padding: '10px',
-                border: '1px solid #ddd',
-                borderRadius: '4px',
-                fontSize: '16px',
-                resize: 'vertical'
-              }}
+              placeholder="예) 기간이 다른 일정과 겹칩니다."
             />
-            <button onClick={handleRejectionClick}
-            style={{
-                padding: '10px 20px',
-                marginRight: '10px',
-                border: 'none',
-                borderRadius: '4px',
-                fontWeight: 'bold',
-                cursor: 'pointer',
-                transition: 'all 0.2s ease',
-                backgroundColor: 'var(--gw-warning)',
-                color: 'white'
-            }}>반려</button>
-            <button onClick={closeRejectionModal}
-              style={{
-                padding: '10px 20px',
-                border: 'none',
-                borderRadius: '4px',
-                fontWeight: 'bold',
-                cursor: 'pointer',
-                transition: 'all 0.2s ease',
-                backgroundColor: '#9e9e9e',
-                color: 'white'
-              }}>닫기</button>
-          </Modal>
+          </AppModal>
         );
       };
 
-    const renderPagination = (currentPage, setCurrentPage, totalPages) => {
-    return (
-        <div>
-            <button onClick={() => setCurrentPage(currentPage - 1)} disabled={currentPage === 1}>이전</button>
-            <span>{currentPage}</span>
-            <button onClick={() => setCurrentPage(currentPage + 1)} disabled={currentPage >= totalPages}>다음</button>
-        </div>
-        );
-    };
+    const renderPagination = (page, setPage, totalPages) => (
+        <Pagination currentPage={page} totalPages={totalPages} onChange={setPage} />
+    );
 
     const renderDetailModal = () => {
         return (
@@ -312,7 +245,7 @@ const VacationFormList = ({}) => {
 
 
     const queryParam = encodeURIComponent(loginMemberNo);
-    const url = `http://127.0.0.1:8888/app/api/vacation-form/login-member?no=${queryParam}`;
+    const url = `${API_BASE}/api/vacation-form/login-member?no=${queryParam}`;
     const fetchLoginMember = () => {
     fetch(url)
     .then( (resp) => resp.json() )
@@ -330,7 +263,7 @@ const VacationFormList = ({}) => {
     const handleApplyClick = (vacationNo) => {
         const isConfirmed = window.confirm("정말 승인 하시겠습니까?");
         if(isConfirmed) {
-            fetch(`http://127.0.0.1:8888/app/api/vacation-form/apply`,{
+            fetch(`${API_BASE}/api/vacation-form/apply`,{
                 method:'POST',
                 headers: {
                     'Content-Type' : 'application/json',
@@ -359,7 +292,7 @@ const VacationFormList = ({}) => {
     const handleRejectionClick = () => {
         const isConfirmed = window.confirm("정말 반려 하시겠습니까?");
         if(isConfirmed) {
-            fetch(`http://127.0.0.1:8888/app/api/vacation-form/rejection`,{
+            fetch(`${API_BASE}/api/vacation-form/rejection`,{
                 method:'POST',
                 headers: {
                     'Content-Type' : 'application/json',
@@ -389,7 +322,7 @@ const VacationFormList = ({}) => {
     };
 
     const refreshFormList = () => {
-        fetch(`http://127.0.0.1:8888/app/api/vacation-form/list?writerNo=${loginMemberNo}&page=${currentPage}&limit=${limit}`)
+        fetch(`${API_BASE}/api/vacation-form/list?writerNo=${loginMemberNo}&page=${currentPage}&limit=${limit}`)
         .then(resp => resp.json())
         .then(data => {
             if(data.msg === 'good') {
@@ -401,6 +334,9 @@ const VacationFormList = ({}) => {
         .catch(error => console.error('목록 조회 중 에러 발생', error));
     };
 
+    const statusTone = (category = '') =>
+        category.includes('반려') ? 'danger' : category.includes('완료') || category.includes('승인') ? 'success' : 'primary';
+
     const renderFormList = () => {
         return(
             <table>
@@ -408,39 +344,27 @@ const VacationFormList = ({}) => {
                     <tr>
                         <th>번호</th>
                         <th>결재상태</th>
-                        <th>등록일시</th>
-                        <th>결재일시</th>
+                        <th>등록일</th>
+                        <th>결재일</th>
                         <th>반려사유</th>
-                        <th>삭제</th>
+                        <th>관리</th>
                     </tr>
                 </thead>
                 <tbody>
                     {
                         formList.length === 0
-                        ?
-                        <h3>Loading</h3>
-                        :
-                        formList.map( vo => <tr key = {vo.no}>
-                            <td >{vo.no}</td>    
-                            <td>{vo.category}</td>    
+                        ? <tr><td colSpan="6"><EmptyState $compact>작성한 신청서가 없습니다.</EmptyState></td></tr>
+                        : formList.map( vo => <tr key = {vo.no}>
+                            <td>{vo.no}</td>
+                            <td><Badge $tone={statusTone(vo.category)}>{vo.category}</Badge></td>
                             <td>{vo.writeDate}</td>
-                            <td>{vo.documentDate}</td>
-                            <td>{vo.rejection}</td>  
+                            <td>{vo.documentDate || '-'}</td>
+                            <td>{vo.rejection || '-'}</td>
                             <td>
-                                <button onClick={() => handleDelete(vo.no)}
-                                style={{
-                                    padding: '10px 20px',
-                                    fontSize: '1rem',
-                                    borderRadius: '5px',
-                                    border: 'none',
-                                    color: 'white',
-                                    background: 'var(--gw-danger)',
-                                    boxShadow: '0 2px 4px rgba(0, 0, 0, 0.2)',
-                                    cursor: 'pointer',
-                                    transition: 'all 0.2s ease-in-out'
-                                  }}>삭제</button>
-                            </td> 
-                        </tr> 
+                                <button type="button" className="btn btn-outline-secondary" onClick={() => handleItemClick(vo)}>상세</button>{' '}
+                                <button type="button" className="btn btn-outline-danger" onClick={() => handleDelete(vo.no)}>삭제</button>
+                            </td>
+                        </tr>
                         )
                     }
                 </tbody>
@@ -454,78 +378,42 @@ const VacationFormList = ({}) => {
                 <thead>
                     <tr>
                         <th>번호</th>
-                        <th>작성자</th>
-                        <th>등록일시</th>
-                        <th>상세조회</th>
+                        <th>등록일</th>
+                        <th>상세</th>
                         <th>결재처리</th>
                     </tr>
                 </thead>
                 <tbody>
                     {
                         applyList.length === 0
-                        ?
-                        <h3>Loading</h3>
-                        :
-                        applyList.map( vo => <tr key = {vo.no}>
-                            <td>{vo.no}</td>    
-                            <td>{loginMember.name}</td>    
+                        ? <tr><td colSpan="4"><EmptyState $compact>승인을 기다리는 문서가 없습니다.</EmptyState></td></tr>
+                        : applyList.map( vo => <tr key = {vo.no}>
+                            <td>{vo.no}</td>
                             <td>{vo.writeDate}</td>
                             <td>
-                                <button onClick={() => handleItemClick(vo)} 
-                                style={{
-                                    padding: '10px 20px',
-                                    fontSize: '1rem',
-                                    borderRadius: '5px',
-                                    border: 'none',
-                                    color: 'white',
-                                    background: '#999', // 승인 버튼을 초록색으로 설정
-                                    boxShadow: '0 2px 4px rgba(0, 0, 0, 0.2)',
-                                    cursor: 'pointer',
-                                    transition: 'all 0.2s ease-in-out'
-                                  }}>상세조회</button>
+                                <button type="button" className="btn btn-outline-secondary" onClick={() => handleItemClick(vo)}>상세보기</button>
                             </td>
                             <td>
-                                <button onClick={() => handleApplyClick(vo.no)}
-                                style={{
-                                    padding: '10px 20px',
-                                    fontSize: '1rem',
-                                    borderRadius: '5px',
-                                    border: 'none',
-                                    color: 'white',
-                                    background: 'var(--gw-success)', // 승인 버튼을 초록색으로 설정
-                                    boxShadow: '0 2px 4px rgba(0, 0, 0, 0.2)',
-                                    cursor: 'pointer',
-                                    transition: 'all 0.2s ease-in-out'
-                                  }}>승인</button>
-                                <button onClick={() => handleRejectClick(vo.no)}
-                                 style={{
-                                    padding: '10px 20px',
-                                    fontSize: '1rem',
-                                    borderRadius: '5px',
-                                    border: 'none',
-                                    color: 'white',
-                                    background: 'var(--gw-warning)', // 반려 버튼을 진한 노란색으로 설정
-                                    boxShadow: '0 2px 4px rgba(0, 0, 0, 0.2)',
-                                    cursor: 'pointer',
-                                    transition: 'all 0.2s ease-in-out'
-                                  }}>반려</button>
+                                <button type="button" className="btn btn-success" onClick={() => handleApplyClick(vo.no)}>승인</button>{' '}
+                                <button type="button" className="btn btn-outline-danger" onClick={() => handleRejectClick(vo.no)}>반려</button>
                             </td>
-                        </tr> 
+                        </tr>
                         )
                     }
                 </tbody>
             </table>
         );
     };
-    
+
     return (
         <StyledVacationFormListDiv>
-            <div>
-                <button onClick={() => navigate('/document/write')}>휴가신청서 등록</button>
-                <button onClick={showMyVacationList}>결재목록</button>
-                <button onClick={loadApplyList}>승인대기목록</button>
+            <div className="toolbar">
+                <div className="tabs">
+                    <button type="button" className={`gw-reset ${!isShowingApplyList ? 'active' : ''}`} onClick={showMyVacationList}>내 신청 문서</button>
+                    <button type="button" className={`gw-reset ${isShowingApplyList ? 'active' : ''}`} onClick={loadApplyList}>승인 대기</button>
+                </div>
+                <button type="button" className="btn btn-primary" onClick={() => navigate('/document/write')}>휴가신청서 작성</button>
             </div>
-
 
             {isShowingApplyList ? (
                 <>

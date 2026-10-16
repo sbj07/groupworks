@@ -1,48 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import styled from 'styled-components';
-
-const Form = styled.form`
-    display: flex;
-    flex-direction: column;
-    max-width: 500px;
-    margin: auto;
-    padding: 20px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-    background: white;
-
-`;
-
-const Label = styled.label`
-    margin-bottom: 10px;
-    color: #333;
-    font-size: 1rem;
-`;
-
-const Input = styled.input`
-    padding: 10px;
-    margin-bottom: 20px;
-    border: 1px solid #ccc;
-    border-radius: 3px;
-    font-size: 1rem;
-`;
-
-const SubmitButton = styled.button`
-    padding: 10px 20px;
-    border: none;
-    border-radius: 3px;
-    background-color: var(--gw-primary);
-    color: white;
-    font-size: 1rem;
-    cursor: pointer;
-    transition: background-color 0.2s;
-
-    &:hover {
-        background-color: var(--gw-primary-hover);
-    }
-`;
+import { Form, Label, Input, SubmitButton } from '../common/FormLayout';
+import { API_BASE } from '../../api/config';
 
 const OrganWrite = () => {
     const [organData, setOrganData] = useState({
@@ -87,7 +46,7 @@ const OrganWrite = () => {
         // navigate('/organ/list'); // 작성 완료 후 목록 페이지로 이동
         try{
             console.log('전송 시작', organData);
-            const response = await fetch('http://127.0.0.1:8888/app/organ/insert', {
+            const response = await fetch(`${API_BASE}/organ/insert`, {
                 method : 'POST',
                 body : formData,
             });
@@ -175,7 +134,7 @@ const OrganWrite = () => {
                     onChange={handleProfileChange}
                 />
             </Label>
-                <SubmitButton type="submit">저장</SubmitButton>
+                <SubmitButton>저장</SubmitButton>
             </Form>
     );
 };

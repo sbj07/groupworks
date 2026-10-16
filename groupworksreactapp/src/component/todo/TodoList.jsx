@@ -1,207 +1,130 @@
 import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
-import Modal from 'react-modal';
+import { FiTrash2 } from 'react-icons/fi';
 import TodoWrite from './TodoWrite';
+import EmptyState from '../common/EmptyState';
+import { API_BASE } from '../../api/config';
 
-const StyledTodoDiv = styled.div`
-  width: 100%;
-  height: 90%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  flex-direction: column;
-  margin-bottom: 50px;
-  & > table {
-    width: 100%; 
-    height: 100%;
-    border-collapse: collapse; 
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); 
-    th, td {
-      padding: 8px; 
-      border: none;
-      text-align: center; 
-      border-radius: 8px;
-    }
-    th {
-      border: none;
-      white-space: nowrap;
-      background-color: var(--gw-primary); // 테이블 헤더 배경색 조정
-      color: white; 
+const MAX_TODO = 5;
+
+const StyledTodo = styled.div`
+    width: 100%;
+
+    ul {
+        margin: 0;
+        padding: 0;
+        list-style: none;
     }
 
-    td {
+    li {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 10px 4px;
+        border-bottom: 1px solid var(--gw-border);
+    }
+
+    li:last-child {
+        border-bottom: none;
+    }
+
+    li::before {
+        content: '';
+        flex-shrink: 0;
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: var(--gw-primary);
+    }
+
+    li > span {
+        flex: 1;
+        min-width: 0;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    li > small {
+        flex-shrink: 0;
+        color: var(--gw-text-muted);
+    }
+
+    li > button {
+        flex-shrink: 0;
         border: none;
+        background: none;
+        color: var(--gw-text-muted);
+        line-height: 1;
     }
-    
-    tr:nth-child(odd) {
-      background-color: var(--gw-surface-2); 
+
+    li > button:hover {
+        color: var(--gw-danger);
     }
-    tr:hover {
-      background-color: var(--gw-row-hover); 
+
+    .count {
+        margin-top: 10px;
+        color: var(--gw-text-muted);
+        font-size: 12px;
+        text-align: right;
     }
-    .delete-btn {
-    background-color: var(--gw-primary);
-    }
-  }
-  button {
-    padding: 8px 16px;
-    margin: 0 5px; 
-    border: none;
-    border-radius: 8px; 
-    color: white;
-    font-weight: bold;
-    cursor: pointer;
-    transition: background-color 0.3s; 
-    &:hover {
-      background-color: var(--gw-primary); 
-    }
-  }
-  & > button {
-    width: auto; 
-    font-size: 1rem; 
-    background-color: var(--gw-primary); 
-    margin-top: 20px; 
-  }
 `;
 
 const TodoList = () => {
-
-    const loginMemberNo = sessionStorage.getItem('loginMemberNo');
-    const navigate = useNavigate();
-    const [memberNo, setMemberNo] = useState(loginMemberNo);
+    const memberNo = sessionStorage.getItem('loginMemberNo');
     const [todoVoList, setTodoVoList] = useState([]);
-    const [modalIsOpen, setModalIsOpen] = useState(false);
-
-    const openModal = () => {
-        setModalIsOpen(true);
-        if (todoVoList.length >= 5) {
-            alert('최대 5개의 Todo만 등록 가능합니다. 필요시 기존 항목을 삭제하세요.');
-            setModalIsOpen(false);
-        } else {
-            setModalIsOpen(true); 
-        }
-    };
-
-    const closeModal = () => {
-        setModalIsOpen(false);
-    };
 
     const loadTodoVoList = () => {
-        fetch(`http://127.0.0.1:8888/app/api/todo/list?memberNo=${memberNo}`)
+        fetch(`${API_BASE}/api/todo/list?memberNo=${memberNo}`)
         .then( resp => resp.json() )
         .then(data => {
             if(data.msg === "good"){
-                setTodoVoList(data.todoList);
+                setTodoVoList(data.todoList ?? []);
             }else {
                 console.log("목록 가져오기 실패");
             }
-        })
-        ;
-    }
+        });
+    };
 
     useEffect( () => {
         loadTodoVoList();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [memberNo] );
 
     const handleDelete = (todoNo) => {
-        fetch(`http://127.0.0.1:8888/app/api/todo/delete`,{
+        fetch(`${API_BASE}/api/todo/delete`,{
             method: 'POST',
             headers: {
                 'Content-Type' : 'application/json',
             },
-            body: JSON.stringify({no: todoNo, memberNo: loginMemberNo}),
+            body: JSON.stringify({no: todoNo, memberNo: memberNo}),
         })
         .then( (resp) => resp.json() )
         .then( (data) => {
             if(data.msg === 'good'){
-                alert('todo 삭제 완료');
                 loadTodoVoList();
             }else{
-                alert('todo 삭제 실패');
+                alert('할 일 삭제에 실패했습니다.');
             }
         } );
     };
 
     return (
-        <StyledTodoDiv>
-            <table>
-                <thead>
-                    <tr>
-                        <th>번호</th>
-                        <th>Todo</th>
-                        <th>작성일자</th>
-                        <th>삭제</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {
-                        todoVoList.length === 0
-                        ?
-                        <tr>
-                            <td colSpan="4">Todo 리스트 항목이 없습니다.</td>
-                        </tr>
-                        :
-                        todoVoList.map( vo => <tr key = {vo.no}>
-                            <td>{vo.no}</td>
-                            <td>{vo.content}</td>
-                            <td>{vo.writeDate}</td>
-                            <td><button className="delete-btn" onClick={() => handleDelete(vo.no)}>삭제</button></td>
-                        </tr>
-                        )
-                    }
-                </tbody>
-            </table>
-
-            <button onClick={openModal}>Todo 추가</button>
-            <Modal
-                isOpen={modalIsOpen}
-                onRequestClose={closeModal}
-                contentLabel="Todo Write Modal"
-                style={{
-                    overlay: {
-                      backgroundColor: 'rgba(0, 0, 0, 0.75)',
-                      display: 'flex', 
-                      justifyContent: 'center',
-                      alignItems: 'center',
-                      zIndex: '1000'
-                    },
-                    content: {
-                        position: 'relative',
-                        inset: 'auto',
-                        margin: 'auto',
-                        border: '1px solid #ccc', // 모달 테두리를 은은한 회색으로 설정
-                        borderRadius: '10px', // 모달 모서리를 부드럽게 둥글게 설정
-                        padding: '20px', // 모달 내부 패딩 설정
-                        background: 'white', // 모달 배경색 설정
-                        boxShadow: '0 5px 15px rgba(0, 0, 0, 0.2)', // 모달에 그림자 효과 추가
-                        width: '50%', // 모달 너비를 화면의 50%로 설정
-                        maxWidth: '640px', // 모달 최대 너비 설정
-                        height: 'auto', // 높이를 내용에 맞추어 자동으로 설정
-                        overflow: 'auto', // 내용이 많을 경우 스크롤 생성
-                        textAlign: 'left', // 텍스트 왼쪽 정렬
-                        fontFamily: 'Arial, sans-serif', // 폰트 설정
-                        fontSize: '1rem', // 폰트 크기 설정
-                        color: '#444', // 글자 색상 설정
-                      }
-                  }}
-            >
-                
-                <TodoWrite closeModal={closeModal} loadTodoVoList={loadTodoVoList} />
-                <button onClick={closeModal}
-                style={{
-                    padding: '10px 20px',
-                    fontSize: '1rem',
-                    borderRadius: '5px',
-                    border: 'none',
-                    color: 'white',
-                    background: 'var(--gw-primary)', // 버튼 배경색을 파란색 계열로 설정
-                    boxShadow: '0 2px 4px rgba(0, 0, 0, 0.2)', // 버튼에 그림자 효과 추가
-                    cursor: 'pointer',
-                    transition: 'all 0.2s ease-in-out' // 부드러운 상태 변화를 위한 전환 효과 추가
-                  }}>닫기</button>
-            </Modal>
-        </StyledTodoDiv>   
+        <StyledTodo>
+            <TodoWrite loadTodoVoList={loadTodoVoList} disabled={todoVoList.length >= MAX_TODO} />
+            {todoVoList.length === 0
+                ? <EmptyState $compact>등록된 할 일이 없습니다.</EmptyState>
+                : <ul>
+                    {todoVoList.map(vo => (
+                        <li key={vo.no}>
+                            <span title={vo.content}>{vo.content}</span>
+                            <small>{vo.writeDate}</small>
+                            <button type="button" className="gw-reset" onClick={() => handleDelete(vo.no)} aria-label="삭제"><FiTrash2 /></button>
+                        </li>
+                    ))}
+                  </ul>}
+            <div className="count">{todoVoList.length} / {MAX_TODO}</div>
+        </StyledTodo>
     );
 };
 

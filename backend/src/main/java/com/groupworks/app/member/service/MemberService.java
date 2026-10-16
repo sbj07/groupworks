@@ -77,9 +77,12 @@ public class MemberService {
 
     // 정보 수정
     public int edit(MemberVo editVo) {
-        if (editVo.getPwd() != null) {
+        // 비밀번호는 입력했을 때만 암호화해서 바꾼다
+        if (editVo.getPwd() != null && !editVo.getPwd().isBlank()) {
             String encodedPwd = pwdEncoding(editVo.getPwd());
             editVo.setPwd(encodedPwd);
+        } else {
+            editVo.setPwd(null);
         }
         return dao.editMember(sessionTemplate, editVo);
     }

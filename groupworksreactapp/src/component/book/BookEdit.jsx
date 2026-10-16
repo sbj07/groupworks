@@ -1,22 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import styled from 'styled-components';
+import { FormShell, SubmitButton } from '../common/FormLayout';
+import { API_BASE } from '../../api/config';
 
-const StyledBookEditDiv = styled.div`
-    /* width: 100%;
-    height: 100%;
-    padding: 20px; */
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    background-color: white;
-    padding: 20px;
-    z-index: 1000;
-    border-radius: 10px; // 모달에 둥근 모서리 추가
-    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1); // 그림자 효과 추가
-    max-width: 500px; // 모달의 최대 너비 설정
-`;
 
 const BookEdit = () => {
     const loginMemberNo = sessionStorage.getItem("loginMemberNo");
@@ -65,7 +51,7 @@ const BookEdit = () => {
 
         //로긔인멤버 정보 불러오기
         const func = ( ) => {
-            fetch(`http://127.0.0.1:8888/app/api/member/${loginMemberNo}`)
+            fetch(`${API_BASE}/api/member/${loginMemberNo}`)
             .then( resp => resp.json() )
             .then( data => {
                 setLoginMemberVo(data.loginMemberVo);
@@ -87,7 +73,7 @@ const BookEdit = () => {
         };
 
         // 수정된 조직도 데이터를 서버로 전송합니다.
-        fetch('http://127.0.0.1:8888/app/book/edit', {
+        fetch(`${API_BASE}/book/edit`, {
             method: 'POST',
             // body: formData
             headers: {
@@ -113,7 +99,7 @@ const BookEdit = () => {
     };
 
     return (
-        <StyledBookEditDiv>
+        <FormShell>
             <h2>예약 수정</h2>
             <form onSubmit={handleSubmit}>
                 {/* <label>예약자명
@@ -124,8 +110,7 @@ const BookEdit = () => {
                          onChange={handleChange}
                     />
                 </label> */}
-            <label>예약자 : {loginMemberVo.name}</label>
-            <br />
+            <label>예약자<span className="readonly">{loginMemberVo.name}</span></label>
             <label>
                 장소
                 <input
@@ -134,17 +119,14 @@ const BookEdit = () => {
                     value={editedBook.bookPlace}
                     onChange={handleChange} />
             </label>
-            <br />
             <label>
                 시작 일자
                 <input type="datetime-local" name="startDate" value={startDate} onChange={handleDateChange} />
             </label>
-            <br />
             <label>
                 종료 일자
                 <input type="datetime-local" name="endDate" value={endDate} onChange={handleDateChange} />
             </label>
-            <br />
             <label>사용 목적
                 <input
                         type="text"
@@ -152,10 +134,9 @@ const BookEdit = () => {
                         value={editedBook.bookPurpose}
                         onChange={handleChange} />
             </label>
-            <br />
-            <button type='submit'>저장</button>
+            <SubmitButton>저장</SubmitButton>
             </form>
-        </StyledBookEditDiv>
+        </FormShell>
     );
 };
 

@@ -1,48 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import styled from 'styled-components';
-
-const Form = styled.form`
-    display: flex;
-    flex-direction: column;
-    max-width: 500px;
-    margin: auto;
-    padding: 20px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-    background: white;
-
-`;
-
-const Label = styled.label`
-    margin-bottom: 10px;
-    color: #333;
-    font-size: 1rem;
-`;
-
-const Input = styled.input`
-    padding: 10px;
-    margin-bottom: 20px;
-    border: 1px solid #ccc;
-    border-radius: 3px;
-    font-size: 1rem;
-`;
-
-const SubmitButton = styled.button`
-    padding: 10px 20px;
-    border: none;
-    border-radius: 3px;
-    background-color: var(--gw-primary);
-    color: white;
-    font-size: 1rem;
-    cursor: pointer;
-    transition: background-color 0.2s;
-
-    &:hover {
-        background-color: var(--gw-primary-hover);
-    }
-`;
+import { Form, Label, Input, SubmitButton } from '../common/FormLayout';
+import { API_BASE } from '../../api/config';
 
 const BookWrite = () => {
     const loginMemberNo = sessionStorage.getItem("loginMemberNo");
@@ -69,7 +28,7 @@ const handleDateChange = (e) => {
 
     //로긔인멤버 정보 불러오기
     const func = ( ) => {
-        fetch(`http://127.0.0.1:8888/app/api/member/${loginMemberNo}`)
+        fetch(`${API_BASE}/api/member/${loginMemberNo}`)
         .then( resp => resp.json() )
         .then( data => {
             setLoginMemberVo(data.loginMemberVo);
@@ -103,7 +62,7 @@ const handleDateChange = (e) => {
             // console.log('JSON 데이터 전송:', jsonData);
     
             // JSON 데이터로 요청 전송
-            const response = await fetch('http://127.0.0.1:8888/app/book/insert', {
+            const response = await fetch(`${API_BASE}/book/insert`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -127,7 +86,7 @@ const handleDateChange = (e) => {
 
     return (
         <Form onSubmit={handleSubmit}>
-            <Label>이름 : {loginMemberVo.name}</Label>
+            <Label>이름<span className="readonly">{loginMemberVo.name}</span></Label>
             <Label>
                 예약장소
                 <Input
@@ -154,7 +113,7 @@ const handleDateChange = (e) => {
                     onChange={handleChange}
                 />
             </Label>
-                <SubmitButton type="submit">저장</SubmitButton>
+                <SubmitButton>저장</SubmitButton>
         </Form>
     );
 };

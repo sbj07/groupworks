@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import koLocale from "@fullcalendar/core/locales/ko";
 import styled from "styled-components";
+import { API_BASE } from '../../api/config';
 
 const StyledCalendarDiv = styled.div`
   background-color: white;
@@ -22,7 +23,7 @@ const Calendar = ({ refresh }) => {
   useEffect(() => {
     console.log("렌더중");
     fetch(
-      `http://127.0.0.1:8888/app/api/attendance/business-trip?loginMemberNo=${loginMemberNo}`
+      `${API_BASE}/api/attendance/business-trip?loginMemberNo=${loginMemberNo}`
     )
       .then((resp) => resp.json())
       .then((data) => {
@@ -30,7 +31,7 @@ const Calendar = ({ refresh }) => {
       });
 
     fetch(
-      `http://127.0.0.1:8888/app/api/attendance/outside-work?loginMemberNo=${loginMemberNo}`
+      `${API_BASE}/api/attendance/outside-work?loginMemberNo=${loginMemberNo}`
     )
       .then((resp) => resp.json())
       .then((data) => {
@@ -38,7 +39,7 @@ const Calendar = ({ refresh }) => {
       });
 
     fetch(
-      `http://127.0.0.1:8888/app/api/attendance/vacation?loginMemberNo=${loginMemberNo}`
+      `${API_BASE}/api/attendance/vacation?loginMemberNo=${loginMemberNo}`
     )
       .then((resp) => resp.json())
       .then((data) => {

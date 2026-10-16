@@ -4,6 +4,7 @@ import styled from 'styled-components';
 import EditMember from '../member/EditMember';
 import Card from '../common/Card';
 import { Avatar } from '../Topbar';
+import { API_BASE } from '../../api/config';
 
 const Profile = styled.div`
     display: flex;
@@ -84,13 +85,13 @@ const UserInfoMain = () => {
     const time = useClock();
 
     useEffect( () => {
-        fetch(`http://127.0.0.1:8888/app/api/member/${loginMemberNo}`)
+        fetch(`${API_BASE}/api/member/${loginMemberNo}`)
         .then( resp => resp.json() )
         .then( data => {
             setLoginMemberVo(data.loginMemberVo ?? {});
         });
 
-        fetch(`http://127.0.0.1:8888/app/api/attendance/vacation/total/${loginMemberNo}`)
+        fetch(`${API_BASE}/api/attendance/vacation/total/${loginMemberNo}`)
         .then( resp => resp.json() )
         .then( data => {
             setTotalDays(data.totalDays);

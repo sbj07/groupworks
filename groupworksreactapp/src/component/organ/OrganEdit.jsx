@@ -1,22 +1,8 @@
 import React, { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import styled from 'styled-components';
+import { FormShell, SubmitButton } from '../common/FormLayout';
+import { API_BASE } from '../../api/config';
 
-const StyledOrganEditDiv = styled.div`
-    /* width: 100%;
-    height: 100%;
-    padding: 20px; */
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    background-color: white;
-    padding: 20px;
-    z-index: 1000;
-    border-radius: 10px; // 모달에 둥근 모서리 추가
-    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1); // 그림자 효과 추가
-    max-width: 500px; // 모달의 최대 너비 설정
-`;
 
 
 const OrganEdit = () => {
@@ -56,7 +42,7 @@ const OrganEdit = () => {
 
 
         // 수정된 조직도 데이터를 서버로 전송합니다.
-        fetch('http://127.0.0.1:8888/app/organ/edit', {
+        fetch(`${API_BASE}/organ/edit`, {
             method: 'POST',
             body: formData // JSON.stringify를 사용하지 않고, FormData를 직접 전달
             })
@@ -84,10 +70,10 @@ const OrganEdit = () => {
 
         
     return (
-        <StyledOrganEditDiv>
+        <FormShell>
             <h2>조직도 수정</h2>
             <form onSubmit={handleSubmit}>
-                <label>이름: {editedOrgan.name}
+                <label>이름 {editedOrgan.name}
                     {/* <input
                         type="text"
                         name="name"
@@ -95,8 +81,7 @@ const OrganEdit = () => {
                         onChange={handleChange}
                     /> */}
                 </label>
-                <br />
-                <label>부서:
+                <label>부서
                     <input
                         type="text"
                         name="departNo"
@@ -104,8 +89,7 @@ const OrganEdit = () => {
                         onChange={handleChange}
                     />
                 </label>
-                <br />
-                <label>직책:
+                <label>직책
                     <input
                         type="text"
                         name="positionNo"
@@ -113,8 +97,7 @@ const OrganEdit = () => {
                         onChange={handleChange}
                     />
                 </label>
-                <br />
-                <label>번호:
+                <label>번호
                     <input
                         type="text"
                         name="tel"
@@ -122,8 +105,7 @@ const OrganEdit = () => {
                         onChange={handleChange}
                     />
                 </label>
-                <br />
-                <label>이메일:
+                <label>이메일
                     <input
                         type="text"
                         name="email"
@@ -131,18 +113,17 @@ const OrganEdit = () => {
                         onChange={handleChange}
                     />
                 </label>
-                <br />
                 <label>
-                    프로필:
+                    프로필
                     <input
                         type="file"
                         name="profile"
                         onChange={handleFileChange}
                     />
                 </label>
-                <button type="submit">저장</button>
+                <SubmitButton>저장</SubmitButton>
                 </form>
-            </StyledOrganEditDiv>
+            </FormShell>
     )
 }
 

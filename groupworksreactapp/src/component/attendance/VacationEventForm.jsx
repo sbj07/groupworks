@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Button, Form } from 'react-bootstrap';
+import { API_BASE } from '../../api/config';
 
 const VacationEventForm = ( props ) => {
     let fetchType = props.type;
@@ -36,7 +37,7 @@ const VacationEventForm = ( props ) => {
         event.preventDefault();
         if (fetchType !== 'put') {
 
-            fetch("http://127.0.0.1:8888/app/api/attendance/vacation",{
+            fetch(`${API_BASE}/api/attendance/vacation`,{
                 method: "POST" ,
                 headers: {
                 "Content-Type": "application/json"
@@ -53,7 +54,7 @@ const VacationEventForm = ( props ) => {
                 }
             })
         } else {
-            fetch("http://127.0.0.1:8888/app/api/attendance/vacation",{
+            fetch(`${API_BASE}/api/attendance/vacation`,{
                 method: "PUT" ,
                 headers: {
                 "Content-Type": "application/json"

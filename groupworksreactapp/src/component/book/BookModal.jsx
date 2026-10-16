@@ -1,44 +1,22 @@
-import Modal from 'react-modal';
 import React from 'react';
-import styled from 'styled-components';
 import { useNavigate } from 'react-router-dom';
-
-export const StyledModal = styled.div`
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    background-color: white;
-    padding: 20px;
-    z-index: 1000;
-    border-radius: 10px;
-    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
-    max-width: 500px;
-`;
-
-export const Overlay = styled.div`
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-color: rgba(0, 0, 0, 0.7);
-    z-index: 1000;
-`;
+import AppModal from '../common/AppModal';
+import InfoList from '../common/InfoList';
+import { API_BASE } from '../../api/config';
 
 const BookModal = ({ modalIsOpen, selectedVo, closeModal, refreshList }) => {
-    const loginMemberNo = sessionStorage.getItem("loginMemberNo")
+    const loginMemberNo = sessionStorage.getItem("loginMemberNo");
     const navigate = useNavigate();
-    
+
     const navigateToEdit = () => {
-        navigate(`/book/edit`, { state: { selectedVo } }); // selectedVo가 올바른지 확인
+        navigate(`/book/edit`, { state: { selectedVo } });
         closeModal();
-    }
+    };
 
     const navigateToDelete = async () => {
         if (window.confirm('예약을 삭제하시겠습니까?')) {
             try {
-                const response = await fetch(`http://127.0.0.1:8888/app/book/delete/${selectedVo.bookNo}`, {
+                const response = await fetch(`${API_BASE}/book/delete/${selectedVo.bookNo}`, {
                     method: 'DELETE',
                     headers: {
                         'Content-Type': 'application/json',
@@ -62,40 +40,36 @@ const BookModal = ({ modalIsOpen, selectedVo, closeModal, refreshList }) => {
         }
     };
 
+    const isMine = selectedVo?.memberNo === loginMemberNo;
 
     return (
-        <Modal
-        isOpen={modalIsOpen}
-        onRequestClose={closeModal}
-        contentLabel="상세 조회"
-        style={{ overlay: {}, content: {
-            background: 'none',
-            border: 'none',
-            padding: 0
-        } }}
-        >
-            <StyledModal>
-                <h2>상세 조회</h2>
-                {selectedVo && (
-                    <div>
-                        <p>예약 번호: {selectedVo.bookNo}</p>
-                        <p>예약자명: {selectedVo.memberName}</p>
-                        <p>언제부터: {selectedVo.startDate}</p>
-                        <p>언제까지: {selectedVo.endDate}</p>
-                        <p>사용 목적: {selectedVo.bookPurpose}</p>
-                        {selectedVo.memberNo === loginMemberNo && (
-                            <>
-                                <button onClick={navigateToEdit}>수정</button>
-                                <button onClick={navigateToDelete}>삭제</button>
-                            </>
-                        )}
-                        <button onClick={closeModal}>닫기</button>
-                    </div>
+        <AppModal
+            isOpen={modalIsOpen && !!selectedVo}
+            onClose={closeModal}
+            title="예약 상세"
+            subtitle={selectedVo && `예약 번호 ${selectedVo.bookNo}`}
+            width={460}
+            footer={<>
+                {isMine && (
+                    <>
+                        <button type="button" className="btn btn-outline-danger" onClick={navigateToDelete}>삭제</button>
+                        <button type="button" className="btn btn-outline-primary" onClick={navigateToEdit}>수정</button>
+                    </>
                 )}
-            </StyledModal>
-        </Modal>
+                <button type="button" className="btn btn-primary" onClick={closeModal}>닫기</button>
+            </>}
+        >
+            {selectedVo && (
+                <InfoList items={[
+                    { label: '예약자', value: selectedVo.memberName },
+                    { label: '장소', value: selectedVo.bookPlace },
+                    { label: '사용 시간', value: `${selectedVo.startDate} ~ ${selectedVo.endDate}` },
+                    { label: '사용 목적', value: selectedVo.bookPurpose },
+                    { label: '신청 일시', value: selectedVo.updateDate || selectedVo.bookDate },
+                ]} />
+            )}
+        </AppModal>
     );
 };
 
 export default BookModal;
-//

@@ -3,19 +3,39 @@ import React, { useEffect, useState } from "react";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import koLocale from "@fullcalendar/core/locales/ko";
 import styled from "styled-components";
-import Modal from "react-modal";
-import { Button } from "react-bootstrap";
+import AppModal from "../common/AppModal";
 import BusinessTripEventFrom from "../attendance/BusinessTripEventFrom";
 import OutworkEventForm from "../attendance/OutworkEventForm";
 import VacationEventForm from "../attendance/VacationEventForm";
+import { API_BASE } from '../../api/config';
+
+// 일정 종류별 색 (범례와 이벤트에 같이 쓴다)
+const EVENT_TYPES = {
+  "business-trip": { label: "출장", color: "#f5a524" },
+  "outside-work": { label: "외근", color: "#1f9d6b" },
+  vacation: { label: "휴가", color: "#2459e0" },
+};
 
 const StyledCalendarDiv = styled.div`
-  background-color: white;
-  border-radius: 1%;
   width: 100%;
 
-  & > Modal {
-    background-color: green;
+  .legend {
+    display: flex;
+    gap: 14px;
+    margin-bottom: 10px;
+    color: var(--gw-text-muted);
+    font-size: 12px;
+    font-weight: 600;
+  }
+
+  .legend span::before {
+    content: "";
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    margin-right: 6px;
+    border-radius: 50%;
+    background: var(--dot);
   }
 `;
 
@@ -33,9 +53,9 @@ const TestCalendar = ({ refresh }) => {
   useEffect(() => {
 
     Promise.all([
-      fetch(`http://127.0.0.1:8888/app/api/attendance/business-trip?loginMemberNo=${loginMemberNo}`).then(resp => resp.json()),
-      fetch(`http://127.0.0.1:8888/app/api/attendance/outside-work?loginMemberNo=${loginMemberNo}`).then(resp => resp.json()),
-      fetch(`http://127.0.0.1:8888/app/api/attendance/vacation?loginMemberNo=${loginMemberNo}`).then(resp => resp.json()),
+      fetch(`${API_BASE}/api/attendance/business-trip?loginMemberNo=${loginMemberNo}`).then(resp => resp.json()),
+      fetch(`${API_BASE}/api/attendance/outside-work?loginMemberNo=${loginMemberNo}`).then(resp => resp.json()),
+      fetch(`${API_BASE}/api/attendance/vacation?loginMemberNo=${loginMemberNo}`).then(resp => resp.json()),
     ])
     .then(([bTripData, outsideWorkData, vacationData]) => {
       const newEventList = [];
@@ -47,7 +67,7 @@ const TestCalendar = ({ refresh }) => {
           title: vo.memo !== null ? "출장 : " + vo.memo : "출장",
           start: vo.startDate,
           end: vo.endDate,
-          color: "orange",
+          color: EVENT_TYPES["business-trip"].color,
         });
       });
 
@@ -58,7 +78,7 @@ const TestCalendar = ({ refresh }) => {
           title: "외근",
           start: vo.startTime,
           end: vo.endTime,
-          color: "green",
+          color: EVENT_TYPES["outside-work"].color,
         });
       });
 
@@ -69,6 +89,7 @@ const TestCalendar = ({ refresh }) => {
           title: "휴가",
           start: vo.startDate,
           end: vo.endDate,
+          color: EVENT_TYPES.vacation.color,
         });
       });
 
@@ -88,7 +109,7 @@ const TestCalendar = ({ refresh }) => {
   };
 
   const handleDeleteEvent = ( ) => {
-    fetch(`http://127.0.0.1:8888/app/api/attendance/${selectedEvent}/${selectedNo}`,{
+    fetch(`${API_BASE}/api/attendance/${selectedEvent}/${selectedNo}`,{
       method: "DELETE",
     })
     .then(resp => resp.json())
@@ -104,80 +125,37 @@ const TestCalendar = ({ refresh }) => {
     })
   };
 
-  return (
-    <>
+  const typeInfo = EVENT_TYPES[selectedEvent];
 
+  return (
       <StyledCalendarDiv>
+        <div className="legend">
+          {Object.values(EVENT_TYPES).map(t => <span key={t.label} style={{ "--dot": t.color }}>{t.label}</span>)}
+        </div>
         <FullCalendar
           locale={koLocale}
-          // defaultView="dayGridMonth"
           plugins={[dayGridPlugin]}
-          aspectRatio="2.5"
           contentHeight={480}
           events={eventList}
           eventClick={handleEventClick}
-          />  
-          {
-            modalVisible && 
-            (
-              <Modal 
-              isOpen={modalVisible}
-              style={ {
-                  overlay: {
-                    backgroundColor: "rgba(0, 0, 0, 0.4)",
-                    width: "100%",
-                    height: "100vh",
-                    zIndex: "10",
-                    position: "fixed",
-                    top: "0",
-                    left: "0",
-                  },
-                  content: {
-                    display: "flex",
-                    flexDirection: "column",
-                    alignItems: "center",
-                    width: "400px",
-                    height: "600px",
-                    zIndex: "150",
-                    position: "absolute",
-                    top: "50%",
-                    left: "50%",
-                    transform: "translate(-50%, -50%)",
-                    borderRadius: "10px",
-                    boxShadow: "2px 2px 2px rgba(0, 0, 0, 0.25)",
-                    backgroundColor: "white",
-                    justifyContent: "center",
-                    overflow: "auto",
-                   
-                  },
-              } }
-              >
-                <h2>
-                수정 / 삭제 하시겠습니까?
-                </h2>
-                {
-                  selectedEvent === 'business-trip'
-                  ?
-                    <BusinessTripEventFrom type="put" putId={selectedNo} />       
-                  :
-                  (
-                    selectedEvent === 'outside-work'
-                    ?
-                      <OutworkEventForm type="put" putId={selectedNo}/>
-                    :
-                    <VacationEventForm type="put" putId={selectedNo} /> 
-                  )
-                }
-                <br />
-                <div>
-                <Button variant="danger" onClick={handleDeleteEvent}>삭제</Button>
-                <Button variant="warning" onClick={closeModal}>닫기</Button>
-                </div>
-              </Modal>
-            )
-          }
-        </StyledCalendarDiv>
-    </>
+          dayMaxEvents={3}
+          />
+        <AppModal
+          isOpen={modalVisible}
+          onClose={closeModal}
+          title={`${typeInfo?.label ?? "일정"} 수정`}
+          subtitle="내용을 바꾸고 수정을 누르거나, 일정을 삭제할 수 있습니다."
+          width={460}
+          footer={<>
+            <button type="button" className="btn btn-outline-danger" onClick={handleDeleteEvent}>삭제</button>
+            <button type="button" className="btn btn-outline-secondary" onClick={closeModal}>닫기</button>
+          </>}
+        >
+          {selectedEvent === 'business-trip' && <BusinessTripEventFrom type="put" putId={selectedNo} />}
+          {selectedEvent === 'outside-work' && <OutworkEventForm type="put" putId={selectedNo} />}
+          {selectedEvent === 'vacation' && <VacationEventForm type="put" putId={selectedNo} />}
+        </AppModal>
+      </StyledCalendarDiv>
   );
 };
 

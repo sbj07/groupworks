@@ -1,11 +1,12 @@
 import React from 'react';
+import { API_BASE } from '../../api/config';
 
 const BookDelete = ({ bookNo, onDeleteSuccess }) => {
 
     const handleDelete = async () => {
         if (window.confirm('예약을 삭제하시겠습니까?')) {
             try {
-                const response = await fetch(`http://127.0.0.1:8888/app/book/delete/${bookNo}`, {
+                const response = await fetch(`${API_BASE}/book/delete/${bookNo}`, {
                     method: 'DELETE',
                     headers: {
                         'Content-Type': 'application/json',

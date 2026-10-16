@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Button, Form, Table } from 'react-bootstrap';
 import styled from 'styled-components';
+import { API_BASE } from '../../api/config';
 
 const StyledDeleteDiv = styled.div`
     overflow-x: auto;
@@ -28,7 +29,7 @@ const DeleteMember = () => {
     const loginMemberNo = sessionStorage.getItem("loginMemberNo");
 
     useEffect( () => {
-        fetch("http://127.0.0.1:8888/app/api/member/list/auth")
+        fetch(`${API_BASE}/api/member/list/auth`)
         .then( resp => resp.json() )
         .then( data => {
             if(data.msg === 'okay') {
@@ -39,7 +40,7 @@ const DeleteMember = () => {
             }
         });
 
-        fetch("http://127.0.0.1:8888/app/api/member/list/depart")
+        fetch(`${API_BASE}/api/member/list/depart`)
         .then( resp => resp.json() )
         .then( data => {
             if(data.msg === 'okay') {
@@ -50,7 +51,7 @@ const DeleteMember = () => {
             }
         });
 
-        fetch("http://127.0.0.1:8888/app/api/member/list/position")
+        fetch(`${API_BASE}/api/member/list/position`)
         .then( resp => resp.json() )
         .then( data => {
             if(data.msg === 'okay') {
@@ -61,7 +62,7 @@ const DeleteMember = () => {
             }
         });
 
-        fetch(`http://127.0.0.1:8888/app/api/member/list/${loginMemberNo}`)
+        fetch(`${API_BASE}/api/member/list/${loginMemberNo}`)
         .then( resp => resp.json() )
         .then( data => {
             if(data.msg === 'okay') {
@@ -75,7 +76,7 @@ const DeleteMember = () => {
 
     const handleDeleteBtn = ( prop ) => {
         console.log(prop);
-        fetch(`http://127.0.0.1:8888/app/api/member/${prop}`,{
+        fetch(`${API_BASE}/api/member/${prop}`,{
             method: "DELETE"
         })
         .then(resp => resp.json())
@@ -130,7 +131,7 @@ const DeleteMember = () => {
     };
 
     const handleMemberChange = () => {
-        fetch("http://127.0.0.1:8888/app/api/member", {
+        fetch(`${API_BASE}/api/member`, {
             method : "PUT",
             headers : {
                 "Content-Type" : "application/json"
@@ -152,7 +153,7 @@ const DeleteMember = () => {
         return (
             <>
             <td>
-                <Form.Select 
+                <Form.Select size='sm'
                     value={userAuth[props.no] ? userAuth[props.no] : ''}
                     onChange={(event) => handleAuthInputChange(event, props.no)}
                 >
@@ -165,7 +166,7 @@ const DeleteMember = () => {
                 </Form.Select>
             </td>
             <td>
-                <Button variant='warning' onClick={() => handleMemberChange(props.no)}>변경</Button>
+                <Button size='sm' variant='outline-primary' onClick={() => handleMemberChange(props.no)}>변경</Button>
             </td>
             </>
         );
@@ -175,7 +176,7 @@ const DeleteMember = () => {
         return (
             <>
             <td>
-                <Form.Select
+                <Form.Select size='sm'
                     value={userDepart[props.no] ? userDepart[props.no] : ''}
                     onChange={(event) => handleDepartInputChange(event, props.no)}
                 >
@@ -188,7 +189,7 @@ const DeleteMember = () => {
                 </Form.Select>
             </td>
             <td>
-                <Button variant='warning' onClick={() => handleMemberChange(props.no)}>변경</Button>
+                <Button size='sm' variant='outline-primary' onClick={() => handleMemberChange(props.no)}>변경</Button>
             </td>
             </>
         );
@@ -198,7 +199,7 @@ const DeleteMember = () => {
         return (
             <>
             <td>
-                <Form.Select
+                <Form.Select size='sm'
                     value={userPosition[props.no] ? userPosition[props.no] : ''}
                     onChange={(event) => handlePositionInputChange(event, props.no)}
                 >
@@ -211,7 +212,7 @@ const DeleteMember = () => {
                 </Form.Select>
             </td>
             <td>
-                <Button variant='warning' onClick={() => handleMemberChange(props.no)}>변경</Button>
+                <Button size='sm' variant='outline-primary' onClick={() => handleMemberChange(props.no)}>변경</Button>
             </td>
             </>
         );
@@ -231,7 +232,7 @@ const DeleteMember = () => {
                   <td>{member.positionName}</td>
                   <ListPositionBox no={member.no}/>
                   <ListAuthBox no={member.no}/>
-                  <td><Button variant='danger' onClick={() => handleDeleteBtn(member.no)}>삭제</Button></td>
+                  <td><Button size='sm' variant='outline-danger' onClick={() => handleDeleteBtn(member.no)}>삭제</Button></td>
                 </tr>
               );
             })}
@@ -241,7 +242,7 @@ const DeleteMember = () => {
       
     return (
         <StyledDeleteDiv>
-            <Table bordered hover>
+            <Table hover responsive className='align-middle'>
                 <thead>
                     <tr>
                         <th>이름</th>

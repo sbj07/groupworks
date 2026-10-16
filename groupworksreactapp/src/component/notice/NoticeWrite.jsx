@@ -1,67 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import styled from 'styled-components';
-
-const Form = styled.form`
-    display: flex;
-    flex-direction: column;
-    max-width: 500px;
-    margin: auto;
-    padding: 20px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-    background: white;
-`;
-
-const Label = styled.label`
-    margin-bottom: 10px;
-    color: #333;
-    font-size: 1rem;
-`;
-
-const Input = styled.input`
-    padding: 10px;
-    margin-bottom: 20px;
-    border: 1px solid #ccc;
-    border-radius: 3px;
-    font-size: 1rem;
-`;
-
-const TextArea = styled.textarea`
-    padding: 10px;
-    margin-bottom: 20px;
-    border: 1px solid #ccc;
-    border-radius: 3px;
-    font-size: 1rem;
-    height: 100px;
-    resize: vertical;
-`;
-
-const Select = styled.select`
-    padding: 10px;
-    margin-bottom: 20px;
-    border: 1px solid #ccc;
-    border-radius: 3px;
-    font-size: 1rem;
-`;
-
-const SubmitButton = styled.button`
-    padding: 10px 20px;
-    border: none;
-    border-radius: 3px;
-    background-color: var(--gw-primary);
-    color: white;
-    font-size: 1rem;
-    cursor: pointer;
-    transition: background-color 0.2s;
-
-    &:hover {
-        background-color: var(--gw-primary-hover);
-    }
-`;
-
-
+import { Form, Label, Input, TextArea, Select, SubmitButton } from '../common/FormLayout';
+import { API_BASE } from '../../api/config';
 
 const NoticeWrite = () => {
     const loginMemberNo = sessionStorage.getItem("loginMemberNo");
@@ -86,8 +26,8 @@ const NoticeWrite = () => {
     // 카테고리와 부서 데이터를 로드하는 함수
     // const loadSelectOptions = async () => {
     //     try {
-    //         const categoryResponse = await fetch('http://127.0.0.1:8888/app/notice/list/categoryList');
-    //         const departmentResponse = await fetch('http://127.0.0.1:8888/app/notice/list/departList');
+    //         const categoryResponse = await fetch(`${API_BASE}/notice/list/categoryList`);
+    //         const departmentResponse = await fetch(`${API_BASE}/notice/list/departList`);
     //         if (!departmentResponse.ok) {
     //             throw new Error('데이터를 불러오는 데 실패했습니다.');
     //         }
@@ -103,7 +43,7 @@ const NoticeWrite = () => {
     // };
 
     useEffect(() => {
-        fetch('http://127.0.0.1:8888/app/notice/list/categoryList')
+        fetch(`${API_BASE}/notice/list/categoryList`)
         .then(resp => resp.json())
         .then(data => {
             if (data && data.categories) {
@@ -113,7 +53,7 @@ const NoticeWrite = () => {
         });
         // loadSelectOptions();
 
-        fetch('http://127.0.0.1:8888/app/notice/list/departList')
+        fetch(`${API_BASE}/notice/list/departList`)
         .then(resp => resp.json())
         .then(data => {
             if (data && data.list) {
@@ -123,7 +63,7 @@ const NoticeWrite = () => {
         });
 
 
-        // fetch('http://127.0.0.1:8888/app/notice/list/emergencyYn')
+        // fetch(`${API_BASE}/notice/list/emergencyYn`)
         // .then( resp => resp.json())
         // .then( data => {
         //     console.log(data.list);
@@ -163,7 +103,7 @@ const NoticeWrite = () => {
     // };
 
     const func = ( ) => {
-        fetch(`http://127.0.0.1:8888/app/api/member/${loginMemberNo}`)
+        fetch(`${API_BASE}/api/member/${loginMemberNo}`)
         .then( resp => resp.json() )
         .then( data => {
             setLoginMemberVo(data.loginMemberVo);
@@ -191,7 +131,7 @@ const NoticeWrite = () => {
         }
 
         try {
-            const response = await fetch('http://127.0.0.1:8888/app/notice/insert', {
+            const response = await fetch(`${API_BASE}/notice/insert`, {
                 method: 'POST',
                 // headers: {
                 //     "Content-type" : "application/json"
@@ -227,7 +167,7 @@ const NoticeWrite = () => {
     return (
         <Form onSubmit={handleSubmit}>
             <Label>
-                제목:
+                제목
                 <Input
                     type="text"
                     name="title"
@@ -236,7 +176,7 @@ const NoticeWrite = () => {
                 />
             </Label>
             <Label>
-                내용:
+                내용
                 <TextArea
                     name="content"
                     value={noticeData.content}
@@ -253,9 +193,9 @@ const NoticeWrite = () => {
                     readOnly
                 />
             </Label> */}
-            <Label>이름 : {loginMemberVo.name}</Label>
+            <Label>이름<span className="readonly">{loginMemberVo.name}</span></Label>
             {/* <Label>
-                카테고리:
+                카테고리
                 <Select
                     name="category"
                     value={noticeData.category}
@@ -265,7 +205,7 @@ const NoticeWrite = () => {
                 </Select>
             </Label> */}
             <Label>
-                카테고리:
+                카테고리
                 <Select
                     name="category"
                     value={noticeData.category}
@@ -275,7 +215,7 @@ const NoticeWrite = () => {
                 </Select>
             </Label>
             <Label>
-                공개 부서:
+                공개 부서
                 <Select
                     name="openDepart"
                     value={noticeData.openDepart}
@@ -285,7 +225,7 @@ const NoticeWrite = () => {
                 </Select>
             </Label>
             <Label>
-                파일첨부:
+                파일첨부
                 <Input
                     type="file"
                     name="file"
@@ -293,7 +233,7 @@ const NoticeWrite = () => {
                 />
             </Label>
             {/* <Label>
-                긴급 여부:
+                긴급 여부
                 <Select
                 name='emergencyYn'
                 value={noticeData.emergencyYn}
@@ -303,7 +243,7 @@ const NoticeWrite = () => {
                 </Select>
             </Label> */}
             {/* 기타 필드 */}
-            <SubmitButton type="submit">저장</SubmitButton>
+            <SubmitButton>저장</SubmitButton>
         </Form>
     );
 };

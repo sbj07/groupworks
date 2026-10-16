@@ -99,6 +99,7 @@
         <set>
             <if test="name != null and name != '' ">NAME = #{name},</if>
             <if test="id != null and id != '' ">ID = #{id},</if>
+            <if test="pwd != null and pwd != '' ">PWD = #{pwd},</if>
             <if test="email != null and email != '' ">EMAIL = #{email},</if>
             <if test="tel != null and tel != '' ">TEL = #{tel},</if>
             <if test="annual != null and annual != '' ">ANNUAL = #{annual},</if>

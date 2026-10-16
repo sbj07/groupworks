@@ -1,23 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { Form } from 'react-bootstrap';
 import { useLocation, useNavigate } from 'react-router';
-import styled from 'styled-components';
+import { FormShell, SubmitButton } from '../common/FormLayout';
+import { API_BASE } from '../../api/config';
 
-const StyledNoticeEditDiv = styled.div`
-    /* width: 100%;
-    height: 100%;
-    padding: 20px; */
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    background-color: white;
-    padding: 20px;
-    z-index: 1000;
-    border-radius: 10px; // 모달에 둥근 모서리 추가
-    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1); // 그림자 효과 추가
-    max-width: 500px; // 모달의 최대 너비 설정
-`;
 
 
 const NoticeEdit = () => {
@@ -54,7 +40,7 @@ const NoticeEdit = () => {
         }
 
         // 수정된 공지사항 데이터를 서버로 전송합니다.
-        fetch('http://127.0.0.1:8888/app/notice/edit', {
+        fetch(`${API_BASE}/notice/edit`, {
             method: 'POST',
             body: formData // JSON.stringify를 사용하지 않고, FormData를 직접 전달
             })
@@ -75,7 +61,7 @@ const NoticeEdit = () => {
     };
 
     useEffect( () => {
-        fetch("http://127.0.0.1:8888/app/notice/list/categoryList")
+        fetch(`${API_BASE}/notice/list/categoryList`)
         .then(resp => resp.json())
         .then(data => {
             if(data.msg === "okay"){
@@ -84,7 +70,7 @@ const NoticeEdit = () => {
             }
         })
 
-        fetch("http://127.0.0.1:8888/app/api/member/list/depart")
+        fetch(`${API_BASE}/api/member/list/depart`)
         .then( resp => resp.json() )
         .then( data => {
             if(data.msg === 'okay') {
@@ -95,7 +81,7 @@ const NoticeEdit = () => {
             }
         });
 
-        fetch(`http://127.0.0.1:8888/app/api/member/${loginMemberNo}`)
+        fetch(`${API_BASE}/api/member/${loginMemberNo}`)
         .then( resp => resp.json() )
         .then( data => {
             setLoginMemberVo(data.loginMemberVo);
@@ -142,13 +128,12 @@ const NoticeEdit = () => {
     if (!editedNotice) return <div>로딩 중...</div>;
 
     return (
-        <StyledNoticeEditDiv>
+        <FormShell>
             <h1>공지사항 수정</h1>
             <form onSubmit={handleSubmit}>
-                <label>작성자 : {loginMemberVo.name}</label>
-                <br />
+                <label>작성자<span className="readonly">{loginMemberVo.name}</span></label>
                 <label>
-                    제목:
+                    제목
                     <input
                         type="text"
                         name="title"
@@ -156,26 +141,21 @@ const NoticeEdit = () => {
                         onChange={handleChange}
                     />
                 </label>
-                <br />
                 <label>
-                    내용:
+                    내용
                     <textarea
                         name="content"
                         value={editedNotice.content}
                         onChange={handleChange}
                     />
                 </label>
-                <br />
                 <label>
-                    카테고리:
-                    
+                    카테고리
                     <CategoryListOption />
                   
                 </label>
-                <br />
                 <label>
-                    공개 부서:
-
+                    공개 부서
                     <DepartListOption />
                     {/* <input
                         type="text"
@@ -184,19 +164,17 @@ const NoticeEdit = () => {
                         onChange={handleChange}
                     /> */}
                 </label>
-                <br />
                 <label>
-                    파일첨부:
+                    파일첨부
                     <input
                         type="file"
                         name="file"
                         onChange={handleFileChange}
                     />
                 </label>
-                <br />
-                <button type="submit">저장</button>
+                <SubmitButton>저장</SubmitButton>
             </form>
-        </StyledNoticeEditDiv>
+        </FormShell>
     );
 };
 

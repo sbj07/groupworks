@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import { Button, Form } from 'react-bootstrap';
+import { Button, Col, Form, InputGroup, Row } from 'react-bootstrap';
 import { useLocation } from 'react-router-dom';
 import styled from 'styled-components';
+import { API_BASE } from '../../api/config';
 
 const StyledSignUpDiv = styled.div`
     display: flex;
@@ -25,13 +26,13 @@ const AddMember = () => {
     const [positionList, setPositionList] = useState([]);
 
     useEffect( () => {
-        fetch(`http://127.0.0.1:8888/app/api/member/list/depart`)
+        fetch(`${API_BASE}/api/member/list/depart`)
         .then( (resp) => { return resp.json() })
         .then( (data) => {
           setDepartList(data.departList);
         });
     
-        fetch(`http://127.0.0.1:8888/app/api/member/list/position`)
+        fetch(`${API_BASE}/api/member/list/position`)
         .then( (resp) => { return resp.json() })
         .then( (data) => {
           setPositionList(data.positionList);
@@ -75,7 +76,7 @@ const AddMember = () => {
     // id 중복확인
     const handleIdCheck = () => {
         let idStr = memberVo.id;
-        fetch(`http://127.0.0.1:8888/app/api/member/check-id?id=${idStr}`)
+        fetch(`${API_BASE}/api/member/check-id?id=${idStr}`)
         .then( resp => resp.json() )
         .then( data => {
         if(data.msg === 'nope'){
@@ -89,7 +90,7 @@ const AddMember = () => {
     //Add Api 호출
     const handleJoinSubmit = (event) => {
         event.preventDefault();
-        fetch("http://127.0.0.1:8888/app/api/member/add", {
+        fetch(`${API_BASE}/api/member/add`, {
         method: "POST",
         headers: {
             "Content-Type": "application/json"
@@ -111,35 +112,41 @@ const AddMember = () => {
         <StyledSignUpDiv>
             <StyledSignUpForm>
                 <h1>구성원 추가</h1>
+                <p className="text-muted mb-4">새 구성원의 계정을 만들고 부서와 직책을 지정합니다.</p>
                 <Form onSubmit={handleJoinSubmit}>
-                    <Form.Group className="mb-3" controlId="formBasicEmail">
-                        <Form.Label>구성원 이름</Form.Label>
-                        <Form.Control size='sm' type="text" placeholder="이름" name='name' onChange={handleInputChange} />
-
-                    <Form.Group className="mb-3" controlId="formBasicEmail">
-                        <Form.Label>구성원 ID</Form.Label>
-                        <Form.Control size='sm' type="text" placeholder="ID" name='id'onChange={handleInputChange} />
-                        <Form.Text className="text-muted">
-                            4글자 이상의 아이디를 입력후, 중복체크를 해주세요.
-                        </Form.Text>
-                        <Button size='sm' variant="primary" onClick={handleIdCheck}>
-                            중복체크
-                        </Button>
+                    <Form.Group className="mb-3" controlId="addName">
+                        <Form.Label>이름</Form.Label>
+                        <Form.Control type="text" placeholder="이름" name='name' onChange={handleInputChange} />
                     </Form.Group>
 
-                        <Form.Label>구성원 Password</Form.Label>
-                        <Form.Control size='sm' type="password" placeholder="Password" name='pwd' onChange={handleInputChange} />
-
-                        <Form.Label>구성원 부서</Form.Label>
-                        <ListSelectBox prop="depart" list={departList} />
-
-                        <Form.Label>구성원 직책</Form.Label>
-                        <ListSelectBox prop="position" list={positionList} />
-
+                    <Form.Group className="mb-3" controlId="addId">
+                        <Form.Label>아이디</Form.Label>
+                        <InputGroup>
+                            <Form.Control type="text" placeholder="4글자 이상" name='id' onChange={handleInputChange} />
+                            <Button variant="outline-primary" onClick={handleIdCheck}>중복체크</Button>
+                        </InputGroup>
                     </Form.Group>
-                    <Button variant="primary" type="submit">
-                        추가
-                    </Button>
+
+                    <Form.Group className="mb-3" controlId="addPwd">
+                        <Form.Label>초기 비밀번호</Form.Label>
+                        <Form.Control type="password" placeholder="비밀번호" name='pwd' autoComplete="new-password" onChange={handleInputChange} />
+                    </Form.Group>
+
+                    <Row className="mb-4">
+                        <Col>
+                            <Form.Label>부서</Form.Label>
+                            <ListSelectBox prop="depart" list={departList} />
+                        </Col>
+                        <Col>
+                            <Form.Label>직책</Form.Label>
+                            <ListSelectBox prop="position" list={positionList} />
+                        </Col>
+                    </Row>
+
+                    <div className="d-flex justify-content-end gap-2">
+                        <Button variant="outline-secondary" onClick={() => window.history.back()}>취소</Button>
+                        <Button variant="primary" type="submit">추가</Button>
+                    </div>
                 </Form>
             </StyledSignUpForm>
         </StyledSignUpDiv>

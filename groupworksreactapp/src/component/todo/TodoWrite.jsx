@@ -1,113 +1,66 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
+import { FiPlus } from 'react-icons/fi';
+import { API_BASE } from '../../api/config';
 
-const StyledTodoWriteDiv = styled.div`
-  width: 100%;
-  height: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  
-  form {
-    width: 90%;
-    max-width: 500px; // 폼의 최대 너비 제한
+const StyledTodoWrite = styled.form`
+    display: flex;
+    gap: 6px;
+    margin-bottom: 12px;
 
-    table {
-      width: 100%; // 테이블 전체 폭 사용
-      border-collapse: collapse; // 셀 간격 없애기
-      
-      tr {
-        td:first-child {
-          text-align: left; // 첫 번째 셀은 텍스트 왼쪽 정렬
-          padding-right: 10px; // 라벨과 인풋 사이 간격
-        }
-        td {
-          padding: 10px 0; // 셀 패딩
-        }
-        input[type="text"] {
-          width: calc(100% - 100px); // 버튼 너비를 제외한 폭 사용
-          padding: 10px;
-          border: 1px solid #ccc;
-          border-radius: 5px;
-          margin-right: 10px; // 버튼과의 간격
-        }
-        input[type="submit"] {
-          padding: 10px 20px;
-          font-size: 1rem;
-          border-radius: 5px;
-          border: none;
-          color: white;
-          background: var(--gw-primary);
-          cursor: pointer;
-          transition: background-color 0.2s ease-in-out;
-          &:hover {
-            background-color: var(--gw-primary);
-          }
-        }
-      }
+    & > input {
+        flex: 1;
+        min-width: 0;
     }
-  }
+
+    & > .btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        flex-shrink: 0;
+    }
 `;
 
-const TodoWrite = ({closeModal, loadTodoVoList}) => {
-    const str = sessionStorage.getItem("loginMemberNo");
-    const vo = JSON.parse(str);
-    const memberNo = str;
-    const [inputTodoVo, setInputTodoVo] = useState({
-        "writerNo" : str,
-    }) 
-    const navigate = useNavigate();
+// 할 일 한 줄 입력
+const TodoWrite = ({ loadTodoVoList, disabled }) => {
+    const memberNo = sessionStorage.getItem("loginMemberNo");
+    const [content, setContent] = useState('');
 
     const handleSubmit = (event) => {
         event.preventDefault();
+        if (!content.trim()) return;
+        if (disabled) {
+            alert('할 일은 최대 5개까지 등록할 수 있습니다. 기존 항목을 정리해주세요.');
+            return;
+        }
 
-        fetch("http://127.0.0.1:8888/app/api/todo/write", {
+        fetch(`${API_BASE}/api/todo/write`, {
             method: "POST",
             headers: {
                 "Content-Type" : "application/json",
             },
             body: JSON.stringify({
-                ...inputTodoVo,
-                memberNo: str,
+                writerNo: memberNo,
+                memberNo: memberNo,
+                content: content.trim(),
             }),
         })
         .then( (resp) => resp.json() )
         .then( (data) => {
             if(data.msg === "good"){
-                alert("todo 작성 완료");
-                closeModal();
+                setContent('');
                 loadTodoVoList();
             }else{
-                alert("todo 작성 실패");
+                alert("할 일 등록에 실패했습니다.");
             }
-        } )
-        ;
-    }
+        } );
+    };
 
-    const handleChangeInput = (event) => {
-        const {name, value} = event.target;
-
-        setInputTodoVo({
-            ...inputTodoVo,
-            [name] : value,
-        });
-    }
-    
     return (
-        <StyledTodoWriteDiv>
-            <form onSubmit={handleSubmit}>
-                <table>
-                    <tbody>
-                        <tr>
-                            <td>Todo</td>
-                            <td><input type="text" name="content" onChange={handleChangeInput}/></td>
-                            <td colSpan="2"><input type="submit" value="등록" /></td>
-                        </tr>
-                    </tbody>
-                </table>
-            </form>
-        </StyledTodoWriteDiv>
+        <StyledTodoWrite onSubmit={handleSubmit}>
+            <input type="text" className="form-control" value={content} onChange={e => setContent(e.target.value)} placeholder="할 일을 입력하고 Enter" maxLength={100} />
+            <button type="submit" className="btn btn-primary"><FiPlus />추가</button>
+        </StyledTodoWrite>
     );
 };
 

@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import Modal from 'react-modal';
 import { useNavigate } from 'react-router-dom';
+import { API_BASE } from '../../api/config';
 import {
     DocSheet, DocHeader, DocTable, ChoiceGroup, DocFooter, DocActions,
     ApprovalLine, ApproverPicker, APPROVAL_ROLES, today,
@@ -27,7 +28,7 @@ const BusinessTripFormWrite = () => {
   });
 
   const fetchCompanyMember = () => {
-    fetch(`http://127.0.0.1:8888/app/api/business-trip-form/member?companyNo=${loginMember.companyNo}`, {
+    fetch(`${API_BASE}/api/business-trip-form/member?companyNo=${loginMember.companyNo}`, {
       method: 'GET',
       headers : {
         'Content-Type' : 'application/json'
@@ -68,7 +69,7 @@ const BusinessTripFormWrite = () => {
   const loginMemberNo = sessionStorage.getItem("loginMemberNo");
   const queryParam = encodeURIComponent(loginMemberNo);
 
-  const url = `http://127.0.0.1:8888/app/api/business-trip-form/login-member?no=${queryParam}`;
+  const url = `${API_BASE}/api/business-trip-form/login-member?no=${queryParam}`;
   const fetchLoginMember = () => {
     fetch(url)
     .then( (resp) => resp.json() )
@@ -136,7 +137,7 @@ const BusinessTripFormWrite = () => {
       sign
     };
     console.log('formData:', formData);
-    fetch("http://127.0.0.1:8888/app/api/business-trip-form/write" , {
+    fetch(`${API_BASE}/api/business-trip-form/write` , {
       method: 'POST',
       headers: {
         'Content-Type' : 'application/json'

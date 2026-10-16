@@ -4,6 +4,8 @@ import styled from 'styled-components';
 import NoticeModal from './NoticeModal';
 import { API_BASE } from '../../api/config';
 import SearchBox, { SearchField } from '../common/SearchBox';
+import Pagination from '../common/Pagination';
+import Badge from '../common/Badge';
 
 import {FaFileDownload} from 'react-icons/fa';
 
@@ -84,6 +86,50 @@ const MiddlePosition = styled.div`
     justify-content: center; // 수평 가운데 정렬
     align-items: center; // 수직 가운데 정렬
 `;
+const CompactList = styled.ul`
+    margin: 0;
+    padding: 0;
+    list-style: none;
+
+    & > li {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 11px 4px;
+        border-bottom: 1px solid var(--gw-border);
+        cursor: pointer;
+    }
+
+    & > li:last-of-type {
+        border-bottom: none;
+    }
+
+    & > li:hover .title {
+        color: var(--gw-primary);
+    }
+
+    & .title {
+        flex: 1;
+        min-width: 0;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        font-weight: 500;
+    }
+
+    & small {
+        flex-shrink: 0;
+        color: var(--gw-text-muted);
+    }
+
+    & > li.empty {
+        justify-content: center;
+        padding: 24px 0;
+        color: var(--gw-text-muted);
+        cursor: default;
+    }
+`;
+
 const StyledNoticeListDiv = styled.div`
     width: 100%;
     height: 100%;
@@ -139,7 +185,7 @@ const StyledNoticeListDiv = styled.div`
 // 조회수 증가 함수
 const incrementClickCount = async (noticeNo) => {
     try {
-        const response = await fetch(`http://127.0.0.1:8888/app/notice/increase-click/${noticeNo}`, {
+        const response = await fetch(`${API_BASE}/notice/increase-click/${noticeNo}`, {
             method: 'POST',
         });
 
@@ -254,7 +300,7 @@ const NoticeList = ({ showTopFive, showWriteButton, showPagination, showEditAndD
 
     const handleSave = (editedNotice) => {
         // API 호출 URL 설정
-        const apiUrl = `http://127.0.0.1:8888/app/notice/edit`;
+        const apiUrl = `${API_BASE}/notice/edit`;
         fetch(apiUrl, {
             method: 'POST',
             headers: {
@@ -311,7 +357,8 @@ const NoticeList = ({ showTopFive, showWriteButton, showPagination, showEditAndD
     
         if (success) {
             await loadNoticeVoList();
-            const updatedNotice = noticeVoList.find(n => n.noticeNo === notice.noticeNo);
+            const found = noticeVoList.find(n => n.noticeNo === notice.noticeNo) ?? notice;
+            const updatedNotice = { ...found, clickNo: Number(found.clickNo ?? 0) + 1 };
 
             //
             const loginMemberNo = sessionStorage.getItem("loginMemberNo");
@@ -329,7 +376,7 @@ const NoticeList = ({ showTopFive, showWriteButton, showPagination, showEditAndD
 
     const handleDelete = noticeNo => {
         const loginMemberNo = sessionStorage.getItem("loginMemberNo");
-        fetch(`http://127.0.0.1:8888/app/notice/delete/${noticeNo}?memberNo=${loginMemberNo}`, {
+        fetch(`${API_BASE}/notice/delete/${noticeNo}?memberNo=${loginMemberNo}`, {
             method: 'DELETE',
             method: 'DELETE',
             headers: {
@@ -370,20 +417,31 @@ const NoticeList = ({ showTopFive, showWriteButton, showPagination, showEditAndD
         
         const maxPage = Math.max(1, Math.ceil(totalItems / itemsPerPage));
 
-        return (
-            <ButtonContainer>
-                <MiddlePosition>
-                <CenteredButtons>
-                <button onClick={handlePreviousPage} disabled={currentPage === 1}>이전</button>
-                <span>{currentPage} / {maxPage}</span>
-                <button onClick={handleNextPage} disabled={currentPage === maxPage}>다음</button>
-                </CenteredButtons>
-                </MiddlePosition>
-            </ButtonContainer>
-        );
+        return <Pagination currentPage={currentPage} totalPages={maxPage} onChange={setCurrentPage} />;
     };
     
     
+    // 홈 화면용 짧은 목록: 제목, 작성자, 날짜만
+    if (showTopFive) {
+        return (
+            <CompactList>
+                {noticeVoList.length === 0
+                    ? <li className="empty">{loaded ? '등록된 공지사항이 없습니다.' : '불러오는 중...'}</li>
+                    : noticeVoList.map(notice => (
+                        <li key={notice.noticeNo} onClick={() => handleNoticeClick(notice)}>
+                            {notice.emergencyYn === 'Y' && <Badge $tone="danger">긴급</Badge>}
+                            <span className="title">{notice.title}</span>
+                            <small>{notice.memberName}</small>
+                            <small>{(notice.updateDate || notice.enrollDate || '').slice(0, 10)}</small>
+                        </li>
+                    ))}
+                {selectedNotice && (
+                    <NoticeModal notice={selectedNotice} onClose={handleCloseModal} onDelete={handleDelete} showEditAndDelete={showEditAndDelete} />
+                )}
+            </CompactList>
+        );
+    }
+
     return (
         <StyledNoticeListDiv>
             {showSearch && (
@@ -462,7 +520,7 @@ const NoticeList = ({ showTopFive, showWriteButton, showPagination, showEditAndD
                                 )}
                             </td>
                             <td>{notice.memberName}</td>
-                            <td>{notice.emergencyYn}</td>
+                            <td>{notice.emergencyYn === 'Y' ? <Badge $tone="danger">긴급</Badge> : <Badge>일반</Badge>}</td>
                             <td>{notice.categoryCon}</td>
                             <td>{notice.departName}</td>
                             <td>{notice.updateDate ? `(${notice.updateDate})` : notice.enrollDate}</td>

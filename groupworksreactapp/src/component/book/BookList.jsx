@@ -140,7 +140,6 @@ const BookList = () => {
     return (
         <StyledBookListDiv>
             <h1>예약 조회</h1>
-            {showModal && <BookModal closeModal={handleBookWrite} userName={loginMemberName}/>}
             <SearchBox
                 onSearch={handleSearch}
                 onReset={handleSearchReset}
