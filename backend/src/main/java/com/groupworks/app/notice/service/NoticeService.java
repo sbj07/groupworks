@@ -10,6 +10,7 @@ import com.groupworks.app.member.vo.DepartVo;
 import com.groupworks.app.member.vo.MemberVo;
 import com.groupworks.app.notice.dao.NoticeDao;
 import com.groupworks.app.notice.vo.CategoryVo;
+import com.groupworks.app.notice.vo.NoticeSearchVo;
 import com.groupworks.app.notice.vo.NoticeVo;
 import com.groupworks.app.page.vo.PageVo;
 
@@ -59,13 +60,14 @@ public class NoticeService {
 		return dao.list(sst);
 	}
 	
-//	페이징 처리(기존)
-	public List<NoticeVo> listPaged(PageVo pageVo) {
-	    return dao.listPaged(sst, pageVo);
+	// 조회조건 + 페이징 목록
+	public List<NoticeVo> listPaged(PageVo pageVo, NoticeSearchVo search) {
+	    return dao.listPaged(sst, pageVo, search);
 	}
-//	전체 갯수 조회(기존)
-	public int getListCount(String memberNo) {
-	    return dao.getListCount(sst, memberNo);
+
+	// 조회조건에 맞는 전체 갯수
+	public int getListCount(NoticeSearchVo search) {
+	    return dao.getListCount(sst, search);
 	}
 	
 

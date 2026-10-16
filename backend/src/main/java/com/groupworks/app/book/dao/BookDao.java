@@ -30,11 +30,13 @@ public class BookDao {
     }
     
 	//목록 조회(gpt)
-	public List<BookVo> listByDateRange(SqlSessionTemplate sst, String startDate, String endDate, String memberName) {
+	public List<BookVo> listByDateRange(SqlSessionTemplate sst, String startDate, String endDate, String memberName, String bookPlace, String bookPurpose) {
 	    Map<String, Object> params = new HashMap<>();
 	    params.put("startDate", startDate);
 	    params.put("endDate", endDate);
 	    params.put("memberName", memberName);
+	    params.put("bookPlace", bookPlace);
+	    params.put("bookPurpose", bookPurpose);
 	    return sst.selectList("BookMapper.listByDateRange", params);
 	}
 

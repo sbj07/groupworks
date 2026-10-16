@@ -10,6 +10,7 @@ import org.springframework.stereotype.Repository;
 import com.groupworks.app.member.vo.DepartVo;
 import com.groupworks.app.member.vo.MemberVo;
 import com.groupworks.app.notice.vo.CategoryVo;
+import com.groupworks.app.notice.vo.NoticeSearchVo;
 import com.groupworks.app.notice.vo.NoticeVo;
 import com.groupworks.app.page.vo.PageVo;
 
@@ -67,13 +68,18 @@ public class NoticeDao {
 		return sst.selectList("NoticeMapper.list");
 	}
 	
-	//목록 조회 페이징 기능(기존)
-	public List<NoticeVo> listPaged(SqlSessionTemplate sst, PageVo pageVo) {
-	    return sst.selectList("NoticeMapper.listPaged", pageVo);
+	//조회조건 + 페이징 목록
+	public List<NoticeVo> listPaged(SqlSessionTemplate sst, PageVo pageVo, NoticeSearchVo search) {
+		Map<String, Object> param = new HashMap<>();
+		param.put("page", pageVo);
+		param.put("search", search);
+	    return sst.selectList("NoticeMapper.listPaged", param);
 	}
-	//전체 수 조회(기존)
-	public int getListCount(SqlSessionTemplate sst, String memberNo) {
-	    return sst.selectOne("NoticeMapper.getListCount", memberNo);
+	//조회조건에 맞는 전체 수
+	public int getListCount(SqlSessionTemplate sst, NoticeSearchVo search) {
+		Map<String, Object> param = new HashMap<>();
+		param.put("search", search);
+	    return sst.selectOne("NoticeMapper.getListCount", param);
 	}
 
 

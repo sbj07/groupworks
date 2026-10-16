@@ -3,7 +3,11 @@ import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import NoticeModal from './NoticeModal';
 import { API_BASE } from '../../api/config';
+import SearchBox, { SearchField } from '../common/SearchBox';
+
 import {FaFileDownload} from 'react-icons/fa';
+
+const EMPTY_SEARCH = { searchType: '', keyword: '', category: '', emergencyYn: '', startDate: '', endDate: '' };
 
 const StyledTableHeader = styled.th`
     &.number {
@@ -165,6 +169,36 @@ const NoticeList = ({ showTopFive, showWriteButton, showPagination, showEditAndD
     const [currentPage, setCurrentPage] = useState(1);
     const itemsPerPage = 10; // 페이지당 항목 수
     const [totalItems, setTotalItems] = useState(0);
+    const [loaded, setLoaded] = useState(false);
+    // 조회조건: 입력 중인 값(search)과 실제 조회에 쓰는 값(appliedSearch)을 나눈다
+    const [search, setSearch] = useState(EMPTY_SEARCH);
+    const [appliedSearch, setAppliedSearch] = useState(EMPTY_SEARCH);
+    const [categoryList, setCategoryList] = useState([]);
+    const showSearch = showPagination;
+
+    useEffect(() => {
+        if (!showSearch) return;
+        fetch(`${API_BASE}/notice/list/categoryList`)
+            .then(resp => resp.json())
+            .then(data => setCategoryList(data.categories ?? []))
+            .catch(() => setCategoryList([]));
+    }, [showSearch]);
+
+    const handleSearchChange = (e) => {
+        const { name, value } = e.target;
+        setSearch({ ...search, [name]: value });
+    };
+
+    const handleSearch = () => {
+        setCurrentPage(1);
+        setAppliedSearch({ ...search });
+    };
+
+    const handleSearchReset = () => {
+        setSearch(EMPTY_SEARCH);
+        setCurrentPage(1);
+        setAppliedSearch(EMPTY_SEARCH);
+    };
 
 
     // const handleFileDownload = (filePath, e) => {
@@ -251,17 +285,21 @@ const NoticeList = ({ showTopFive, showWriteButton, showPagination, showEditAndD
         const loginMemberNo = sessionStorage.getItem("loginMemberNo");
     
         if (loginMemberNo) {
-            const response = await fetch(`http://127.0.0.1:8888/app/notice/list?page=${currentPage}&limit=${itemsPerPage}&memberNo=${loginMemberNo}`);
+            const params = new URLSearchParams({ page: currentPage, limit: itemsPerPage, memberNo: loginMemberNo });
+            Object.entries(appliedSearch).forEach(([key, value]) => {
+                if (value) params.append(key, value);
+            });
+            const response = await fetch(`${API_BASE}/notice/list?${params}`);
             const data = await response.json();
             if (data.voList && Array.isArray(data.voList)) {
                 setTotalItems(data.totalCount); // 총 아이템 수를 설정
                 const listToShow = showTopFive ? data.voList.slice(0, 5) : data.voList;
                 setNoticeVoList(listToShow);
-                console.log(noticeVoList);
             } else {
                 console.error('Data is not an array:', data);
                 setNoticeVoList([]);
             }
+            setLoaded(true);
         } else {
             console.error('No user number found');
             setNoticeVoList([]);
@@ -322,7 +360,7 @@ const NoticeList = ({ showTopFive, showWriteButton, showPagination, showEditAndD
     useEffect( () => {
         // console.log("useEffect 호출");
         loadNoticeVoList();
-    }, [showTopFive, currentPage] );
+    }, [showTopFive, currentPage, appliedSearch] );
 
 
     const renderPagination = () => {
@@ -330,7 +368,7 @@ const NoticeList = ({ showTopFive, showWriteButton, showPagination, showEditAndD
             return null; // 페이징을 표시하지 않음
         }
         
-        const maxPage = Math.ceil(totalItems / itemsPerPage);
+        const maxPage = Math.max(1, Math.ceil(totalItems / itemsPerPage));
 
         return (
             <ButtonContainer>
@@ -348,7 +386,46 @@ const NoticeList = ({ showTopFive, showWriteButton, showPagination, showEditAndD
     
     return (
         <StyledNoticeListDiv>
-            {showWriteButton && <RightAlignedButton onClick={() => navigate("/notice/insert")}>작성하기</RightAlignedButton>}
+            {showSearch && (
+                <SearchBox
+                    onSearch={handleSearch}
+                    onReset={handleSearchReset}
+                    extra={showWriteButton && <button type="button" className="btn btn-primary" onClick={() => navigate("/notice/insert")}>작성하기</button>}
+                >
+                    <SearchField label="검색어" span={2}>
+                        <div className="combo">
+                            <select name="searchType" value={search.searchType} onChange={handleSearchChange}>
+                                <option value="">제목+내용</option>
+                                <option value="title">제목</option>
+                                <option value="content">내용</option>
+                                <option value="writer">작성자</option>
+                            </select>
+                            <input type="text" name="keyword" value={search.keyword} onChange={handleSearchChange} placeholder="검색어를 입력하세요" />
+                        </div>
+                    </SearchField>
+                    <SearchField label="카테고리">
+                        <select name="category" value={search.category} onChange={handleSearchChange}>
+                            <option value="">전체</option>
+                            {categoryList.map(c => <option key={c.categoryNo} value={c.categoryNo}>{c.categoryCon}</option>)}
+                        </select>
+                    </SearchField>
+                    <SearchField label="긴급여부">
+                        <select name="emergencyYn" value={search.emergencyYn} onChange={handleSearchChange}>
+                            <option value="">전체</option>
+                            <option value="Y">긴급</option>
+                            <option value="N">일반</option>
+                        </select>
+                    </SearchField>
+                    <SearchField label="작성일" span={2}>
+                        <div className="range">
+                            <input type="date" name="startDate" value={search.startDate} onChange={handleSearchChange} />
+                            ~
+                            <input type="date" name="endDate" value={search.endDate} onChange={handleSearchChange} />
+                        </div>
+                    </SearchField>
+                </SearchBox>
+            )}
+            {!showSearch && showWriteButton && <RightAlignedButton onClick={() => navigate("/notice/insert")}>작성하기</RightAlignedButton>}
             
             <table>
                 <thead>
@@ -368,7 +445,7 @@ const NoticeList = ({ showTopFive, showWriteButton, showPagination, showEditAndD
                     {
                         noticeVoList.length===0
                         ?
-                        <tr><td colSpan="9">로딩 중...</td></tr>
+                        <tr><td colSpan="9">{loaded ? '조회된 공지사항이 없습니다.' : '불러오는 중...'}</td></tr>
                         :
                         noticeVoList.map( notice => (
                             // notice.deleteYn === 'y' ? null : (

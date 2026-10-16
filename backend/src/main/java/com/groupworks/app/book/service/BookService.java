@@ -51,22 +51,22 @@ public class BookService {
 //	public List<BookVo> listByDateRange(String startDate, String endDate) {
 //	    return dao.listByDateRange(sst, startDate, endDate);
 //	}
-    public List<BookVo> listByDateRange(String startDate, String endDate, String memberName) {
-        if ((startDate == null || startDate.isEmpty()) && (endDate == null || endDate.isEmpty())) {
-            return dao.list(sst); // 모든 목록 조회
+    // 조회조건은 모두 선택 사항이며, 비어 있으면 전체 목록
+    public List<BookVo> listByDateRange(String startDate, String endDate, String memberName, String bookPlace, String bookPurpose) {
+        return dao.listByDateRange(sst, toDate(startDate), toDate(endDate), memberName, bookPlace, bookPurpose);
+    }//listByDateRange
+
+    // yyyy-MM-dd 형식이 아니면 조건에서 뺀다
+    private String toDate(String value) {
+        if (value == null || value.isEmpty()) {
+            return null;
         }
         try {
-            // 날짜 형식 검증 및 변환
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-            LocalDate start = LocalDate.parse(startDate, formatter);
-            LocalDate end = LocalDate.parse(endDate, formatter);
-
-            return dao.listByDateRange(sst, startDate, endDate, memberName);
+            return LocalDate.parse(value, DateTimeFormatter.ofPattern("yyyy-MM-dd")).toString();
         } catch (DateTimeParseException e) {
-            // 잘못된 날짜 형식 처리
-            return dao.list(sst);
+            return null;
         }
-    }//listByDateRange
+    }
 
 	//상세 조회
 	public BookVo detail(BookVo vo) {

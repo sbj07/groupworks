@@ -2,6 +2,18 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import OrganModal from './OrganModal';
+import SearchBox, { SearchField } from '../common/SearchBox';
+
+const EMPTY_SEARCH = { name: '', departName: '', positionName: '', tel: '' };
+
+// 조회조건에 맞는 구성원만 남긴다 (조직도는 전체 목록을 한 번에 받으므로 화면에서 거른다)
+const matchSearch = (member, search) => {
+    const has = (value, keyword) => !keyword || (value ?? '').toLowerCase().includes(keyword.toLowerCase());
+    return has(member.name, search.name)
+        && (!search.departName || member.departName === search.departName)
+        && (!search.positionName || member.positionName === search.positionName)
+        && has(member.tel, search.tel);
+};
 
 
 function groupByDepartName(list) {
@@ -20,14 +32,23 @@ function groupByDepartName(list) {
 
 
 const StyledOrganListDiv = styled.div`
+    & > h1 {
+        display: none; /* 제목은 상단바에 표시 */
+    }
+`;
+
+const Grid = styled.div`
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(420px, 1fr));
     gap: 16px;
     align-items: start;
+`;
 
-    & > h1 {
-        display: none; /* 제목은 상단바에 표시 */
-    }
+const Empty = styled.p`
+    padding: 40px 0;
+    margin: 0;
+    color: var(--gw-text-muted);
+    text-align: center;
 `;
 
 const StyledTable = styled.table`
@@ -63,25 +84,40 @@ const OrganList = () => {
     // const [loginMemberVo, setLoginMemberVo] = useState([]);
 
     const [organVoList, setOrganVoList] = useState([]);
+    const [loaded, setLoaded] = useState(false);
+    const [search, setSearch] = useState(EMPTY_SEARCH);
+    const [appliedSearch, setAppliedSearch] = useState(EMPTY_SEARCH);
+
+    const handleSearchChange = (e) => {
+        const { name, value } = e.target;
+        setSearch({ ...search, [name]: value });
+    };
+    const handleSearch = () => setAppliedSearch({ ...search });
+    const handleSearchReset = () => {
+        setSearch(EMPTY_SEARCH);
+        setAppliedSearch(EMPTY_SEARCH);
+    };
 
     const loadOrganVoList = () => {
         const loginMemberNo = sessionStorage.getItem("loginMemberNo");
 
-        console.log(loginMemberNo);
         fetch(`http://127.0.0.1:8888/app/organ/list?loginMemberNo=${loginMemberNo}`)
         .then(resp => resp.json())
         .then(data => {
             if (data.voList && Array.isArray(data.voList)) {
                 const filteredVoList = data.voList.filter(member => member.delYn !== 'Y');
                 setOrganVoList(data.voList);
+                setLoaded(true);
             } else {
                 console.error('Data is not an array:', data);
-                setOrganVoList([]); 
+                setOrganVoList([]);
+                setLoaded(true);
             }
         })
         .catch(error => {
             console.error('Fetch error:', error);
-            setOrganVoList([]); 
+            setOrganVoList([]);
+            setLoaded(true);
         });
     };
 
@@ -147,21 +183,46 @@ const OrganList = () => {
         closeModal();
     }
 
+    const departOptions = [...new Set(organVoList.map(m => m.departName).filter(Boolean))];
+    const positionOptions = [...new Set(organVoList.map(m => m.positionName).filter(Boolean))];
+    const filteredList = organVoList.filter(member => matchSearch(member, appliedSearch));
+
     return (
         <StyledOrganListDiv>
             <h1>조직도</h1>
-            {/* <button onClick={handleOrganWrite}>조직도 작성</button> */}
+            <SearchBox onSearch={handleSearch} onReset={handleSearchReset}>
+                <SearchField label="이름">
+                    <input type="text" name="name" value={search.name} onChange={handleSearchChange} placeholder="이름" />
+                </SearchField>
+                <SearchField label="부서">
+                    <select name="departName" value={search.departName} onChange={handleSearchChange}>
+                        <option value="">전체</option>
+                        {departOptions.map(d => <option key={d} value={d}>{d}</option>)}
+                    </select>
+                </SearchField>
+                <SearchField label="직책">
+                    <select name="positionName" value={search.positionName} onChange={handleSearchChange}>
+                        <option value="">전체</option>
+                        {positionOptions.map(p => <option key={p} value={p}>{p}</option>)}
+                    </select>
+                </SearchField>
+                <SearchField label="전화번호">
+                    <input type="text" name="tel" value={search.tel} onChange={handleSearchChange} placeholder="번호 일부" />
+                </SearchField>
+            </SearchBox>
             {
-                Array.isArray(organVoList) && organVoList.length === 0
-                ? <div>로딩 중...</div>
-                : Object.entries(groupByDepartName(organVoList)).map(([departName, members]) => (
+                !loaded
+                ? <Empty>불러오는 중...</Empty>
+                : filteredList.length === 0
+                ? <Empty>조회조건에 맞는 구성원이 없습니다.</Empty>
+                : <Grid>
+                    {Object.entries(groupByDepartName(filteredList)).map(([departName, members]) => (
                     <StyledTable key={departName}>
                         <thead>
                             <tr className="depart-header">
-                                <th colSpan="4"> {departName}</th>
+                                <th colSpan="4"> {departName} <small>({members.length}명)</small></th>
                             </tr>
                             <tr>
-                                {/* <th>프로필</th> */}
                                 <th>이름</th>
                                 <th>직책</th>
                                 <th>전화번호</th>
@@ -171,16 +232,16 @@ const OrganList = () => {
                         <tbody>
                             {members.map(member => (
                                 <tr key={member.no} onClick={() => openModal(member)}>
-                                    {/* <td>{member.profile && <img src={`/path/to/your/images/${member.profile}`} alt="Profile" style={{ width: '50px', height: '50px' }}/>}</td> */}
                                     <td>{member.name}</td>
-                                    <td>{member.positionName}</td> {/* 직책 필드명 확인 필요 */}
+                                    <td>{member.positionName}</td>
                                     <td>{member.tel}</td>
                                     <td>{member.email}</td>
                                 </tr>
                             ))}
                         </tbody>
                     </StyledTable>
-                ))
+                    ))}
+                  </Grid>
             }
             <OrganModal
                 modalIsOpen={modalIsOpen}

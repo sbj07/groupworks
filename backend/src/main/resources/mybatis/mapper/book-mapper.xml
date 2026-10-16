@@ -43,58 +43,39 @@
 		ORDER BY BOOK_NO DESC
 	</select>
 	
-<!-- 	날짜 입력 후 조건에 맞는 데이터 조회 -->
+<!-- 	조회조건(기간, 예약자, 장소, 사용목적)에 맞는 예약 목록. 조건은 모두 선택 사항 -->
 <select id="listByDateRange" resultType="com.groupworks.app.book.vo.BookVo">
-    <choose>
-        <when test="startDate != null and endDate != null">
-            SELECT
-                B.BOOK_NO
-                , B.MEMBER_NO
-                , M.NAME as memberName
-                , B.BOOK_PLACE
-                , TO_CHAR(B.START_DATE, 'YYYY-MM-DD HH24:MI') AS START_DATE
-                , TO_CHAR(B.END_DATE, 'YYYY-MM-DD HH24:MI') AS END_DATE
-                , B.BOOK_PURPOSE
-                , TO_CHAR(B.BOOK_DATE, 'YYYY-MM-DD HH24:MI') AS BOOK_DATE
-                , TO_CHAR(B.UPDATE_DATE, 'YYYY-MM-DD HH24:MI') AS UPDATE_DATE
-                , TO_CHAR(B.CANCEL_DATE, 'YYYY-MM-DD HH24:MI') AS CANCEL_DATE
-		    FROM BOOK B
-		    JOIN MEMBER M ON B.MEMBER_NO = M.NO
-		    WHERE CANCEL_DATE IS NULL
-		    <if test="startDate != null and endDate != null">
-		        AND B.START_DATE &gt;= #{startDate}
-		        AND B.END_DATE &lt;= #{endDate}
-		    </if>
-		    <if test="memberName != null and memberName != ''">
-		        AND M.NAME LIKE '%' || #{memberName} || '%' -- 예약자명으로 필터링
-		    </if>
-            ORDER BY B.BOOK_NO DESC
-        </when>
-
-        <otherwise>
-            SELECT
-                B.BOOK_NO
-                , B.MEMBER_NO
-                , M.NAME as memberName
-                , B.BOOK_PLACE
-                , TO_CHAR(B.START_DATE, 'YYYY-MM-DD HH24:MI') AS START_DATE
-                , TO_CHAR(B.END_DATE, 'YYYY-MM-DD HH24:MI') AS END_DATE
-                , B.BOOK_PURPOSE
-                , TO_CHAR(B.BOOK_DATE, 'YYYY-MM-DD HH24:MI') AS BOOK_DATE
-                , TO_CHAR(B.UPDATE_DATE, 'YYYY-MM-DD HH24:MI') AS UPDATE_DATE
-                , TO_CHAR(B.CANCEL_DATE, 'YYYY-MM-DD HH24:MI') AS CANCEL_DATE
-            FROM BOOK B
-            JOIN MEMBER M ON B.MEMBER_NO = M.NO
-            WHERE B.CANCEL_DATE IS NULL
-            		AND M.COMPANY_NO = (
-			                    SELECT 
-			                    	COMPANY_NO
-			                    FROM MEMBER
-			                    WHERE NO = #{loginMemberNo}
-			                    )
-            ORDER BY B.BOOK_NO DESC
-        </otherwise>
-    </choose>
+    SELECT
+        B.BOOK_NO
+        , B.MEMBER_NO
+        , M.NAME as memberName
+        , B.BOOK_PLACE
+        , TO_CHAR(B.START_DATE, 'YYYY-MM-DD HH24:MI') AS START_DATE
+        , TO_CHAR(B.END_DATE, 'YYYY-MM-DD HH24:MI') AS END_DATE
+        , B.BOOK_PURPOSE
+        , TO_CHAR(B.BOOK_DATE, 'YYYY-MM-DD HH24:MI') AS BOOK_DATE
+        , TO_CHAR(B.UPDATE_DATE, 'YYYY-MM-DD HH24:MI') AS UPDATE_DATE
+        , TO_CHAR(B.CANCEL_DATE, 'YYYY-MM-DD HH24:MI') AS CANCEL_DATE
+    FROM BOOK B
+    JOIN MEMBER M ON B.MEMBER_NO = M.NO
+    WHERE B.CANCEL_DATE IS NULL
+    <!-- 기간과 겹치는 예약 -->
+    <if test="startDate != null and startDate != ''">
+        AND B.END_DATE &gt;= TO_DATE(#{startDate}, 'YYYY-MM-DD')
+    </if>
+    <if test="endDate != null and endDate != ''">
+        AND B.START_DATE &lt; TO_DATE(#{endDate}, 'YYYY-MM-DD') + 1
+    </if>
+    <if test="memberName != null and memberName != ''">
+        AND M.NAME LIKE '%' || #{memberName} || '%'
+    </if>
+    <if test="bookPlace != null and bookPlace != ''">
+        AND B.BOOK_PLACE LIKE '%' || #{bookPlace} || '%'
+    </if>
+    <if test="bookPurpose != null and bookPurpose != ''">
+        AND B.BOOK_PURPOSE LIKE '%' || #{bookPurpose} || '%'
+    </if>
+    ORDER BY B.BOOK_NO DESC
 </select>
 
 <!-- 상세 조회 -->

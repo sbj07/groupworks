@@ -131,6 +131,38 @@
 	</update>
 	
 <!-- 	전체 공지사항 수 조회 -->
+	<!-- 목록 조회조건 (search.*) -->
+	<sql id="searchCondition">
+	    <if test="search.keyword != null and search.keyword != ''">
+	        <choose>
+	            <when test="search.searchType == 'title'">
+	                AND N.TITLE LIKE '%' || #{search.keyword} || '%'
+	            </when>
+	            <when test="search.searchType == 'content'">
+	                AND N.CONTENT LIKE '%' || #{search.keyword} || '%'
+	            </when>
+	            <when test="search.searchType == 'writer'">
+	                AND M.NAME LIKE '%' || #{search.keyword} || '%'
+	            </when>
+	            <otherwise>
+	                AND (N.TITLE LIKE '%' || #{search.keyword} || '%' OR N.CONTENT LIKE '%' || #{search.keyword} || '%')
+	            </otherwise>
+	        </choose>
+	    </if>
+	    <if test="search.category != null and search.category != ''">
+	        AND N.CATEGORY = #{search.category}
+	    </if>
+	    <if test="search.emergencyYn != null and search.emergencyYn != ''">
+	        AND N.EMERGENCY_YN = #{search.emergencyYn}
+	    </if>
+	    <if test="search.startDate != null and search.startDate != ''">
+	        AND N.ENROLL_DATE &gt;= TO_DATE(#{search.startDate}, 'YYYY-MM-DD')
+	    </if>
+	    <if test="search.endDate != null and search.endDate != ''">
+	        AND N.ENROLL_DATE &lt; TO_DATE(#{search.endDate}, 'YYYY-MM-DD') + 1
+	    </if>
+	</sql>
+
 	<select id="getListCount" resultType="int">
    	    SELECT COUNT(*)
 	    FROM NOTICE N
@@ -138,13 +170,14 @@
 	    WHERE M.COMPANY_NO = (
 	        SELECT COMPANY_NO
 	        FROM MEMBER
-	        WHERE NO = #{loginMemberNo}
+	        WHERE NO = #{search.loginMemberNo}
 	    )
 	    AND N.DELETE_YN = 'N'
+	    <include refid="searchCondition"/>
 	</select>
 	
 
-<select id="listPaged" resultType="com.groupworks.app.notice.vo.NoticeVo" parameterType="com.groupworks.app.page.vo.PageVo">
+<select id="listPaged" resultType="com.groupworks.app.notice.vo.NoticeVo">
 
 <!--  TNWJD -->
     SELECT 
@@ -172,10 +205,11 @@
                                 SELECT
                                 COMPANY_NO
                                 FROM MEMBER
-                                WHERE NO = #{loginMemberNo}
+                                WHERE NO = #{search.loginMemberNo}
                                 )
-        AND N.DELETE_YN = 'N')
-	WHERE RN BETWEEN #{startRow} AND #{lastRow}
+        AND N.DELETE_YN = 'N'
+        <include refid="searchCondition"/>)
+	WHERE RN BETWEEN #{page.startRow} AND #{page.lastRow}
 </select>
 
 

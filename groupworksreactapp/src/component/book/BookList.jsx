@@ -1,7 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import BookModal from './BookModal';
+import SearchBox, { SearchField } from '../common/SearchBox';
+import { API_BASE } from '../../api/config';
+
 import { useNavigate } from 'react-router-dom';
+
+const EMPTY_SEARCH = { startDate: '', endDate: '', memberName: '', bookPlace: '', bookPurpose: '' };
 
 const StyledBookListDiv = styled.div`
     width: 100%;
@@ -11,35 +16,6 @@ const StyledBookListDiv = styled.div`
     }
 `;
 
-const Toolbar = styled.div`
-    display: flex;
-    flex-wrap: wrap;
-    align-items: flex-end;
-    gap: 12px;
-    margin-bottom: 18px;
-
-    & label {
-        display: flex;
-        flex-direction: column;
-        gap: 4px;
-        font-size: 12px;
-        font-weight: 600;
-        color: var(--gw-text-muted);
-    }
-
-    & input {
-        min-width: 160px;
-        padding: 8px 10px;
-        border: 1px solid var(--gw-border);
-        border-radius: var(--gw-radius-sm);
-        font-size: 14px;
-        color: var(--gw-text);
-    }
-
-    & > .btn {
-        margin-left: auto;
-    }
-`;
 
 const Button = styled.button`
     width: 10%; // 버튼 너비 조정
@@ -81,19 +57,20 @@ const StyledTable = styled.table`
 const BookList = () => {
 
     const [bookVoList, setBookVoList] = useState([]);
-    const [startDate, setStartDate] = useState('');
-    const [endDate, setEndDate] = useState('');
-    const [searchName, setSearchName] = useState('');
+    const [search, setSearch] = useState(EMPTY_SEARCH);
+    const [appliedSearch, setAppliedSearch] = useState(EMPTY_SEARCH);
+    const [loaded, setLoaded] = useState(false);
     const [showModal, setShowModal] = useState(false);
     const navigate = useNavigate();
     const loginMemberName = sessionStorage.getItem("loginMemberName");
 
-
-    const loadBookVoList = async (startDate, endDate, searchName = '') => {
+    const loadBookVoList = async (condition) => {
         try {
-            const queryStartDate = startDate === '' ? null : startDate;
-            const queryEndDate = endDate === '' ? null : endDate;
-            const response = await fetch(`http://127.0.0.1:8888/app/book/list?startDate=${startDate}&endDate=${endDate}&memberName=${encodeURIComponent(searchName)}`);
+            const params = new URLSearchParams();
+            Object.entries(condition).forEach(([key, value]) => {
+                if (value) params.append(key, value);
+            });
+            const response = await fetch(`${API_BASE}/book/list?${params}`);
             if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
@@ -105,37 +82,33 @@ const BookList = () => {
             }
         } catch (error) {
             console.error('Fetch error:', error);
+        } finally {
+            setLoaded(true);
         }
     };
-        useEffect(() => {
-            console.log('Effect running with:', { startDate, endDate, searchName });
-            loadBookVoList(startDate, endDate, searchName); // 컴포넌트 마운트 시 예약 정보를 불러옵니다.
-        }, [startDate, endDate, searchName]);
 
+    useEffect(() => {
+        loadBookVoList(appliedSearch);
+    }, [appliedSearch]);
 
-        const handleSearchNameChange = (e) =>{
-            setSearchName(e.target.value);
-            loadBookVoList(startDate || null, endDate || null, e.target.value);
-        };
-
-
-
-    const handleDateChange = (e) => {
-        if (e.target.name === 'startDate') {
-            setStartDate(e.target.value);
-        } else if (e.target.name === 'endDate') {
-            setEndDate(e.target.value);
-        }
-        loadBookVoList(e.target.name === 'startDate' ? e.target.value : startDate, e.target.name === 'endDate' ? e.target.value : endDate, searchName);
+    const handleSearchChange = (e) => {
+        const { name, value } = e.target;
+        setSearch({ ...search, [name]: value });
     };
 
     const handleSearch = () => {
-        if (startDate && endDate || searchName) {
-            loadBookVoList(startDate, endDate, searchName);
+        if (search.startDate && search.endDate && search.startDate > search.endDate) {
+            alert('시작일이 종료일보다 늦습니다.');
+            return;
         }
+        setAppliedSearch({ ...search });
     };
 
-    
+    const handleSearchReset = () => {
+        setSearch(EMPTY_SEARCH);
+        setAppliedSearch(EMPTY_SEARCH);
+    };
+
     const handleBookWrite = () => {
         // setShowModal(!showModal);
         navigate('/book/insert');
@@ -161,28 +134,35 @@ const BookList = () => {
 
     // 목록을 새로 고치는 함수
     const refreshList = async () => {
-        await loadBookVoList(startDate, endDate, searchName);
+        await loadBookVoList(appliedSearch);
     };
 
     return (
         <StyledBookListDiv>
             <h1>예약 조회</h1>
             {showModal && <BookModal closeModal={handleBookWrite} userName={loginMemberName}/>}
-            <Toolbar>
-                <label>
-                    시작 날짜
-                    <input type="date" name="startDate" value={startDate} onChange={handleDateChange} />
-                </label>
-                <label>
-                    종료 날짜
-                    <input type="date" name="endDate" value={endDate} onChange={handleDateChange} />
-                </label>
-                <label>
-                    예약자명
-                    <input type="text" value={searchName} onChange={handleSearchNameChange} placeholder="이름으로 검색" />
-                </label>
-                <button type="button" className="btn btn-primary" onClick={handleBookWrite}>예약 신청</button>
-            </Toolbar>
+            <SearchBox
+                onSearch={handleSearch}
+                onReset={handleSearchReset}
+                extra={<button type="button" className="btn btn-primary" onClick={handleBookWrite}>예약 신청</button>}
+            >
+                <SearchField label="사용 기간" span={2}>
+                    <div className="range">
+                        <input type="date" name="startDate" value={search.startDate} onChange={handleSearchChange} />
+                        ~
+                        <input type="date" name="endDate" value={search.endDate} onChange={handleSearchChange} />
+                    </div>
+                </SearchField>
+                <SearchField label="예약자">
+                    <input type="text" name="memberName" value={search.memberName} onChange={handleSearchChange} placeholder="이름" />
+                </SearchField>
+                <SearchField label="장소">
+                    <input type="text" name="bookPlace" value={search.bookPlace} onChange={handleSearchChange} placeholder="회의실" />
+                </SearchField>
+                <SearchField label="사용 목적">
+                    <input type="text" name="bookPurpose" value={search.bookPurpose} onChange={handleSearchChange} placeholder="키워드" />
+                </SearchField>
+            </SearchBox>
             <StyledTable>
                 <thead>
                     <tr>
@@ -210,7 +190,7 @@ const BookList = () => {
                         ))
                     ) : (
                         <tr>
-                            <td colSpan="7">해당 기간 등록된 예약 정보가 없습니다.</td>
+                            <td colSpan="7">{loaded ? '조회조건에 맞는 예약이 없습니다.' : '불러오는 중...'}</td>
                         </tr>
                     )}
                 </tbody>

@@ -32,6 +32,7 @@ import com.groupworks.app.member.vo.DepartVo;
 import com.groupworks.app.member.vo.MemberVo;
 import com.groupworks.app.notice.service.NoticeService;
 import com.groupworks.app.notice.vo.CategoryVo;
+import com.groupworks.app.notice.vo.NoticeSearchVo;
 import com.groupworks.app.notice.vo.NoticeVo;
 import com.groupworks.app.page.vo.PageVo;
 
@@ -107,16 +108,17 @@ public class NoticeController {
 		return map;
 	}
 
-	@GetMapping("list") // 페이징처리
+	@GetMapping("list") // 조회조건 + 페이징처리
 	public Map<String, Object> list(@RequestParam(value = "page", defaultValue = "1") int currentPage,
-			@RequestParam(value = "limit", defaultValue = "10") int boardLimit, @RequestParam String memberNo) {
+			@RequestParam(value = "limit", defaultValue = "10") int boardLimit, @RequestParam String memberNo,
+			NoticeSearchVo search) {
 
-		log.info("{}", memberNo);
-		int listCount = service.getListCount(memberNo); // 전체 공지사항 수를 가져옵니다.
+		search.setLoginMemberNo(memberNo);
+		int listCount = service.getListCount(search); // 조회조건에 맞는 공지사항 수
 		PageVo pageVo = new PageVo(listCount, currentPage, 10, boardLimit); // 페이지 정보 생성
 		pageVo.setLoginMemberNo(memberNo);
 
-		List<NoticeVo> voList = service.listPaged(pageVo); // 페이징 처리된 목록 조회
+		List<NoticeVo> voList = service.listPaged(pageVo, search); // 페이징 처리된 목록 조회
 
 		Map<String, Object> map = new HashMap<>();
 		map.put("msg", "good");
@@ -190,9 +192,11 @@ public class NoticeController {
 				throw new Exception("삭제 실패");
 			}
 
-			int listCount = service.getListCount(memberNo); // 전체 공지사항 수를 다시 가져옵니다.
+			NoticeSearchVo search = new NoticeSearchVo();
+			search.setLoginMemberNo(memberNo);
+			int listCount = service.getListCount(search); // 전체 공지사항 수를 다시 가져옵니다.
 			PageVo pageVo = new PageVo(listCount, currentPage, 10, boardLimit); // 페이지 정보를 재생성합니다.
-			List<NoticeVo> voList = service.listPaged(pageVo); // 새로운 목록 조회
+			List<NoticeVo> voList = service.listPaged(pageVo, search); // 새로운 목록 조회
 
 			Map<String, Object> response = new HashMap<>();
 			response.put("message", "공지사항 삭제 성공");
