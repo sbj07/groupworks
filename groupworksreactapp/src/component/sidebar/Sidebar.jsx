@@ -2,7 +2,7 @@ import React from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import { auth } from '../../api/http';
-import { FiHome, FiBell, FiUsers, FiCalendar, FiUserCheck, FiLogOut, FiSun, FiBriefcase, FiFileText, FiInbox } from 'react-icons/fi';
+import { FiHome, FiBell, FiUsers, FiCalendar, FiUserCheck, FiLogOut, FiSun, FiBriefcase, FiFileText, FiInbox, FiMail } from 'react-icons/fi';
 
 const StyledSidebar = styled.aside`
     position: fixed;
@@ -143,6 +143,7 @@ const Sidebar = ({ member, pendingCount = 0 }) => {
 
             <Item to="/" end><FiHome /><span className="label">홈</span></Item>
             <Item to="/notice/list"><FiBell /><span className="label">공지사항</span></Item>
+            <Item to="/message"><FiMail /><span className="label">쪽지함</span></Item>
             <Item to="/organ/list"><FiUsers /><span className="label">조직도</span></Item>
             <Item to="/book/list"><FiCalendar /><span className="label">회의실 예약</span></Item>
 

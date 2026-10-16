@@ -143,7 +143,7 @@ public class MemberApiController {
     @GetMapping("work-stat")
     public Map<String, Object> getWorkStatusList(){
         Map<String, Object> map = okay();
-        map.put("authList", service.getWorkStatList());
+        map.put("workStatusList", service.getWorkStatList());
         return map;
     }
 
@@ -151,7 +151,7 @@ public class MemberApiController {
 
     // 근무상태 (본인)
     @PutMapping("work-stat")
-    public Map<String, Object> editWorkStat(MemberVo vo){
+    public Map<String, Object> editWorkStat(@RequestBody MemberVo vo){
         service.editWorkStatus(vo);
         return okay();
     }

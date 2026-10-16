@@ -1,7 +1,8 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { Button } from 'react-bootstrap';
 import styled from 'styled-components';
 import EditMember from '../member/EditMember';
+import WorkStatus from './WorkStatus';
 import Card from '../common/Card';
 import { Avatar } from '../Topbar';
 import { API_BASE } from '../../api/config';
@@ -84,19 +85,23 @@ const UserInfoMain = () => {
     const [openModal, setOpenModal] = useState(false);
     const time = useClock();
 
-    useEffect( () => {
+    const loadMember = useCallback(() => {
         fetch(`${API_BASE}/api/member/${loginMemberNo}`)
         .then( resp => resp.json() )
         .then( data => {
             setLoginMemberVo(data.loginMemberVo ?? {});
         });
+    }, [loginMemberNo]);
+
+    useEffect( () => {
+        loadMember();
 
         fetch(`${API_BASE}/api/attendance/vacation/total/${loginMemberNo}`)
         .then( resp => resp.json() )
         .then( data => {
             setTotalDays(data.totalDays);
         })
-    },[loginMemberNo]);
+    },[loginMemberNo, loadMember]);
 
     const handleMemberEdit = () => {
         setOpenModal(true);
@@ -120,6 +125,8 @@ const UserInfoMain = () => {
                 <div><small>사용 연차</small><b>{totalDays ?? 0}</b>일</div>
                 <div><small>남은 연차</small><b>{loginMemberVo.annual ?? 0}</b>일</div>
             </Stats>
+
+            <WorkStatus current={loginMemberVo.workStatusNo} onChanged={loadMember} />
 
             <Actions>
                 <Button variant="outline-primary" onClick={handleMemberEdit}>개인정보 수정</Button>

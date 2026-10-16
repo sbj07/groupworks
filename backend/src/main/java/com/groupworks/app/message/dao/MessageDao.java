@@ -1,37 +1,39 @@
 package com.groupworks.app.message.dao;
 
 import java.util.List;
+import java.util.Map;
+
 import org.mybatis.spring.SqlSessionTemplate;
 import org.springframework.stereotype.Repository;
+
 import com.groupworks.app.message.vo.MessageVo;
 
+import lombok.RequiredArgsConstructor;
+
 @Repository
+@RequiredArgsConstructor
 public class MessageDao {
 
-	//보낸 쪽지 조회
-	public List<MessageVo> sendList(SqlSessionTemplate sst, String memberNo) {
-		return sst.selectList("MessageMapper.sendList", memberNo);
+	private static final String NS = "MessageMapper.";
+
+	private final SqlSessionTemplate sst;
+
+	// box: inbox(받은 쪽지) 또는 sent(보낸 쪽지)
+	public List<MessageVo> list(String memberNo, String box) {
+		return sst.selectList(NS + "list", Map.of("memberNo", memberNo, "box", box));
 	}
-	
-	//받은 쪽지 조회
-	public List<MessageVo> recieveList(SqlSessionTemplate sst, String memberNo) {
-		return sst.selectList("MessageMapper.recieveList", memberNo);
+
+	public int countSameCompanyMember(String memberNo, String companyNo) {
+		return sst.selectOne(NS + "countSameCompanyMember", Map.of("memberNo", memberNo, "companyNo", companyNo));
 	}
-	
-	//쪽지 보내기
-	public int write(SqlSessionTemplate sst, MessageVo vo) {
-		return sst.insert("MessageMapper.insert", vo);
+
+	// ownerNo 의 쪽지함에 한 줄 저장
+	public int insert(MessageVo vo, String ownerNo) {
+		return sst.insert(NS + "insert", Map.of("vo", vo, "ownerNo", ownerNo));
 	}
-	
-	//쪽지 답장
-	public int reWrite(SqlSessionTemplate sst, MessageVo vo) {
-		return sst.insert("MessageMapper.reInsert", vo);
+
+	public int delete(String no, String memberNo) {
+		return sst.update(NS + "delete", Map.of("no", no, "memberNo", memberNo));
 	}
-	
-	//쪽지 삭제
-	public int delete(SqlSessionTemplate sst, String no) {
-		return sst.update("MessageMapper.delete", no);
-	}
-	
 
 }

@@ -3,92 +3,76 @@
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="MessageMapper">
-   
-   
-   <!-- 수신가능자리스트 조회 -->
-   <select id="list" resultType="MessageVo">
-   	   SELECT
-   	   	  사용자번호, 이름, 직책, 부서 
-   	   	  group by 회사 (회사같은사람들끼리만)
-   	   FROM 
-   </select>
-   
-   <!-- 보낸메세지 조회 -->
-   <select id="sendList" resultType="MessageVo">
-	   SELECT 
-	   		NO
-	   		, MEMBER_NO
-	   		, SEND_NO
-	   		, RECIEVE_NO
-	   		, CONTENT
-	   		, SEND_DATE
-	   FROM MESSAGE 
-	   WHERE DEL_YN = 'N' 
-	   AND SEND_NO = #{memberNo}
-   </select>
-   
-    <!-- 받은메세지 조회 -->
-   <select id="recieveList" resultType="MessageVo">
-	   SELECT 
-	   		NO
-	   		, MEMBER_NO
-	   		, SEND_NO
-	   		, RECIEVE_NO
-	   		, CONTENT
-	   		, SEND_DATE
-	   FROM MESSAGE 
-	   WHERE DEL_YN = 'N' 
-	   AND RECIEVE_NO = #{memberNo}
-   </select>
-   
-    <!-- 메세지보내기 -->
- 	<insert id="insert">
- 		INSERT INTO MESSAGE 
- 		(
- 			NO
- 			,SEND_NO
- 			,RECIEVE_NO
- 			,CONTENT
- 			,SEND_DATE
- 		) 
-    	VALUES 
-   		(
-    		SEQ_MESSAGE_NO.NEXTVAL
-    		, #{sendNo}
-    		, #{recieveNo}
-    		, #{content}
-    		, SYSDATE
-   		)
- 	</insert>
- 	
- 	 <!-- 메세지답장 -->
- 	<insert id="reInsert">
-	 	INSERT INTO MESSAGE 
-	 	(
-	 		NO
-	 		,SEND_NO
-	 		,RECIEVE_NO
-	 		,CONTENT
-	 		,SEND_DATE
-	 	) 
-		VALUES 
-		(
-	    	SEQ_MESSAGE_NO.NEXTVAL
-	    	,#{recieveNo}
-	    	,#{sendNo}
-	    	,#{content}
-	    	,SYSDATE
-	    )
- 	</insert>
- 	
- 	<!-- 메세지삭제 -->
- 	<update id="delete">
- 		UPDATE MESSAGE 
-		    SET DEL_YN = 'Y'
-		    , DELETE_DATE = SYSDATE 
-	    WHERE NO = #{no} 
-	    AND MEMBER_NO = #{memberNo};
- 	</update>
- 	
- 	
+
+    <!--
+        쪽지는 보낸 사람 몫, 받은 사람 몫 두 줄로 저장한다. MEMBER_NO 가 그 줄의 주인.
+        받은 쪽지함: 주인 = 나, 받는 사람 = 나 / 보낸 쪽지함: 주인 = 나, 보낸 사람 = 나
+    -->
+    <select id="list" resultType="MessageVo">
+        SELECT
+            MS.NO
+            , MS.SEND_NO
+            , MS.RECIEVE_NO
+            , MS.CONTENT
+            , TO_CHAR(MS.SEND_DATE, 'YYYY-MM-DD HH24:MI') AS SEND_DATE
+            , P.NO AS PARTNER_NO
+            , P.NAME AS PARTNER_NAME
+            , D.NAME AS PARTNER_DEPART_NAME
+            , PO.NAME AS PARTNER_POSITION_NAME
+        FROM MESSAGE MS
+        JOIN MEMBER P ON P.NO = <choose><when test='box == "sent"'>MS.RECIEVE_NO</when><otherwise>MS.SEND_NO</otherwise></choose>
+        LEFT JOIN DEPARTMENT D ON P.DEPART_NO = D.NO
+        LEFT JOIN POSITION PO ON P.POSITION_NO = PO.NO
+        WHERE MS.DEL_YN = 'N'
+        AND MS.MEMBER_NO = #{memberNo}
+        <choose>
+            <when test='box == "sent"'>AND MS.SEND_NO = #{memberNo}</when>
+            <otherwise>AND MS.RECIEVE_NO = #{memberNo}</otherwise>
+        </choose>
+        ORDER BY MS.SEND_DATE DESC, MS.NO DESC
+        FETCH FIRST 200 ROWS ONLY
+    </select>
+
+    <!-- 받는 사람이 같은 회사의 재직자인지 -->
+    <select id="countSameCompanyMember" resultType="int">
+        SELECT COUNT(*)
+        FROM MEMBER
+        WHERE NO = #{memberNo}
+        AND COMPANY_NO = #{companyNo}
+        AND DEL_YN = 'N'
+    </select>
+
+    <insert id="insert">
+        INSERT INTO MESSAGE
+        (
+            NO
+            , MEMBER_NO
+            , SEND_NO
+            , RECIEVE_NO
+            , CONTENT
+            , SEND_DATE
+            , DEL_YN
+        )
+        VALUES
+        (
+            SEQ_MESSAGE_NO.NEXTVAL
+            , #{ownerNo}
+            , #{vo.sendNo}
+            , #{vo.recieveNo}
+            , #{vo.content}
+            , SYSTIMESTAMP
+            , 'N'
+        )
+    </insert>
+
+    <!-- 내 쪽지함에서만 지운다 -->
+    <update id="delete">
+        UPDATE MESSAGE
+        SET DEL_YN = 'Y'
+            , DELETE_DATE = SYSTIMESTAMP
+        WHERE NO = #{no}
+        AND MEMBER_NO = #{memberNo}
+        AND DEL_YN = 'N'
+    </update>
+
 </mapper>

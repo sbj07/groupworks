@@ -1,6 +1,8 @@
 import React from 'react';
 import { useLocation } from 'react-router-dom';
 import styled from 'styled-components';
+import Badge from './common/Badge';
+import { WORK_STATUS_TONE } from './attendance/WorkStatus';
 
 const StyledTopbar = styled.header`
     position: sticky;
@@ -58,6 +60,7 @@ export const Avatar = styled.span`
 
 const TITLES = [
     ['/notice', '공지사항'],
+    ['/message', '쪽지함'],
     ['/approval/write/vacation', '휴가신청서 작성'],
     ['/approval/write/business', '출장신청서 작성'],
     ['/approval/my', '결재내역'],
@@ -88,7 +91,10 @@ const Topbar = ({ member }) => {
             {member && (
                 <User>
                     <div>
-                        <strong>{member.name}</strong>
+                        <strong>
+                            {member.workStatusName && <Badge $tone={WORK_STATUS_TONE[member.workStatusNo]} className="me-2">{member.workStatusName}</Badge>}
+                            {member.name}
+                        </strong>
                         <small>{[member.departName, member.positionName].filter(Boolean).join(' · ')}</small>
                     </div>
                     <Avatar>{member.name?.charAt(0)}</Avatar>

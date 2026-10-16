@@ -201,7 +201,9 @@ public class MemberService {
     public int editWorkStatus(MemberVo vo){
         vo.setNo(CurrentUser.memberNo());
         Check.required(vo.getWorkStatusNo(), "근무 상태");
-        return dao.editWorkStatus(sessionTemplate,vo);
+        int result = dao.editWorkStatus(sessionTemplate,vo);
+        Check.affected(result, "없는 근무 상태입니다.");
+        return result;
     }
 
     // 로그인 유저 정보

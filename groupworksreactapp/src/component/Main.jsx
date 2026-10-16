@@ -9,6 +9,7 @@ import ApprovalMain from './approval/ApprovalMain';
 import BookMain from './book/BookMain';
 import MemberManage from './member/MemberManage';
 import EditMember from './member/EditMember';
+import MessageMain from './message/MessageMain';
 import Card from './common/Card';
 
 const StyledMain = styled.main`
@@ -25,6 +26,7 @@ const Main = ({ summary }) => {
             <Routes>
                 <Route path='/' element={<Home summary={summary} />}></Route>
                 <Route path='/notice/*' element={<Page><NoticeMain /></Page>}></Route>
+                <Route path='/message' element={<Page><MessageMain /></Page>}></Route>
                 <Route path='/approval/*' element={<Page><ApprovalMain /></Page>}></Route>
                 <Route path='/document/*' element={<Navigate to='/approval/my' replace />}></Route>
                 <Route path='/organ/*' element={<Page><OrganMain /></Page>}></Route>

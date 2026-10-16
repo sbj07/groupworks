@@ -26,6 +26,7 @@ public class MemberVo {
     private String companyNo;
     private String companyName;
     private String workStatusNo;
+    private String workStatusName;
     private String delYn;
 
     @JsonIgnore
