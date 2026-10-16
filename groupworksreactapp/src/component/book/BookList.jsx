@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import BookModal from './BookModal';
 import SearchBox, { SearchField } from '../common/SearchBox';
+import ListLayout from '../common/ListLayout';
 import { API_BASE } from '../../api/config';
 import { notify } from '../common/Toast';
 
@@ -139,8 +140,7 @@ const BookList = () => {
     };
 
     return (
-        <StyledBookListDiv>
-            <h1>예약 조회</h1>
+        <ListLayout search={
             <SearchBox
                 onSearch={handleSearch}
                 onReset={handleSearchReset}
@@ -163,6 +163,8 @@ const BookList = () => {
                     <input type="text" name="bookPurpose" value={search.bookPurpose} onChange={handleSearchChange} placeholder="키워드" />
                 </SearchField>
             </SearchBox>
+        }>
+        <StyledBookListDiv>
             <StyledTable>
                 <thead>
                     <tr>
@@ -204,6 +206,7 @@ const BookList = () => {
                 book={selectedVo}
             />
         </StyledBookListDiv>
+        </ListLayout>
     );
 };
 

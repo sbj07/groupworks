@@ -4,6 +4,7 @@ import styled from 'styled-components';
 import Badge from '../common/Badge';
 import EmptyState from '../common/EmptyState';
 import Pagination from '../common/Pagination';
+import ListLayout from '../common/ListLayout';
 import ApprovalDetailModal from './ApprovalDetailModal';
 import { DOC_STATUS, DOC_TYPES, VACATION_KINDS, approvedCount, typeOfServer } from './approvalConstants';
 import { api } from '../../api/http';
@@ -14,7 +15,6 @@ const Toolbar = styled.div`
     align-items: center;
     justify-content: space-between;
     gap: 10px;
-    margin-bottom: 14px;
 
     .left {
         display: flex;
@@ -122,8 +122,9 @@ const ApprovalList = ({ mode }) => {
     const columns = mode === 'mine' ? 7 : 6;
 
     return (
-        <div>
-            <Toolbar>
+        <ListLayout
+            footer={<Pagination currentPage={page} totalPages={data.maxPage} onChange={setPage} />}
+            search={<Toolbar>
                 <div className="left">
                     <select className="form-select" value={docType} onChange={e => changeFilter(setDocType)(e.target.value)} aria-label="문서 종류">
                         <option value="">전체 문서</option>
@@ -144,8 +145,8 @@ const ApprovalList = ({ mode }) => {
                         <Link className="btn btn-outline-primary" to="/approval/write/business">출장신청서 작성</Link>
                     </div>
                 )}
-            </Toolbar>
-
+            </Toolbar>}
+        >
             <table className="clickable">
                 <thead>
                     <tr>
@@ -190,10 +191,8 @@ const ApprovalList = ({ mode }) => {
                 </tbody>
             </table>
 
-            <Pagination currentPage={page} totalPages={data.maxPage} onChange={setPage} />
-
             <ApprovalDetailModal doc={selected} mode={mode} onClose={() => setSelected(null)} onChanged={load} />
-        </div>
+        </ListLayout>
     );
 };
 

@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import OrganModal from './OrganModal';
 import SearchBox, { SearchField } from '../common/SearchBox';
+import ListLayout from '../common/ListLayout';
 import { API_BASE } from '../../api/config';
 
 const EMPTY_SEARCH = { name: '', departName: '', positionName: '', tel: '' };
@@ -189,8 +190,7 @@ const OrganList = () => {
     const filteredList = organVoList.filter(member => matchSearch(member, appliedSearch));
 
     return (
-        <StyledOrganListDiv>
-            <h1>조직도</h1>
+        <ListLayout search={
             <SearchBox onSearch={handleSearch} onReset={handleSearchReset}>
                 <SearchField label="이름">
                     <input type="text" name="name" value={search.name} onChange={handleSearchChange} placeholder="이름" />
@@ -211,6 +211,8 @@ const OrganList = () => {
                     <input type="text" name="tel" value={search.tel} onChange={handleSearchChange} placeholder="번호 일부" />
                 </SearchField>
             </SearchBox>
+        }>
+        <StyledOrganListDiv>
             {
                 !loaded
                 ? <Empty>불러오는 중...</Empty>
@@ -253,6 +255,7 @@ const OrganList = () => {
                 organ={selectedVo}
             />
         </StyledOrganListDiv>
+        </ListLayout>
     );
 
 };

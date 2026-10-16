@@ -5,6 +5,7 @@ import NoticeModal from './NoticeModal';
 import { API_BASE } from '../../api/config';
 import SearchBox, { SearchField } from '../common/SearchBox';
 import Pagination from '../common/Pagination';
+import ListLayout from '../common/ListLayout';
 import Badge from '../common/Badge';
 import { api } from '../../api/http';
 import { notify } from '../common/Toast';
@@ -405,8 +406,9 @@ const NoticeList = ({ showTopFive, showWriteButton, showPagination, showEditAndD
     }
 
     return (
-        <StyledNoticeListDiv>
-            {showSearch && (
+        <ListLayout
+            footer={renderPagination()}
+            search={showSearch && (
                 <SearchBox
                     onSearch={handleSearch}
                     onReset={handleSearchReset}
@@ -445,6 +447,8 @@ const NoticeList = ({ showTopFive, showWriteButton, showPagination, showEditAndD
                     </SearchField>
                 </SearchBox>
             )}
+        >
+        <StyledNoticeListDiv>
             {!showSearch && showWriteButton && <RightAlignedButton onClick={() => navigate("/notice/insert")}>작성하기</RightAlignedButton>}
             
             <table>
@@ -503,8 +507,8 @@ const NoticeList = ({ showTopFive, showWriteButton, showPagination, showEditAndD
                 />
                 )}
             
-            {renderPagination()}
         </StyledNoticeListDiv>
+        </ListLayout>
     );
 };
 
